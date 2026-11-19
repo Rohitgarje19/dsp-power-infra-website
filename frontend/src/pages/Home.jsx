@@ -6,8 +6,9 @@ import {
 } from "lucide-react";
 import LeadForm from "../components/LeadForm";
 import Faq from "../components/Faq";
+import QuoteModal from "../components/QuoteModal";
 import { HOME_FAQS, CONTACT } from "../data/content";
-import { usePageMeta } from "../lib/seo";
+import { usePageMeta, useFaqSchema } from "../lib/seo";
 import { pct } from "../lib/format";
 import EmiCalculator from "../components/EmiCalculator";
 
@@ -79,7 +80,9 @@ function ProcessCard() {
 }
 
 export default function Home() {
+  const [quoteOpen, setQuoteOpen] = useState(false);
   usePageMeta(null, "DSP Power Infra — solar EPC for homes, housing societies and businesses in Pune. Survey-first design, subsidy support, installation and maintenance.");
+  useFaqSchema(HOME_FAQS);
   return (
     <main>
       <section className="hero photo-hero">
@@ -90,8 +93,8 @@ export default function Home() {
           <h1>Solar that's planned around <em>your roof.</em></h1>
           <p className="lede light">From the first site visit to the day your system goes live — clear numbers, one accountable team, support that stays.</p>
           <div className="actions">
-            <a className="button gold" href="#contact">Plan your solar project <ArrowRight size={17} /></a>
-            <a className="button ghost-light" href="#solutions">Explore solutions</a>
+            <button type="button" className="button gold" onClick={() => setQuoteOpen(true)}>Get a free quote <ArrowRight size={17} /></button>
+            <Link className="button ghost-light" to="/book-visit">Book a free visit</Link>
           </div>
           <p className="caption light"><ShieldCheck size={18} /> Clear recommendations. A real team. Support through the journey.</p>
         </div>
@@ -202,7 +205,7 @@ export default function Home() {
               <li><Check /> See the assumptions behind every estimate</li>
               <li><Check /> Know the next steps before you proceed</li>
             </ul>
-            <a className="button" href="#contact">Book a consultation <ArrowRight size={16} /></a>
+            <Link className="button" to="/book-visit">Book a free site visit <ArrowRight size={16} /></Link>
           </div>
           <div className="visit-card">
             <h3>What your consultation covers</h3>
@@ -242,6 +245,7 @@ export default function Home() {
         </div>
         <LeadForm source="home" />
       </section>
+      <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />
     </main>
   );
 }

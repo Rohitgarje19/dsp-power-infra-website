@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { ArrowUpRight, Building2, ChevronDown, House, Layers, Menu, Sun, Users, X, Zap } from "lucide-react";
 import { NAV_SOLUTIONS } from "../data/content";
+import QuoteModal from "./QuoteModal";
 
 const ICONS = { "/homes": House, "/housing-societies": Users, "/commercial": Building2, "/on-grid-solar": Zap, "/hybrid-solar": Layers, "/off-grid-solar": Sun };
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [quoteOpen, setQuoteOpen] = useState(false);
   const { pathname } = useLocation();
 
   useEffect(() => setOpen(false), [pathname]);
@@ -43,8 +45,15 @@ export default function Header() {
         <NavLink to="/how-it-works">How it works</NavLink>
         <NavLink to="/solar-calculator">Solar calculator</NavLink>
         <NavLink to="/blog">Guides</NavLink>
-        <NavLink to="/contact" className="nav-cta">Talk to an expert <ArrowUpRight size={15} /></NavLink>
+        <button
+          type="button"
+          className="nav-cta nav-quote"
+          onClick={() => { setOpen(false); setQuoteOpen(true); }}
+        >
+          Get free quote <ArrowUpRight size={15} />
+        </button>
       </nav>
+      <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />
     </header>
   );
 }

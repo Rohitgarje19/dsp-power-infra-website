@@ -1,4 +1,5 @@
 import { CalendarCheck, Eye, MessageSquare, Ruler } from "lucide-react";
+import { Link } from "react-router-dom";
 import PageHero from "../components/PageHero";
 import LeadForm from "../components/LeadForm";
 import { usePageMeta } from "../lib/seo";
@@ -37,6 +38,7 @@ export default function ExperienceCentre() {
           <span className="eyebrow">Book your slot</span>
           <h2>Pick a time that suits you.</h2>
           <p>Tell us what you want to see and when you're free. We confirm the arrangement by phone — evenings and weekends possible for working households.</p>
+          <p className="availability">Prefer us at your own rooftop? <Link to="/book-visit">Book a free site visit</Link> instead.</p>
         </div>
         <LeadForm source="experience-centre" defaults={{ message: "I'd like to book a consultation / visit. Preferred days/times: " }} heading="Request a consultation." eyebrow="BOOK A VISIT" />
       </section>

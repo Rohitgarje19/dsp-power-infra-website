@@ -27,12 +27,15 @@ export default function Footer() {
         <div>
           <b>QUICK LINKS</b>
           <Link to="/solar-calculator">Solar calculator</Link>
+          <Link to="/book-visit">Book a free visit</Link>
           <Link to="/how-it-works">How it works</Link>
           <Link to="/projects">Projects</Link>
           <Link to="/blog">Solar guides</Link>
           <Link to="/service-areas">Service areas</Link>
           <Link to="/refer-a-friend">Refer a friend</Link>
           <Link to="/about">About DSP</Link>
+          <Link to="/careers">Careers</Link>
+          <Link to="/sitemap">Sitemap</Link>
         </div>
         <div>
           <b>CONTACT</b>

@@ -5,6 +5,8 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
+**Status snapshot (2026-11-20):** Backend 38/38 JUnit tests pass (`mvn test`), frontend 63/63 Vitest tests pass (`npm test`), production build clean. The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test` and `frontend/src/**/__tests__` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) and Day 4 (deployment) remain deferred by decision.
+
 ---
 
 ## Day 1 — Calculator, subsidy, serviceability, lead form (frontend unit/component)
@@ -135,6 +137,49 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 | TC-DEP-06 ☐ | Rate limit live | burst POSTs → 429 |
 | TC-DEP-07 ☐ | Backup + restore drill | nightly dump exists; restore into scratch DB, row counts match |
 | TC-DEP-08 ☐ | Restart resilience | `docker compose restart` → site back <60s, data intact; uptime monitor alerts on down |
+
+---
+
+## SolarSquare parity round (2026-11-20) — all ✅ passing
+
+### TC-MODAL — quick-quote modal (`components/QuoteModal.jsx`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-MODAL-01 ✅ | Closed state | renders nothing when `open=false` |
+| TC-MODAL-02 ✅ | Open state | accessible dialog (`role=dialog`, `aria-modal`, labelled) containing the lead form |
+| TC-MODAL-03 ✅ | Escape key | calls `onClose` |
+| TC-MODAL-04 ✅ | Backdrop click | closes on overlay click, NOT on inner panel click |
+| TC-MODAL-05 ✅ | Close button | calls `onClose` |
+| TC-MODAL-06 ✅ | Scroll lock | `body.overflow` hidden while open, restored on close |
+| TC-MODAL-07 ✅ | Custom copy | heading/eyebrow props passed through to the form |
+
+### TC-NAV — header CTA + mobile menu (`components/Header.jsx`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-NAV-01 ✅ | Header quote CTA | "Get free quote" opens the quote dialog |
+| TC-NAV-02 ✅ | Escape from header modal | dialog closes |
+| TC-NAV-03 ✅ | Mobile menu | toggles open and closes after navigation |
+
+### TC-VISIT — free-visit booking page (`pages/BookVisit.jsx`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-VISIT-01 ✅ | Page render | survey headings + form with prefilled "free site survey" message |
+| TC-VISIT-02 ✅ | Submit | posts lead with `source="free-visit"`, `sourcePage="/book-visit"` |
+
+### TC-CAREERS / TC-SITEMAP — careers + HTML sitemap
+| ID | Case | Expected |
+|---|---|---|
+| TC-CAREERS-01 ✅ | Apply by email | mailto links carry CONTACT.email + "Careers" subject |
+| TC-CAREERS-02 ✅ | Honesty copy | "not a list of fixed vacancies" disclaimer present (no fabricated openings) |
+| TC-SITEMAP-01 ✅ | Link coverage | 22 primary public paths linked in 6 groups; `/admin` excluded |
+
+### TC-FAQ — homepage FAQ depth (`data/content.js`, `components/Faq.jsx`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-FAQ-01 ✅ | Depth + quality | ≥15 questions (18 shipped), unique, complete answers |
+| TC-FAQ-02 ✅ | Render | every homepage question renders as an accordion button |
+
+Browser smoke (same round): hero modal open → focus first field → Escape closes → scroll restored → focus returned to trigger; `/book-visit` lead submitted and persisted (`source=free-visit` visible via admin API); `/careers` and `/sitemap` render; console clean.
 
 ---
 

@@ -3,7 +3,7 @@
 Local workspace for the DSP Power Infra solar platform — an original, DSP-branded site inspired by the customer journeys of reference solar sites (e.g. SolarSquare), built and verified to run fully functional locally.
 
 ## Stack
-- React 19 + Vite 7 frontend (react-router, 24 public routes + admin desk)
+- React 19 + Vite 7 frontend (react-router, 27 public routes + admin desk)
 - Java 21 + Spring Boot 4.1.2 REST API (feature-first packages)
 - MySQL 8.4 (Docker) with Flyway-managed schema
 - Private leads API protected with an ADMIN role (HTTP Basic)
@@ -28,7 +28,7 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 
 ## Run the tests
 - Backend: `cd backend && mvn test` — 38 JUnit/MockMvc tests on H2 (lead API, validation, rate limiting, honeypot, admin workflows, CSV, cleanup job, notification fail-safe, readiness, prod secret guard).
-- Frontend: `cd frontend && npm test` — 46 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability, API client/error mapping, lead form, FAQ, calculator results).
+- Frontend: `cd frontend && npm test` — 63 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability, API client/error mapping, lead form, quote modal, header/mobile nav, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results).
 
 ## Status — what is done ✅
 
@@ -37,7 +37,14 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 - Solar calculator (`/solar-calculator`) with live preview and shareable results (`/solar-calculator/results`): system size, roof area, PM Surya Ghar subsidy (₹30k/kW first 2 kW + ₹18k third kW, capped ₹78k, residential only), net cost, payback and EMI — every assumption visible and adjustable, results labelled as planning estimates.
 - Calculator → results → prefilled contact enquiry flow; leads carry source page and UTM attribution.
 - Serviceability PIN check (Pune prefixes 411/412; unknown PINs accepted and flagged, never rejected).
-- SEO: per-route titles/descriptions, Open Graph, JSON-LD LocalBusiness, robots.txt, sitemap.xml.
+- SEO: per-route titles/descriptions, Open Graph, JSON-LD LocalBusiness + FAQPage (homepage), robots.txt, sitemap.xml, HTML sitemap page.
+
+### SolarSquare parity round (2026-11-20)
+- Quick-quote modal on the hero, header and mobile-bar CTAs — full lead form in an accessible dialog (Escape/backdrop close, scroll lock, focus management); submits with `source=quick-quote`.
+- `/book-visit` — free site-visit booking page (what the survey covers + prefilled enquiry form, `source=free-visit`).
+- Homepage FAQ expanded to 18 claim-safe questions with FAQPage structured data.
+- `/careers` — honest work-areas overview + apply-by-email (no fabricated vacancies).
+- `/sitemap` — grouped HTML sitemap of all primary public pages (admin excluded); footer links updated.
 
 ### Lead desk (`/admin`)
 - Active / resolved / deleted tabs, search, lead detail modal, internal notes, resolve / restore / soft-delete / permanent delete, CSV export, 15-day auto-delete of soft-deleted leads.
@@ -65,6 +72,7 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 - Customer portal, live inverter/generation monitoring (requires a compatible monitoring integration — never fabricate data).
 - Advanced lead workflows (assignment, pipelines, WhatsApp/email automation).
 - Email notification delivery (wired, off by default — needs SMTP credentials).
+- Analytics/marketing pixels (needs DSP's own GA/measurement ID — nothing third-party is embedded by default).
 
 ### Deployment (deferred by decision — site runs fully locally first)
 - Production hosting, HTTPS, domain + absolute sitemap URLs.

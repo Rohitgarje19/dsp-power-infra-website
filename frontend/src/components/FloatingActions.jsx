@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { CONTACT } from "../data/content";
+import QuoteModal from "./QuoteModal";
 
 /** Floating WhatsApp button + sticky mobile quote bar (public pages only). */
 export default function FloatingActions() {
   const { pathname } = useLocation();
   const [showBar, setShowBar] = useState(false);
+  const [quoteOpen, setQuoteOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setShowBar(window.scrollY > 480);
@@ -15,7 +17,7 @@ export default function FloatingActions() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [pathname]);
 
-  const hideOn = ["/contact", "/admin"].includes(pathname);
+  const hideOn = ["/contact", "/book-visit", "/admin"].includes(pathname);
   const waText = encodeURIComponent("Hello DSP Power Infra, I'd like to know more about rooftop solar for my site.");
 
   return (
@@ -33,9 +35,10 @@ export default function FloatingActions() {
       {!hideOn && (
         <div className={`mobile-cta ${showBar ? "show" : ""}`}>
           <div><b>Planning solar?</b><small>Free consultation · Pune & nearby</small></div>
-          <Link className="button gold" to="/contact">Get free quote <ArrowRight size={15} /></Link>
+          <button type="button" className="button gold" onClick={() => setQuoteOpen(true)}>Get free quote <ArrowRight size={15} /></button>
         </div>
       )}
+      <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />
     </>
   );
 }

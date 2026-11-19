@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Faq from "../Faq";
+import { HOME_FAQS } from "../../data/content";
 
 const ITEMS = [
   { q: "How long does installation take?", a: "Typically a few days on site after approvals." },
@@ -24,5 +25,25 @@ describe("Faq accordion", () => {
 
     await user.click(second);
     expect(second).toHaveAttribute("aria-expanded", "false");
+  });
+});
+
+// TC-FAQ-* from docs/TEST_CASES.md
+describe("Homepage FAQ content", () => {
+  it("TC-FAQ-01: has SolarSquare-level depth (15+ questions), all complete and unique", () => {
+    expect(HOME_FAQS.length).toBeGreaterThanOrEqual(15);
+    const questions = HOME_FAQS.map((f) => f.q);
+    expect(new Set(questions).size).toBe(questions.length);
+    for (const item of HOME_FAQS) {
+      expect(item.q.trim().length).toBeGreaterThan(10);
+      expect(item.a.trim().length).toBeGreaterThan(40);
+    }
+  });
+
+  it("TC-FAQ-02: renders every homepage question in the accordion", () => {
+    render(<Faq items={HOME_FAQS} />);
+    for (const item of HOME_FAQS) {
+      expect(screen.getByRole("button", { name: item.q })).toBeInTheDocument();
+    }
   });
 });

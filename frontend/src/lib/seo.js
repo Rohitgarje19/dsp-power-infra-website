@@ -18,6 +18,27 @@ export function usePageMeta(title, description) {
   }, [title, description]);
 }
 
+/** Inject FAQPage JSON-LD for a page's FAQ items; removed on unmount. */
+export function useFaqSchema(items) {
+  useEffect(() => {
+    if (!items || items.length === 0) return undefined;
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.dataset.faqSchema = "true";
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: items.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
+    });
+    document.head.appendChild(script);
+    return () => { script.remove(); };
+  }, [items]);
+}
+
 /** Capture UTM params once per session so every lead carries attribution. */
 export function readUtm() {
   try {

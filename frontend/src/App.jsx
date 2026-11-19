@@ -9,6 +9,9 @@ import Home from "./pages/Home";
 import Calculator from "./pages/Calculator";
 import Results from "./pages/Results";
 import Contact from "./pages/Contact";
+import BookVisit from "./pages/BookVisit";
+import Careers from "./pages/Careers";
+import Sitemap from "./pages/Sitemap";
 import HowItWorks from "./pages/HowItWorks";
 import SubsidyGuide from "./pages/SubsidyGuide";
 import ServiceAreas from "./pages/ServiceAreas";
@@ -83,6 +86,9 @@ export default function App() {
           <Route path="/webinars" element={<Webinars />} />
           <Route path="/solar-partners" element={<Partners />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/book-visit" element={<BookVisit />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/sitemap" element={<Sitemap />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />

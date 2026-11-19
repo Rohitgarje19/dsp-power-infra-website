@@ -867,3 +867,38 @@ html{scrollbar-color:var(--g-mid) var(--sage)}
   .subsidy-steps article{padding:18px}
   .post-body p{font-size:16px}
 }
+
+/* ---------- Quick-quote modal ---------- */
+.nav-quote{display:flex;align-items:center;gap:5px;background:none;cursor:pointer;font-weight:600;font-size:15px;font-family:"DM Sans",sans-serif}
+.quote-overlay{position:fixed;inset:0;z-index:120;background:rgba(9,51,39,.58);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:4vh 16px calc(4vh + env(safe-area-inset-bottom));overflow-y:auto;animation:quote-fade .22s ease}
+.quote-modal{position:relative;width:min(680px,100%);animation:quote-rise .3s cubic-bezier(.2,.7,.2,1)}
+.quote-modal .form-card{margin:0;border-radius:24px;box-shadow:0 30px 80px rgba(9,51,39,.45)}
+.quote-close{position:absolute;top:14px;right:14px;z-index:2;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--g);display:grid;place-items:center;cursor:pointer;transition:background .2s ease}
+.quote-close:hover{background:var(--mint)}
+.quote-close:focus-visible{outline:2px solid var(--g-mid);outline-offset:2px}
+@keyframes quote-fade{from{opacity:0}}
+@keyframes quote-rise{from{opacity:0;transform:translateY(18px)}}
+
+/* ---------- Careers ---------- */
+.careers-card{display:flex;flex-direction:column;align-items:flex-start}
+.careers-card .button{margin-top:20px;width:100%}
+.careers-card .privacy{display:block;margin-top:14px}
+.careers-card .privacy a{color:var(--g);font-weight:700;text-decoration:underline}
+
+/* ---------- HTML sitemap ---------- */
+.sitemap-page h1{font-size:clamp(32px,4vw,48px);letter-spacing:-1.5px;margin:14px 0 12px;font-weight:700}
+.sitemap-page .lede a{color:var(--g);font-weight:700;text-decoration:underline}
+.sitemap-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.sitemap-groups>div{background:var(--sage);border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:4px}
+.sitemap-groups b{font-size:12px;letter-spacing:1.4px;color:var(--g-mid);text-transform:uppercase;margin-bottom:10px}
+.sitemap-groups a{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 15px;font-size:14px;font-weight:600;color:var(--g);transition:background .2s ease,transform .2s ease}
+.sitemap-groups a:hover{background:var(--mint);transform:translateX(2px)}
+.sitemap-groups a svg{flex:none;color:var(--gold-deep)}
+@media(max-width:980px){
+  .sitemap-groups{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .sitemap-groups{grid-template-columns:1fr}
+  .quote-overlay{padding:2vh 10px calc(2vh + env(safe-area-inset-bottom))}
+  .quote-modal .form-card{padding:26px 20px}
+}

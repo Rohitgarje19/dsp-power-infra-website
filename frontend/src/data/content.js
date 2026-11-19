@@ -43,6 +43,54 @@ export const HOME_FAQS = [
     q: "Do you work outside Pune?",
     a: "Pune and nearby regions are our core service area. For other locations, share your PIN code — coverage depends on project size, team availability and site conditions, and we confirm case by case before committing.",
   },
+  {
+    q: "What exactly is a rooftop solar system made of?",
+    a: "Solar panels (PV modules) that convert sunlight to DC electricity, an inverter that converts it to usable AC power, a mounting structure fixed to your roof, AC/DC cables and combiner boxes, earthing and protection devices, and a bi-directional meter for grid-connected systems. Hybrid and off-grid setups add batteries and a compatible inverter.",
+  },
+  {
+    q: "How does rooftop solar work?",
+    a: "Sunlight hits the PV cells in the panels and generates DC electricity through the photovoltaic effect. The inverter converts it to AC power your home uses. Solar serves your loads first; a grid-connected system exports surplus through a bi-directional meter and imports from the grid when solar isn't enough — the two are netted under your state's metering rules.",
+  },
+  {
+    q: "Is solar power safe?",
+    a: "Yes. The electricity a solar system produces is the same AC power you get from the grid — only the source differs. A properly designed installation includes earthing, surge protection, isolators and anti-islanding protection, and the structure is anchored for your roof type. Safety comes from design and installation quality, which is why a survey precedes every proposal.",
+  },
+  {
+    q: "How high should my electricity bill be for solar to make sense?",
+    a: "As a planning guideline, bills above roughly ₹1,500 a month usually justify a closer look, because fixed system costs spread over more units. Below that, a smaller system or a hybrid for backup may still fit your goals. Run your numbers through our calculator — it shows the assumptions, so you can judge for your tariff and usage.",
+  },
+  {
+    q: "Do panels generate electricity in monsoon and winter?",
+    a: "Yes, with reduced output on cloudy or rainy days. Generation estimates for a project are built on annual averages that already account for low-sun months — not just peak summer performance. Winter sun can actually be efficient for panels; it's cloud cover and shorter days that lower output.",
+  },
+  {
+    q: "Does solar work during a power cut?",
+    a: "A standard on-grid system shuts down during outages — feeding a dead grid could endanger line workers (anti-islanding protection). If backup matters, a hybrid system with batteries safely powers selected loads through cuts. We size storage around your essential loads and runtime, and show that cost openly.",
+  },
+  {
+    q: "What appliances can I run on solar?",
+    a: "All of them — lights, fans, fridge, TV, ACs, pumps and machinery. A grid-connected system runs everything as usual because solar and the grid supply your home together. For backup or off-grid, the question is energy budget: heavy loads like ACs and pumps dominate it, so we inventory your appliances before sizing anything.",
+  },
+  {
+    q: "Do I need to clean the solar panels?",
+    a: "Yes — dust, bird droppings and pollen can shave a noticeable slice off generation. In Pune's dry months, cleaning every 2–4 weeks with plain water and a soft cloth or brush keeps output close to spec. Avoid abrasives and detergents, and clean early morning or evening when panels are cool. Ask us about maintenance support if you'd rather not do it yourself.",
+  },
+  {
+    q: "My roof isn't concrete — can I still go solar?",
+    a: "Usually yes. Metal-sheet (GI/color-coated) roofs use clamped or penetrated fixings suited to the profile; RCC roofs use anchored foundations. Brittle roofs (like old asbestos) or structurally weak roofs need repair or replacement first — the survey checks condition before any design, and we say so honestly if a roof isn't ready.",
+  },
+  {
+    q: "How long does a solar system last?",
+    a: "Quality panels carry performance warranties of 25 years or more, with slow degradation (around 0.5% a year is typical). Inverters usually carry 5–10 year warranties with extendable options, and batteries (in hybrid/off-grid systems) have shorter lives quoted separately. The structure and protection gear last decades when installed and inspected properly.",
+  },
+  {
+    q: "What do I need to install rooftop solar?",
+    a: "Unshaded roof space you own or have rights over, access for the installation team, and — for grid-connected systems — an electricity connection in your name with a sanctioned load that supports the size. The survey confirms all three. From there, one accountable team handles design, supply, installation and the metering/subsidy paperwork.",
+  },
+  {
+    q: "How soon do I recover the investment?",
+    a: "Payback depends on your tariff, consumption pattern, system cost, subsidy eligibility and export rules — there is no single honest number for everyone. Our calculator estimates it with every assumption visible and adjustable, and your site-specific proposal replaces the estimates with real figures. Treat any guaranteed payback promise from anyone as a sales claim, not engineering.",
+  },
 ];
 
 export const SOLUTION_PAGES = {
