@@ -1,0 +1,11 @@
+node_modules/
+dist/
+target/
+.m2/
+.env
+.env.*
+*.local
+.vscode/
+.idea/
+Thumbs.db
+*.log

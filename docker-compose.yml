@@ -1,0 +1,15 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: dsp_power_infra
+      MYSQL_USER: dsp_dev
+      MYSQL_PASSWORD: local-dev-only
+      MYSQL_ROOT_PASSWORD: local-root-only
+    ports:
+      - "3306:3306"
+    volumes:
+      - dsp_mysql_data:/var/lib/mysql
+volumes:
+  dsp_mysql_data:
