@@ -17,7 +17,8 @@ export default function FloatingActions() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [pathname]);
 
-  const hideOn = ["/contact", "/book-visit", "/admin"].includes(pathname);
+  // Keep the sticky quote bar off pages that carry their own bottom CTA.
+  const hideOn = ["/contact", "/book-visit", "/solar-calculator", "/admin"].includes(pathname);
   const waText = encodeURIComponent("Hello DSP Power Infra, I'd like to know more about rooftop solar for my site.");
 
   return (

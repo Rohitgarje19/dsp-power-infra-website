@@ -8,12 +8,13 @@ const ICONS = { "/homes": House, "/housing-societies": Users, "/commercial": Bui
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [solutionsOpen, setSolutionsOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
   const overlay = pathname === "/" && !scrolled && !open;
 
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => { setOpen(false); setSolutionsOpen(false); }, [pathname]);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
@@ -26,18 +27,18 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className={"site-header" + (overlay ? " overlay" : "")}>
+    <header className={"site-header" + (overlay ? " overlay" : "") + (scrolled ? " scrolled" : "")}>
       <Link className="brand" to="/" aria-label="DSP Power Infra home">
         <img src="/dsp-logo.jpg" alt="" />
         <span>DSP <b>POWER INFRA</b><small>SOLAR EPC SOLUTIONS</small></span>
       </Link>
-      <button className="menu" onClick={() => setOpen(!open)} aria-label="Toggle menu" aria-expanded={open}>
+      <button className="menu" onClick={() => { setOpen(!open); setSolutionsOpen(false); }} aria-label="Toggle menu" aria-expanded={open}>
         {open ? <X /> : <Menu />}
       </button>
       <nav className={open ? "open" : ""} aria-label="Main">
         <NavLink to="/homes">Homes</NavLink>
-        <div className="dd">
-          <button type="button" className="dd-btn" aria-haspopup="true">Solutions <ChevronDown size={15} /></button>
+        <div className={"dd" + (solutionsOpen ? " open" : "")}>
+          <button type="button" className="dd-btn" aria-haspopup="true" aria-expanded={solutionsOpen} onClick={() => setSolutionsOpen(!solutionsOpen)}>Solutions <ChevronDown size={15} /></button>
           <div className="dd-menu">
             {NAV_SOLUTIONS.map(({ name, url, desc }) => {
               const Icon = ICONS[url] || Sun;

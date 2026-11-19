@@ -159,6 +159,7 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 | TC-NAV-01 ✅ | Header quote CTA | "Get a free consultation" opens the quote dialog |
 | TC-NAV-02 ✅ | Escape from header modal | dialog closes |
 | TC-NAV-03 ✅ | Mobile menu | toggles open and closes after navigation |
+| TC-NAV-04 ✅ | Mobile Solutions group | accordion toggles `aria-expanded`, collapses when the drawer closes |
 
 ### TC-VISIT — free-visit booking page (`pages/BookVisit.jsx`)
 | ID | Case | Expected |

@@ -41,4 +41,19 @@ describe("Header", () => {
     await user.click(screen.getByRole("link", { name: /^homes$/i }));
     expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
+
+  it("TC-NAV-04: Solutions accordion toggles and resets with the mobile menu", async () => {
+    const user = userEvent.setup();
+    setup();
+    const menu = screen.getByRole("button", { name: /toggle menu/i });
+    const solutions = screen.getByRole("button", { name: /solutions/i });
+    expect(solutions).toHaveAttribute("aria-expanded", "false");
+    await user.click(menu);
+    await user.click(solutions);
+    expect(solutions).toHaveAttribute("aria-expanded", "true");
+    expect(solutions.closest(".dd")).toHaveClass("open");
+    await user.click(menu);
+    expect(menu).toHaveAttribute("aria-expanded", "false");
+    expect(solutions).toHaveAttribute("aria-expanded", "false");
+  });
 });

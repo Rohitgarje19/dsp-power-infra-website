@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight, ArrowUpRight, Building2, Check, ClipboardCheck, Compass, Factory, FileText,
-  House, Layers, LifeBuoy, MapPin, Phone, Ruler, ShieldCheck, Sun, Trees, Users, Wrench, Zap,
+  House, Layers, LifeBuoy, MapPin, Phone, Ruler, ShieldCheck, Sparkles, Sun, Trees, Users, Wrench, Zap,
 } from "lucide-react";
 import LeadForm from "../components/LeadForm";
 import Faq from "../components/Faq";
@@ -33,7 +33,7 @@ const journey = [
   ["04", "Installation and support", "Your project is installed and you stay informed through the project."],
 ];
 
-function QuickEstimate() {
+function HeroEstimate() {
   const [pin, setPin] = useState("");
   const [bill, setBill] = useState(3000);
   function go(e) {
@@ -42,15 +42,19 @@ function QuickEstimate() {
     window.location.href = "/solar-calculator?" + p.toString();
   }
   return (
-    <form className="quick-form" onSubmit={go}>
-      <label>PIN code
-        <input required pattern="[0-9]{6}" inputMode="numeric" placeholder="e.g. 411046" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))} />
+    <form className="hero-search" onSubmit={go} aria-label="Quick solar estimate">
+      <span className="hs-spark" aria-hidden="true"><Sparkles size={19} /></span>
+      <label className="hs-pin">
+        <span>Your PIN code</span>
+        <input required pattern="[0-9]{6}" inputMode="numeric" placeholder="e.g. 411046" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))} aria-label="Your PIN code" />
       </label>
-      <label>
-        <b><span>Average monthly bill</span><span>₹{Number(bill).toLocaleString("en-IN")}</span></b>
+      <span className="hs-divider" aria-hidden="true" />
+      <label className="hs-bill">
+        <span>Monthly bill</span>
+        <b>₹{Number(bill).toLocaleString("en-IN")}</b>
         <input className="fill" style={{ "--pct": pct(bill, 500, 10000) }} aria-label="Average monthly electricity bill" type="range" min="500" max="10000" step="100" value={bill} onChange={(e) => setBill(e.target.value)} />
       </label>
-      <button className="button primary">Calculate now <ArrowRight size={17} /></button>
+      <button className="hs-submit" type="submit">Calculate <ArrowRight size={16} /></button>
     </form>
   );
 }
@@ -89,20 +93,20 @@ export default function Home() {
         <img className="hero-photo" src="/images/panels-sunset.jpg" alt="Rooftop solar panels stretching toward a setting sun" />
         <div className="hero-scrim" />
         <div className="hero-copy">
-          <span className="eyebrow light square">Solar EPC in Pune, Maharashtra</span>
-          <h1>Power your home with <em>the sun.</em></h1>
-          <p className="lede light">Cleaner energy. Lower bills. A more independent home.</p>
+          <span className="hero-badge"><Sparkles size={14} /> Solar EPC · Pune, Maharashtra</span>
+          <h1>Power your<br />home with<br /><em>the sun.</em></h1>
+          <p className="lede light">Cleaner energy. Lower bills. A more independent home — planned around your roof by one accountable team.</p>
           <div className="actions">
-            <button type="button" className="button sun pill" onClick={() => setQuoteOpen(true)}>Get a free solar consultation <ArrowRight size={17} /></button>
-            <Link className="button ghost-light pill" to="/solar-calculator">Calculate savings</Link>
+            <button type="button" className="button gold pill" onClick={() => setQuoteOpen(true)}>Get a free solar consultation <ArrowRight size={17} /></button>
+            <Link className="button ghost-light pill" to="/solar-calculator">Calculate your savings</Link>
           </div>
-          <p className="caption light"><ShieldCheck size={18} /> Survey-first design. Honest estimates. One team from enquiry to switch-on.</p>
+          <HeroEstimate />
+          <div className="hero-stats">
+            <article><strong>Pune</strong><span>Based in Maharashtra</span></article>
+            <article><strong>3</strong><span>Homes · societies · business</span></article>
+            <article><strong>1 team</strong><span>Enquiry to switch-on</span></article>
+          </div>
         </div>
-      </section>
-
-      <section className="estimate-band">
-        <div><span className="eyebrow">Solar planning estimate</span><h2>Calculate your solar numbers</h2><p>Enter your PIN code and average monthly bill to get started.</p></div>
-        <QuickEstimate />
       </section>
 
       <section className="proof">
