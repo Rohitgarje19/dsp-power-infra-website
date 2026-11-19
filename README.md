@@ -53,6 +53,11 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 - Admin detail modal now carries lifecycle actions (resolve / reopen / restore / delete / permanent delete) and sets its own page title.
 - SolarSquare-style photo backgrounds (existing `/images` banners) on the Contact, Calculator and Results heroes and the home consultation band, each with a green scrim for readable text.
 
+### Editorial hero round (2026-11-20)
+- Home hero rebuilt to match the supplied reference: full-bleed sunset-over-panels photo with a warm scrim, Playfair Display serif headline ("Power your home with *the sun.*"), gold square-bullet eyebrow, sun-yellow pill CTA + white ghost pill, and an honesty caption.
+- Header is transparent over the home hero (white wordmark/nav, amber pill CTA) and solidifies on scroll; solid on all other routes and whenever the mobile menu is open. Page heroes share the serif display face.
+- Header CTA renamed to "Get a free consultation"; header tests updated to match.
+
 ### Lead desk (`/admin`)
 - Active / resolved / deleted tabs, search, lead detail modal, internal notes, resolve / restore / soft-delete / permanent delete, CSV export, 15-day auto-delete of soft-deleted leads.
 

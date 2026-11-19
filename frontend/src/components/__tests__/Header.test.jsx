@@ -14,11 +14,11 @@ function setup() {
 
 // TC-NAV-* from docs/TEST_CASES.md
 describe("Header", () => {
-  it("TC-NAV-01: Get free quote opens the quote modal in place", async () => {
+  it("TC-NAV-01: Get a free consultation opens the quote modal in place", async () => {
     const user = userEvent.setup();
     setup();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: /get free quote/i }));
+    await user.click(screen.getByRole("button", { name: /get a free consultation/i }));
     expect(screen.getByRole("dialog", { name: /get a free solar quote/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/full name/i)).toBeInTheDocument();
   });
@@ -26,7 +26,7 @@ describe("Header", () => {
   it("TC-NAV-02: Escape closes the quote modal from the header", async () => {
     const user = userEvent.setup();
     setup();
-    await user.click(screen.getByRole("button", { name: /get free quote/i }));
+    await user.click(screen.getByRole("button", { name: /get a free consultation/i }));
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });

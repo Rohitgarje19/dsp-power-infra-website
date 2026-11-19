@@ -156,7 +156,7 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 ### TC-NAV — header CTA + mobile menu (`components/Header.jsx`)
 | ID | Case | Expected |
 |---|---|---|
-| TC-NAV-01 ✅ | Header quote CTA | "Get free quote" opens the quote dialog |
+| TC-NAV-01 ✅ | Header quote CTA | "Get a free consultation" opens the quote dialog |
 | TC-NAV-02 ✅ | Escape from header modal | dialog closes |
 | TC-NAV-03 ✅ | Mobile menu | toggles open and closes after navigation |
 
@@ -206,6 +206,25 @@ Shared dialog behavior extracted to `lib/useDialog.js` (Escape, Tab/Shift+Tab fo
 | TC-ADMIN-07 ✅ | Deleted record | modal offers "Restore enquiry" + "Delete permanently", no resolve |
 
 Browser smoke (same round): footer legal links reachable above the fixed mobile bar at ≤980px; quote modal initial focus + Tab/Shift+Tab containment + Escape + scroll restore; admin modal focus inside + Escape + lifecycle buttons + compact metrics + ≥12px type at ≥5.3:1; EMI loan input shows a focus ring; Contact/Calculator/Results/home photo backgrounds load with correct scrim layering and readable text; console clean.
+
+---
+
+## Editorial hero round (2026-11-20) — reference-matched sunset hero + transparent header
+
+Home hero rebuilt to match the supplied reference: full-bleed sunset-over-panels photo (`/images/panels-sunset.jpg`) with a warm scrim, Playfair Display serif headline "Power your home with / *the sun.*" (italic sun-yellow on its own line), gold square-bullet eyebrow, warm cream lede, sun-yellow pill CTA + white ghost pill, and an honesty caption. The header is transparent over the home hero (white wordmark/nav, amber pill CTA) and solidifies on scroll; it stays solid on every other route and whenever the mobile menu is open. Page heroes adopt the same serif display face.
+
+### TC-HERO — editorial home hero (`pages/Home.jsx`, `components/Header.jsx`, `styles.css`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-HERO-01 ✅ | Serif display headline | h1 uses Playfair Display; `em` renders italic, block-level, sun-yellow on its own line |
+| TC-HERO-02 ✅ | Pill CTAs | primary CTA is sun-yellow with 999px radius; secondary is a white ghost pill |
+| TC-HERO-03 ✅ | Square eyebrow bullet | eyebrow marker is a 2px-radius gold square, not a circle |
+| TC-HERO-04 ✅ | Transparent header at top | on `/` at scrollY 0 the header carries `.overlay`: gradient scrim, white brand/nav, amber pill CTA |
+| TC-HERO-05 ✅ | Header solidifies on scroll | scrolling past 24px removes `.overlay`; white blurred header + dark nav return |
+| TC-HERO-06 ✅ | Header solid off-home / menu open | non-`/` routes and an open mobile menu always render the solid header |
+| TC-HERO-07 ✅ | Hero sits under the header | negative margin-top equals header height (84 desktop / 72 ≤980) with matching padding-top; no content hidden behind the header |
+
+Browser smoke (same round, 754px viewport): at top the header is `.overlay` (transparent gradient, white brand/nav/menu, amber 999px CTA) and the hero starts at y=0 with the headline clear of the header; scrolling to 400px returns the solid white blurred header; opening the mobile menu forces the solid header + scroll lock and closing restores `.overlay`; hero copy, both pill CTAs and the caption fit inside the hero with no horizontal overflow; the sunset photo loads (naturalWidth 1640); the sun CTA opens the quote dialog with initial focus on Full name and Escape closes + restores scroll; `/homes` and `/solar-calculator` keep solid headers, serif page-hero and loaded band imagery with no overflow; console clean. Desktop-width pixel QA remains deferred (in-app browser viewport is locked to 754px and was hidden this round, so verification used computed styles + geometry rather than screenshots).
 
 ---
 

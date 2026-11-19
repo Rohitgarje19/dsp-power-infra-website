@@ -86,21 +86,17 @@ export default function Home() {
   return (
     <main>
       <section className="hero photo-hero">
-        <img className="hero-photo" src="/images/hero.jpg" alt="Rooftop solar panels catching the evening sun" />
+        <img className="hero-photo" src="/images/panels-sunset.jpg" alt="Rooftop solar panels stretching toward a setting sun" />
         <div className="hero-scrim" />
         <div className="hero-copy">
-          <span className="eyebrow light">Solar EPC · Pune, Maharashtra</span>
-          <h1>Solar that's planned around <em>your roof.</em></h1>
-          <p className="lede light">From the first site visit to the day your system goes live — clear numbers, one accountable team, support that stays.</p>
+          <span className="eyebrow light square">Solar EPC in Pune, Maharashtra</span>
+          <h1>Power your home with <em>the sun.</em></h1>
+          <p className="lede light">Cleaner energy. Lower bills. A more independent home.</p>
           <div className="actions">
-            <button type="button" className="button gold" onClick={() => setQuoteOpen(true)}>Get a free quote <ArrowRight size={17} /></button>
-            <Link className="button ghost-light" to="/book-visit">Book a free visit</Link>
+            <button type="button" className="button sun pill" onClick={() => setQuoteOpen(true)}>Get a free solar consultation <ArrowRight size={17} /></button>
+            <Link className="button ghost-light pill" to="/solar-calculator">Calculate savings</Link>
           </div>
-          <p className="caption light"><ShieldCheck size={18} /> Clear recommendations. A real team. Support through the journey.</p>
-        </div>
-        <div className="hero-chips">
-          <div className="chip chip-a"><i><Zap /></i><b>Made for your roof<small>Designed around your needs</small></b></div>
-          <div className="chip chip-b"><i><Check /></i><b>Survey to switch-on<small>One team, every step</small></b></div>
+          <p className="caption light"><ShieldCheck size={18} /> Survey-first design. Honest estimates. One team from enquiry to switch-on.</p>
         </div>
       </section>
 

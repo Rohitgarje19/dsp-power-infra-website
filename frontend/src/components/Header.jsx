@@ -9,16 +9,24 @@ const ICONS = { "/homes": House, "/housing-societies": Users, "/commercial": Bui
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
+  const overlay = pathname === "/" && !scrolled && !open;
 
   useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [pathname]);
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
   return (
-    <header className="site-header">
+    <header className={"site-header" + (overlay ? " overlay" : "")}>
       <Link className="brand" to="/" aria-label="DSP Power Infra home">
         <img src="/dsp-logo.jpg" alt="" />
         <span>DSP <b>POWER INFRA</b><small>SOLAR EPC SOLUTIONS</small></span>
@@ -50,7 +58,7 @@ export default function Header() {
           className="nav-cta nav-quote"
           onClick={() => { setOpen(false); setQuoteOpen(true); }}
         >
-          Get free quote <ArrowUpRight size={15} />
+          Get a free consultation <ArrowUpRight size={15} />
         </button>
       </nav>
       <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />
