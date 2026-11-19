@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Relative locations: replace with the production origin at deploy time. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>/</loc><priority>1.0</priority></url>
+  <url><loc>/homes</loc><priority>0.9</priority></url>
+  <url><loc>/commercial</loc><priority>0.9</priority></url>
+  <url><loc>/housing-societies</loc><priority>0.9</priority></url>
+  <url><loc>/on-grid-solar</loc><priority>0.8</priority></url>
+  <url><loc>/hybrid-solar</loc><priority>0.8</priority></url>
+  <url><loc>/off-grid-solar</loc><priority>0.8</priority></url>
+  <url><loc>/solar-calculator</loc><priority>0.9</priority></url>
+  <url><loc>/subsidy-guide</loc><priority>0.8</priority></url>
+  <url><loc>/how-it-works</loc><priority>0.7</priority></url>
+  <url><loc>/service-areas</loc><priority>0.7</priority></url>
+  <url><loc>/projects</loc><priority>0.6</priority></url>
+  <url><loc>/about</loc><priority>0.6</priority></url>
+  <url><loc>/blog</loc><priority>0.7</priority></url>
+  <url><loc>/blog/how-much-solar-does-my-home-need</loc><priority>0.6</priority></url>
+  <url><loc>/blog/pm-surya-ghar-subsidy-explained</loc><priority>0.6</priority></url>
+  <url><loc>/blog/on-grid-vs-hybrid-vs-off-grid</loc><priority>0.6</priority></url>
+  <url><loc>/blog/keeping-solar-performing</loc><priority>0.6</priority></url>
+  <url><loc>/refer-a-friend</loc><priority>0.5</priority></url>
+  <url><loc>/experience-centre</loc><priority>0.5</priority></url>
+  <url><loc>/webinars</loc><priority>0.5</priority></url>
+  <url><loc>/solar-partners</loc><priority>0.5</priority></url>
+  <url><loc>/contact</loc><priority>0.8</priority></url>
+  <url><loc>/privacy</loc><priority>0.3</priority></url>
+  <url><loc>/terms</loc><priority>0.3</priority></url>
+</urlset>

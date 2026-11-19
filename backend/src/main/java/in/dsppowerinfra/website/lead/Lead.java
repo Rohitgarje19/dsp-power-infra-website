@@ -50,6 +50,21 @@ public class Lead {
     @Column(nullable = false, length = 40)
     private String source;
 
+    @Column(name = "source_page", length = 200)
+    private String sourcePage;
+
+    @Column(name = "utm_source", length = 100)
+    private String utmSource;
+
+    @Column(name = "utm_medium", length = 100)
+    private String utmMedium;
+
+    @Column(name = "utm_campaign", length = 100)
+    private String utmCampaign;
+
+    @Column(length = 2000)
+    private String notes;
+
     @Column(nullable = false, length = 40)
     private String status;
 
@@ -79,6 +94,24 @@ public class Lead {
         String message,
         String source
     ) {
+        this(fullName, phone, email, customerType, city, pincode, monthlyBill, message, source, null, null, null, null);
+    }
+
+    public Lead(
+        String fullName,
+        String phone,
+        String email,
+        String customerType,
+        String city,
+        String pincode,
+        Integer monthlyBill,
+        String message,
+        String source,
+        String sourcePage,
+        String utmSource,
+        String utmMedium,
+        String utmCampaign
+    ) {
         this.fullName = fullName;
         this.phone = phone;
         this.email = email;
@@ -88,6 +121,10 @@ public class Lead {
         this.monthlyBill = monthlyBill;
         this.message = message;
         this.source = source == null || source.isBlank() ? "website" : source;
+        this.sourcePage = sourcePage;
+        this.utmSource = utmSource;
+        this.utmMedium = utmMedium;
+        this.utmCampaign = utmCampaign;
         this.status = "NEW_ENQUIRY";
         this.createdAt = Instant.now();
     }
@@ -119,6 +156,12 @@ public class Lead {
     public Integer getMonthlyBill() { return monthlyBill; }
     public String getMessage() { return message; }
     public String getSource() { return source; }
+    public String getSourcePage() { return sourcePage; }
+    public String getUtmSource() { return utmSource; }
+    public String getUtmMedium() { return utmMedium; }
+    public String getUtmCampaign() { return utmCampaign; }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
     public String getStatus() { return status; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getResolvedAt() { return resolvedAt; }

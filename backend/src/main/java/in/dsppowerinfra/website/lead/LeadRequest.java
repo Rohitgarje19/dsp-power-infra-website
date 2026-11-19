@@ -8,4 +8,9 @@ public record LeadRequest(@NotBlank @Size(min=2,max=100) String fullName,
  @NotBlank @Pattern(regexp="[0-9]{6}") String pincode,
  @Min(0) @Max(10000000) Integer monthlyBill,
  @Size(max=1200) String message,
- @Size(max=40) String source) {}
+ @Size(max=40) String source,
+ @Size(max=200) String sourcePage,
+ @Size(max=100) String utmSource,
+ @Size(max=100) String utmMedium,
+ @Size(max=100) String utmCampaign,
+ @Size(max=100) String website) {}

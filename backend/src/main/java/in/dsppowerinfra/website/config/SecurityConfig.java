@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/health", "/api/leads").permitAll()
+                        .requestMatchers("/api/health", "/api/leads", "/api/serviceability/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().denyAll()
@@ -72,6 +72,7 @@ public class SecurityConfig {
                 "GET",
                 "POST",
                 "PUT",
+                "PATCH",
                 "DELETE",
                 "OPTIONS"
         ));
