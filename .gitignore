@@ -4,6 +4,7 @@ target/
 .m2/
 .env
 .env.*
+!.env.example
 *.local
 .vscode/
 .idea/
