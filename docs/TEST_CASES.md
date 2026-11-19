@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-20):** Backend 38/38 JUnit tests pass (`mvn test`), frontend 63/63 Vitest tests pass (`npm test`), production build clean. The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test` and `frontend/src/**/__tests__` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) and Day 4 (deployment) remain deferred by decision.
+**Status snapshot (2026-11-20):** Backend 38/38 JUnit tests pass (`mvn test`), frontend 73/73 Vitest tests pass (`npm test`), production build clean. The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test` and `frontend/src/**/__tests__` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) and Day 4 (deployment) remain deferred by decision.
 
 ---
 
@@ -180,6 +180,32 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 | TC-FAQ-02 ✅ | Render | every homepage question renders as an accordion button |
 
 Browser smoke (same round): hero modal open → focus first field → Escape closes → scroll restored → focus returned to trigger; `/book-visit` lead submitted and persisted (`source=free-visit` visible via admin API); `/careers` and `/sitemap` render; console clean.
+
+---
+
+## Design-fix round (2026-11-20) — accessibility, contrast, admin density, photo backgrounds
+
+Shared dialog behavior extracted to `lib/useDialog.js` (Escape, Tab/Shift+Tab focus trap, body scroll lock, initial focus, focus restore with a connected-target fallback) and reused by `QuoteModal` and the admin detail modal. Global `:focus-visible` system (green on light surfaces, gold on dark), `.money:focus-within` ring, footer clearance under the fixed mobile CTA bar, nine low-contrast text colors raised to ≥4.5:1, admin type raised to ≥12px, compact admin metrics strip, lifecycle actions inside the admin detail modal, admin page title, and SolarSquare-style photo backgrounds on Contact / Calculator / Results heroes and the home consultation band (reusing the existing `/images` banners).
+
+### TC-MODAL (extended) — focus containment (`components/QuoteModal.jsx`, `lib/useDialog.js`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-MODAL-08 ✅ | Initial focus | lands on first form field, not the background |
+| TC-MODAL-09 ✅ | Tab / Shift+Tab trap | wraps last→first and first→last; focus never leaves the panel |
+| TC-MODAL-10 ✅ | Focus restore | returns to the trigger element on close |
+
+### TC-ADMIN — enquiry desk (`pages/Admin.jsx`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-ADMIN-01 ✅ | Page title | login + dashboard set "Enquiry dashboard \| DSP Power Infra" |
+| TC-ADMIN-02 ✅ | Bad credentials | clear "Username or password was not accepted." error |
+| TC-ADMIN-03 ✅ | Sign-in | loads enquiries with HTTP Basic `Authorization` header |
+| TC-ADMIN-04 ✅ | Detail modal | opens labelled dialog, locks scroll, Escape closes + restores |
+| TC-ADMIN-05 ✅ | Tab trap | focus stays contained inside the detail modal |
+| TC-ADMIN-06 ✅ | Lifecycle in modal | "Mark resolved" / "Move to deleted" present; resolve issues `PUT …/resolve` |
+| TC-ADMIN-07 ✅ | Deleted record | modal offers "Restore enquiry" + "Delete permanently", no resolve |
+
+Browser smoke (same round): footer legal links reachable above the fixed mobile bar at ≤980px; quote modal initial focus + Tab/Shift+Tab containment + Escape + scroll restore; admin modal focus inside + Escape + lifecycle buttons + compact metrics + ≥12px type at ≥5.3:1; EMI loan input shows a focus ring; Contact/Calculator/Results/home photo backgrounds load with correct scrim layering and readable text; console clean.
 
 ---
 

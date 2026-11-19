@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { X } from "lucide-react";
 import LeadForm from "./LeadForm";
+import { useDialog } from "../lib/useDialog";
 
 /**
  * In-place quick-quote modal (SolarSquare-style "Get Free Quote" flow).
@@ -16,24 +17,7 @@ export default function QuoteModal({
   defaults = {},
 }) {
   const panelRef = useRef(null);
-
-  useEffect(() => {
-    if (!open) return undefined;
-    const trigger = document.activeElement;
-    const onKey = (e) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const focusTimer = setTimeout(() => {
-      panelRef.current?.querySelector("input:not([aria-hidden]), select, textarea")?.focus();
-    }, 40);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
-      clearTimeout(focusTimer);
-      if (trigger && typeof trigger.focus === "function") trigger.focus();
-    };
-  }, [open, onClose]);
+  useDialog(open, onClose, panelRef);
 
   if (!open) return null;
 

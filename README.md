@@ -28,7 +28,7 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 
 ## Run the tests
 - Backend: `cd backend && mvn test` — 38 JUnit/MockMvc tests on H2 (lead API, validation, rate limiting, honeypot, admin workflows, CSV, cleanup job, notification fail-safe, readiness, prod secret guard).
-- Frontend: `cd frontend && npm test` — 63 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability, API client/error mapping, lead form, quote modal, header/mobile nav, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results).
+- Frontend: `cd frontend && npm test` — 73 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability, API client/error mapping, lead form, quote modal + focus trap, header/mobile nav, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results, admin desk + detail-modal lifecycle).
 
 ## Status — what is done ✅
 
@@ -45,6 +45,13 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 - Homepage FAQ expanded to 18 claim-safe questions with FAQPage structured data.
 - `/careers` — honest work-areas overview + apply-by-email (no fabricated vacancies).
 - `/sitemap` — grouped HTML sitemap of all primary public pages (admin excluded); footer links updated.
+
+### Design & accessibility fix round (2026-11-20)
+- Shared dialog hook (`lib/useDialog.js`): Escape, Tab/Shift+Tab focus trap, scroll lock, initial focus and focus restore — reused by the quote modal and the admin detail modal.
+- Global `:focus-visible` system (green on light surfaces, gold on dark) and a focus ring on the EMI loan input; footer links no longer hidden under the fixed mobile quote bar.
+- Nine low-contrast text colors raised to ≥4.5:1; admin table/label type raised to ≥12px; admin metrics compacted into a single strip so the enquiry table sits higher.
+- Admin detail modal now carries lifecycle actions (resolve / reopen / restore / delete / permanent delete) and sets its own page title.
+- SolarSquare-style photo backgrounds (existing `/images` banners) on the Contact, Calculator and Results heroes and the home consultation band, each with a green scrim for readable text.
 
 ### Lead desk (`/admin`)
 - Active / resolved / deleted tabs, search, lead detail modal, internal notes, resolve / restore / soft-delete / permanent delete, CSV export, 15-day auto-delete of soft-deleted leads.

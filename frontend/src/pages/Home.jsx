@@ -195,6 +195,8 @@ export default function Home() {
 
       <section className="visit-section">
         <div className="visit">
+          <img className="visit-img" src="/images/banner-b.jpg" alt="" loading="lazy" />
+          <div className="visit-scrim" aria-hidden="true" />
           <div>
             <span className="eyebrow">Before you decide</span>
             <h2>Talk it through before you commit.</h2>

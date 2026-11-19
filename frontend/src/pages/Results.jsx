@@ -27,14 +27,18 @@ export default function Results() {
   return (
     <main className="results-main">
       <Link className="back-link" to={"/solar-calculator?" + q.toString()}>← Edit estimate</Link>
-      <section className="results-hero">
-        <span className="eyebrow">Your solar estimate · {city}{pin ? " · " + pin : ""}</span>
-        <h1>Here's a starting point for your roof.</h1>
-        <p>These figures are calculated from your bill and the assumptions shown below. A site visit and current local tariff details are needed for a real proposal.</p>
-        <div className="result-stats">
-          <article><small>Suggested system size</small><strong>{e.kw.toFixed(1)} kW</strong><span>Indicative capacity</span></article>
-          <article><small>Estimated roof area</small><strong>{Math.round(e.roof)} sq ft</strong><span>Unshaded area assumption</span></article>
-          <article><small>Indicative system cost</small><strong>{inr(e.cost)}</strong><span>Before any eligible support</span></article>
+      <section className="results-hero photo-band">
+        <img className="band-img" src="/images/banner-c.jpg" alt="" loading="eager" />
+        <div className="band-scrim" />
+        <div className="band-copy">
+          <span className="eyebrow light">Your solar estimate · {city}{pin ? " · " + pin : ""}</span>
+          <h1>Here's a starting point for your roof.</h1>
+          <p>These figures are calculated from your bill and the assumptions shown below. A site visit and current local tariff details are needed for a real proposal.</p>
+          <div className="result-stats">
+            <article><small>Suggested system size</small><strong>{e.kw.toFixed(1)} kW</strong><span>Indicative capacity</span></article>
+            <article><small>Estimated roof area</small><strong>{Math.round(e.roof)} sq ft</strong><span>Unshaded area assumption</span></article>
+            <article><small>Indicative system cost</small><strong>{inr(e.cost)}</strong><span>Before any eligible support</span></article>
+          </div>
         </div>
       </section>
 

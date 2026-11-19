@@ -29,10 +29,14 @@ export default function Calculator() {
 
   return (
     <main className="calculator-page">
-      <section className="calculator-heading">
-        <span className="eyebrow">Solar planning tool</span>
-        <h1>Calculate a solar estimate for your home.</h1>
-        <p>Start with your location and average electricity bill. We'll show system size, PM Surya Ghar subsidy, indicative cost and payback — with every assumption visible and adjustable.</p>
+      <section className="calculator-heading photo-band">
+        <img className="band-img" src="/images/banner-a.jpg" alt="" loading="eager" />
+        <div className="band-scrim" />
+        <div className="band-copy">
+          <span className="eyebrow light">Solar planning tool</span>
+          <h1>Calculate a solar estimate for your home.</h1>
+          <p>Start with your location and average electricity bill. We'll show system size, PM Surya Ghar subsidy, indicative cost and payback — with every assumption visible and adjustable.</p>
+        </div>
       </section>
       <form className="savings-card" onSubmit={calculate}>
         <div>

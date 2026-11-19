@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { ArrowUpRight, Clock, Mail, MapPin, Phone } from "lucide-react";
 import LeadForm from "../components/LeadForm";
+import PageHero from "../components/PageHero";
 import { CONTACT } from "../data/content";
 import { usePageMeta } from "../lib/seo";
 
@@ -27,6 +28,15 @@ export default function Contact() {
   };
   return (
     <main>
+      <PageHero
+        eyebrow="Contact DSP Power Infra"
+        title="Talk to a team that plans before it sells."
+        lede="Free consultation, survey-first proposals and honest answers about what solar can do for your roof."
+        image="/images/banner-b.jpg"
+        imageAlt=""
+        actions={null}
+        compact
+      />
       <section className="section contact route-contact">
         <div>
           <span className="eyebrow">Tell us what you need</span>

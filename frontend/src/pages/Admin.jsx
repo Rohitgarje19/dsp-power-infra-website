@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Download, RefreshCw, Save } from "lucide-react";
+import { useDialog } from "../lib/useDialog";
+import { usePageMeta } from "../lib/seo";
 
 const AUTO_DELETE_DAYS = 15;
 
@@ -45,6 +47,7 @@ const isResolved = (row) => Boolean(row.resolvedAt) || String(row.status || "").
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function Admin() {
+  usePageMeta("Enquiry dashboard", "Private enquiry management desk for the DSP Power Infra team.");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rows, setRows] = useState(null);
@@ -62,6 +65,9 @@ export default function Admin() {
   const [notes, setNotes] = useState("");
   const [notesSaved, setNotesSaved] = useState(false);
   const [savingNotes, setSavingNotes] = useState(false);
+  const detailRef = useRef(null);
+  const closeDetail = useCallback(() => setSelected(null), []);
+  useDialog(Boolean(selected), closeDetail, detailRef);
 
   const actionLabel = (id, action, idle, busyText) =>
     pendingKey === `${id}:${action}` ? (<><RefreshCw size={12} className="refresh-spin" /> {busyText}</>) : idle;
@@ -350,7 +356,7 @@ export default function Admin() {
       </section>
       {selected && (
         <div className="admin-modal-backdrop" onClick={() => setSelected(null)}>
-          <section className="admin-detail-modal" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label="Enquiry details">
+          <section className="admin-detail-modal" ref={detailRef} onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label="Enquiry details">
             <button className="admin-modal-close" onClick={() => setSelected(null)} aria-label="Close details">×</button>
             <span className="eyebrow">ENQUIRY DETAILS</span>
             <h2>{selected.fullName}</h2>
@@ -388,6 +394,30 @@ export default function Admin() {
                   <button type="button" onClick={() => copyToClipboard(selected.email, "Email")}>{copiedField === "Email" ? "Copied!" : "Copy email"}</button>
                 </>
               )}
+            </div>
+            <div className="admin-lifecycle">
+              <span>Enquiry status</span>
+              <div>
+                {!selected.deleted && !isResolved(selected) && (
+                  <button type="button" disabled={Boolean(pendingKey)} onClick={() => updateLead(selected.id, "resolve")}>
+                    {actionLabel(selected.id, "resolve", "Mark resolved", "Resolving...")}
+                  </button>
+                )}
+                {(selected.deleted || isResolved(selected)) && (
+                  <button type="button" disabled={Boolean(pendingKey)} onClick={() => updateLead(selected.id, "restore")}>
+                    {actionLabel(selected.id, "restore", selected.deleted ? "Restore enquiry" : "Reopen enquiry", "Restoring...")}
+                  </button>
+                )}
+                {selected.deleted ? (
+                  <button type="button" className="danger" disabled={Boolean(pendingKey)} onClick={() => permanentlyDelete(selected.id)}>
+                    {actionLabel(selected.id, "purge", "Delete permanently", "Deleting...")}
+                  </button>
+                ) : (
+                  <button type="button" className="danger" disabled={Boolean(pendingKey)} onClick={() => updateLead(selected.id, "delete")}>
+                    {actionLabel(selected.id, "delete", "Move to deleted", "Deleting...")}
+                  </button>
+                )}
+              </div>
             </div>
           </section>
         </div>
