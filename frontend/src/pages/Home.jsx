@@ -103,6 +103,16 @@ export default function Home() {
             <button type="button" className="button gold pill" onClick={() => setQuoteOpen(true)}>Get a free solar consultation <ArrowRight size={17} /></button>
             <Link className="button ghost-light pill" to="/solar-calculator">Calculate your savings</Link>
           </div>
+          <div className="hero-trust">
+            <span><ShieldCheck size={15} /> Survey-first design</span>
+            <span><Users size={15} /> One accountable team</span>
+            <span><FileText size={15} /> Subsidy support</span>
+          </div>
+        </div>
+        <div className="hero-panel">
+          <span className="eyebrow">Free solar estimate</span>
+          <h2>What could solar save you?</h2>
+          <p>Your PIN code and monthly bill are enough to see system size, subsidy and payback.</p>
           <HeroEstimate />
           <div className="hero-stats">
             <article><strong>Pune</strong><span>Based in Maharashtra</span></article>
@@ -118,8 +128,6 @@ export default function Home() {
         <span><i><Trees /></i> Design · supply · installation</span>
         <span><i><ShieldCheck /></i> Support through the project</span>
       </section>
-
-      <TrackRecord />
 
       <section className="section" id="solutions">
         <div className="section-head">
@@ -148,6 +156,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <TrackRecord />
 
       <section className="approach-section" id="about">
         <div className="approach">
