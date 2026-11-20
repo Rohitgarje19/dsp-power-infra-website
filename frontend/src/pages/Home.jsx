@@ -16,10 +16,10 @@ import TrackRecord from "../components/TrackRecord";
 import { PM_SURYA_GHAR } from "../data/impact";
 
 const segments = [
-  ["Residential", "Homes", "A rooftop system designed around your energy use and property.", House, "/homes"],
-  ["Shared spaces", "Housing societies", "Solar planning for common-area loads and suitable residential rooftops.", Users, "/housing-societies"],
-  ["Commercial", "Business", "Engineering and installation shaped for offices, shops and warehouses.", Building2, "/commercial"],
-  ["Industrial", "Solar EPC", "Planning and delivery for larger energy needs.", Factory, "/commercial"],
+  ["Residential", "Homes", "A rooftop system designed around your energy use and property.", House, "/homes", "homes"],
+  ["Shared spaces", "Housing societies", "Solar planning for common-area loads and suitable residential rooftops.", Users, "/housing-societies", "housing societies"],
+  ["Commercial", "Business", "Engineering and installation shaped for offices, shops and warehouses.", Building2, "/commercial", "businesses"],
+  ["Industrial", "Solar EPC", "Planning and delivery for larger energy needs.", Factory, "/commercial", "solar EPC"],
 ];
 
 const whyItems = [
@@ -62,26 +62,14 @@ function HeroEstimate() {
   );
 }
 
-function ProcessCard() {
-  const move = (e) => {
-    const el = e.currentTarget, r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-    el.style.setProperty("--mx", x.toFixed(3));
-    el.style.setProperty("--my", y.toFixed(3));
-    el.style.setProperty("--gx", ((x + 0.5) * 100).toFixed(1) + "%");
-    el.style.setProperty("--gy", ((y + 0.5) * 100).toFixed(1) + "%");
-  };
-  const leave = (e) => {
-    const el = e.currentTarget;
-    el.style.setProperty("--mx", 0); el.style.setProperty("--my", 0);
-    el.style.setProperty("--gx", "50%"); el.style.setProperty("--gy", "50%");
-  };
+function ProcessPhoto() {
   return (
-    <div className="process-card" onMouseMove={move} onMouseLeave={leave}>
-      <div className="pc-glow" />
-      <div className="pc-layer"><i className="ring r3" /><i className="ring r1" /><i className="ring r2" /></div>
-      <div className="pc-sun"><Sun /></div>
-      <div className="pc-info">Based in Pune, Maharashtra<small>Design · supply · installation · support</small></div>
+    <div className="process-photo">
+      <Picture src="/images/house-dusk.jpg" alt="Modern family home with rooftop solar panels at dusk" sizes="(max-width: 980px) 100vw, 45vw" />
+      <div className="pp-caption">
+        <b>Based in Pune, Maharashtra</b>
+        <span>Design · supply · installation · support</span>
+      </div>
     </div>
   );
 }
@@ -93,32 +81,17 @@ export default function Home() {
   return (
     <>
       <section className="hero photo-hero">
-        <Picture className="hero-photo" src="/images/panels-sunset.jpg" alt="Rooftop solar panels stretching toward a setting sun" loading="eager" fetchPriority="high" sizes="100vw" />
+        <Picture className="hero-photo" src="/images/sunrise-roof.jpg" alt="Rooftop solar panels on a family home at sunrise" loading="eager" fetchPriority="high" sizes="100vw" />
         <div className="hero-scrim" />
         <div className="hero-copy">
-          <span className="hero-badge"><Sparkles size={14} /> Solar EPC · Pune, Maharashtra</span>
-          <h1>Power your<br />home with<br /><em>the sun.</em></h1>
+          <span className="hero-kicker">Solar EPC · Pune, Maharashtra</span>
+          <h1>Power your home<br />with <em>the sun.</em></h1>
           <p className="lede light">Cleaner energy. Lower bills. A more independent home — planned around your roof by one accountable team.</p>
           <div className="actions">
-            <button type="button" className="button gold pill" onClick={() => setQuoteOpen(true)}>Get a free solar consultation <ArrowRight size={17} /></button>
+            <button type="button" className="button light pill" onClick={() => setQuoteOpen(true)}>Get a free solar consultation <ArrowRight size={17} /></button>
             <Link className="button ghost-light pill" to="/solar-calculator">Calculate your savings</Link>
           </div>
-          <div className="hero-trust">
-            <span><ShieldCheck size={15} /> Survey-first design</span>
-            <span><Users size={15} /> One accountable team</span>
-            <span><FileText size={15} /> Subsidy support</span>
-          </div>
-        </div>
-        <div className="hero-panel">
-          <span className="eyebrow">Free solar estimate</span>
-          <h2>What could solar save you?</h2>
-          <p>Your PIN code and monthly bill are enough to see system size, subsidy and payback.</p>
-          <HeroEstimate />
-          <div className="hero-stats">
-            <article><strong>Pune</strong><span>Based in Maharashtra</span></article>
-            <article><strong>{PM_SURYA_GHAR.installationsCompleted.toLocaleString("en-IN")}</strong><span>PM Surya Ghar installations</span></article>
-            <article><strong>1 team</strong><span>Enquiry to switch-on</span></article>
-          </div>
+          <p className="hero-meta"><span>Pune-based team</span><span>Survey-first design</span><span>Subsidy support</span></p>
         </div>
       </section>
 
@@ -129,17 +102,38 @@ export default function Home() {
         <span><i><ShieldCheck /></i> Support through the project</span>
       </section>
 
+      <section className="calc-band" id="estimate">
+        <div className="calc-band-grid">
+          <div className="cb-copy">
+            <span className="eyebrow">Free solar estimate</span>
+            <h2>Calculate your savings.</h2>
+            <p>Your PIN code and monthly bill are enough to see system size, subsidy, payback and an indicative cost — with every assumption shown.</p>
+            <Link className="text-link" to="/solar-calculator">Open the full calculator <ArrowRight size={16} /></Link>
+          </div>
+          <div className="hero-panel calc-panel">
+            <h2>What could solar save you?</h2>
+            <p>Enter your PIN code and monthly bill to see an instant estimate.</p>
+            <HeroEstimate />
+            <div className="hero-stats">
+              <article><strong>Pune</strong><span>Based in Maharashtra</span></article>
+              <article><strong>{PM_SURYA_GHAR.installationsCompleted.toLocaleString("en-IN")}</strong><span>PM Surya Ghar installations</span></article>
+              <article><strong>1 team</strong><span>Enquiry to switch-on</span></article>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="section" id="solutions">
         <div className="section-head">
-          <div><span className="eyebrow">Solutions for every kind of site</span><h2>Get solar for</h2></div>
+          <div><span className="eyebrow">What we do</span><h2>Solar for every kind of site.</h2></div>
           <p>We bring products, engineering and installation together, then shape the system around the people and place using it.</p>
         </div>
         <div className="service-grid">
-          {segments.map(([tag, title, copy, Icon, url]) => (
+          {segments.map(([tag, title, copy, Icon, url, label]) => (
             <article className="service" key={title}>
               <span className="service-icon"><Icon /></span>
               <small>{tag}</small><h3>{title}</h3><p>{copy}</p>
-              <Link to={url}>Learn more about {title.toLowerCase()} <ArrowUpRight size={15} /></Link>
+              <Link to={url}>Learn more about {label} <ArrowUpRight size={15} /></Link>
             </article>
           ))}
         </div>
@@ -190,7 +184,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <ProcessCard />
+          <ProcessPhoto />
         </div>
       </section>
 
@@ -212,9 +206,7 @@ export default function Home() {
 
       <section className="visit-section">
         <div className="visit">
-          <Picture className="visit-img" src="/images/banner-b.jpg" alt="" sizes="(max-width: 900px) 100vw, 55vw" />
-          <div className="visit-scrim" aria-hidden="true" />
-          <div>
+          <div className="visit-copy">
             <span className="eyebrow">Before you decide</span>
             <h2>Talk it through before you commit.</h2>
             <p>Ask questions, understand your options and clear every doubt with the DSP team.</p>
@@ -224,14 +216,14 @@ export default function Home() {
               <li><Check /> See the assumptions behind every estimate</li>
               <li><Check /> Know the next steps before you proceed</li>
             </ul>
-            <Link className="button" to="/book-visit">Book a free site visit <ArrowRight size={16} /></Link>
+            <Link className="button primary" to="/book-visit">Book a free site visit <ArrowRight size={16} /></Link>
           </div>
-          <div className="visit-card">
-            <h3>What your consultation covers</h3>
-            <div className="visit-row"><i><MapPin /></i><b>Your site and location<small>Roof, shade and access</small></b></div>
-            <div className="visit-row"><i><Ruler /></i><b>System planning<small>Sizing based on your usage</small></b></div>
-            <div className="visit-row"><i><FileText /></i><b>Your proposal<small>Scope, costs and assumptions</small></b></div>
-            <div className="visit-row"><i><LifeBuoy /></i><b>Support<small>Guidance through the project</small></b></div>
+          <div className="visit-media">
+            <Picture className="visit-img" src="/images/banner-b.jpg" alt="Home with rooftop solar panels at dusk" sizes="(max-width: 900px) 100vw, 48vw" />
+            <div className="visit-caption">
+              <b>What your consultation covers</b>
+              <span>Site &amp; location · System planning · Proposal · Support</span>
+            </div>
           </div>
         </div>
       </section>
