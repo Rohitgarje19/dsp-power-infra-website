@@ -38,6 +38,8 @@ SMTP_PASSWORD=<the SMTP key from step 3>
 
 `NOTIFY_TO` is optional: it adds one server-level fallback inbox on top of the addresses managed in the desk. Duplicates are removed automatically.
 
+Locally, the project keeps these values in `backend/.env.local` (gitignored). Start the backend with `powershell -ExecutionPolicy Bypass -File scripts/start-backend.ps1` and it loads that file automatically, so mail stays on across restarts. Never commit `.env.local`.
+
 ## 5. Restart and test
 
 1. Restart the backend so it reads the new values.
