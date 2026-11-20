@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-20):** Backend 91/91 JUnit tests pass (`mvn test`), frontend 140/140 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
+**Status snapshot (2026-11-21):** Backend 91/91 JUnit tests pass (`mvn test`), frontend 142/142 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
 
 ---
 
@@ -33,6 +33,13 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 | TC-RATE-05 ☐ | Subsidy eligibility | Residential vs Commercial/Industrial | eligible vs not eligible |
 | TC-RATE-06 ☐ | Unknown type | Housing Society | unsupported (custom proposal), no invented rate |
 | TC-RATE-07 ☐ | Corrupt sheet cells | 1, 21, 41, 200 kW | formula values ₹70,000 / ₹14,70,000 / ₹28,70,000 / ₹1,40,00,000 |
+
+### TC-IMPACT — PM Surya Ghar track record (`data/impact.js`, `components/TrackRecord.jsx`) — added 2026-11-21
+
+| ID | Case | Input | Expected |
+|---|---|---|---|
+| TC-IMPACT-01 ☐ | Verified scheme totals | Home / About track record band | 468 applications, 368 installations, 362 inspections and 325 subsidies render with labels and the 20 November 2026 as-of date |
+| TC-IMPACT-02 ☐ | Subsidy label is honest | rendered component | 325 approved is shown; the portal's 345 redeemed figure (which includes pending claims) is not published |
 
 ### TC-SUB — PM Surya Ghar subsidy (`lib/subsidy.js`) — *verify slabs before launch*
 | ID | Case | Input | Expected |

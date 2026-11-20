@@ -12,6 +12,8 @@ import { usePageMeta, useFaqSchema } from "../lib/seo";
 import { pct } from "../lib/format";
 const EmiCalculator = lazy(() => import("../components/EmiCalculator"));
 import Picture from "../components/Picture";
+import TrackRecord from "../components/TrackRecord";
+import { PM_SURYA_GHAR } from "../data/impact";
 
 const segments = [
   ["Residential", "Homes", "A rooftop system designed around your energy use and property.", House, "/homes"],
@@ -104,7 +106,7 @@ export default function Home() {
           <HeroEstimate />
           <div className="hero-stats">
             <article><strong>Pune</strong><span>Based in Maharashtra</span></article>
-            <article><strong>3</strong><span>Homes · societies · business</span></article>
+            <article><strong>{PM_SURYA_GHAR.installationsCompleted.toLocaleString("en-IN")}</strong><span>PM Surya Ghar installations</span></article>
             <article><strong>1 team</strong><span>Enquiry to switch-on</span></article>
           </div>
         </div>
@@ -116,6 +118,8 @@ export default function Home() {
         <span><i><Trees /></i> Design · supply · installation</span>
         <span><i><ShieldCheck /></i> Support through the project</span>
       </section>
+
+      <TrackRecord />
 
       <section className="section" id="solutions">
         <div className="section-head">

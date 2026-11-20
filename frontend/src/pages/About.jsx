@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Compass, Handshake, Ruler, ShieldCheck } from "lucide-react";
 import PageHero from "../components/PageHero";
+import TrackRecord from "../components/TrackRecord";
 import { usePageMeta } from "../lib/seo";
 import Picture from "../components/Picture";
 
@@ -33,6 +34,7 @@ export default function About() {
           ))}
         </div>
       </section>
+      <TrackRecord />
       <section className="section steps-band">
         <div className="about-story">
           <div>

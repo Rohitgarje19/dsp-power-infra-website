@@ -104,6 +104,28 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .proof i{flex:none;width:46px;height:46px;border-radius:14px;background:var(--mint);color:var(--g);display:grid;place-items:center}
 .proof svg{width:22px;height:22px}
 
+/* ---------- PM Surya Ghar track record ---------- */
+.track-record{position:relative;overflow:hidden;padding:64px var(--pad);background:linear-gradient(120deg,#19140d,#241b11 55%,#2c2114);border-top:1px solid rgba(216,180,137,.18);border-bottom:1px solid rgba(216,180,137,.18);color:#f6efe2}
+.track-record:after{content:"";position:absolute;width:620px;height:620px;right:-200px;top:-260px;border-radius:50%;background:radial-gradient(circle,rgba(216,180,137,.16),transparent 65%);pointer-events:none}
+.track-record-inner{position:relative;z-index:1;display:grid;grid-template-columns:.9fr 1.4fr;gap:56px;align-items:center}
+.track-record .eyebrow{color:#e2c9a6}
+.track-record h2{color:#fbf5e9;font-family:var(--display);font-size:clamp(30px,3.4vw,48px);line-height:1.02;letter-spacing:-.03em;margin:14px 0 16px;font-weight:600;text-wrap:balance}
+.track-record p{max-width:470px;margin:0;color:rgba(247,240,229,.68);font-size:15px;line-height:1.75}
+.track-record-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.track-record-grid article{position:relative;padding:24px 26px;border:1px solid rgba(255,255,255,.13);border-radius:16px;background:rgba(255,255,255,.045)}
+.track-record-grid strong{display:block;font:600 clamp(34px,3.6vw,52px)/1 var(--display);color:var(--champagne);letter-spacing:-.03em}
+.track-record-grid span{display:block;margin-top:9px;color:rgba(247,240,229,.64);font-size:11.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;line-height:1.4}
+@media(max-width:900px){
+  .track-record-inner{grid-template-columns:1fr;gap:30px}
+  .track-record p{max-width:620px}
+}
+@media(max-width:600px){
+  .track-record{padding:48px var(--pad)}
+  .track-record-grid{gap:10px}
+  .track-record-grid article{padding:18px}
+  .track-record-grid strong{font-size:34px}
+}
+
 /* ---------- Segments ---------- */
 .service-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 .service{display:flex;flex-direction:column;padding:28px;border-radius:26px;background:var(--sage);border:1px solid var(--line);min-height:300px}
