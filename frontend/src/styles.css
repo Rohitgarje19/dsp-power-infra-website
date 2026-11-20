@@ -364,6 +364,12 @@ a,button,.service,.route-grid article,.result-card,.result-stats article{transit
 .admin-login-card label{display:grid;gap:7px;font-size:13px;font-weight:700}
 .admin-login-card input{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;font:14px "DM Sans"}
 .admin-login-card button{border:0;justify-content:center}
+.password-field{display:grid;gap:7px;font-size:13px;font-weight:700}
+.password-control{display:block;position:relative}
+.password-control input{display:block;padding-right:44px}
+.password-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:grid;place-items:center;padding:7px;border-radius:9px;background:transparent;color:var(--muted);cursor:pointer}
+.password-toggle:hover{color:var(--ink);background:rgba(23,19,13,.06)}
+.password-toggle:focus-visible{outline:2px solid var(--bronze);outline-offset:2px}
 .admin-dashboard{min-height:100vh;background:#f5f8f4;color:#1c3e30}
 .admin-topbar{height:78px;background:#fff;border-bottom:1px solid var(--line);padding:0 6vw;display:flex;align-items:center;justify-content:space-between}
 .admin-brand{display:flex;align-items:center;gap:12px;color:#174331;font-weight:800;font-size:13px;letter-spacing:.6px}

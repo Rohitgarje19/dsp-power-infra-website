@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ChevronLeft, ChevronRight, Download, Mail, RefreshCw, Save, Send, Trash2 } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Download, Eye, EyeOff, Mail, RefreshCw, Save, Send, Trash2 } from "lucide-react";
 import { useDialog } from "../lib/useDialog";
 import { usePageMeta } from "../lib/seo";
 
@@ -75,6 +75,7 @@ export default function Admin() {
   usePageMeta("Enquiry dashboard", "Private enquiry management desk for the DSP Power Infra team.");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [rows, setRows] = useState(null);
   const [total, setTotal] = useState(0);
   const [counts, setCounts] = useState({ active: 0, resolved: 0, deleted: 0 });
@@ -541,7 +542,21 @@ export default function Admin() {
           <p>Sign in using the admin credentials configured for your local environment.</p>
           <form onSubmit={login}>
             <label>Username<input required value={username} autoComplete="username" onChange={(event) => setUsername(event.target.value)} /></label>
-            <label>Password<input required type="password" value={password} autoComplete="current-password" onChange={(event) => setPassword(event.target.value)} /></label>
+            <div className="password-field">
+              <label htmlFor="admin-password">Password</label>
+              <span className="password-control">
+                <input id="admin-password" required type={showPassword ? "text" : "password"} value={password} autoComplete="current-password" onChange={(event) => setPassword(event.target.value)} />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                  onClick={() => setShowPassword((visible) => !visible)}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </span>
+            </div>
             {error && <p className="error">{error}</p>}
             <button className="button primary" disabled={busy}>{busy ? "Connecting…" : "Sign in securely"} <ArrowRight size={16} /></button>
           </form>

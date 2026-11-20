@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -43,13 +44,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, AdminLoginThrottle throttle) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, AdminLoginAttemptLimiter loginLimiter) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
-                .addFilterBefore(new AdminLoginThrottleFilter(throttle),
-                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+                // Before Basic verification, so a locked-out client is refused
+                // even when it finally presents the correct password.
+                .addFilterBefore(new AdminLoginThrottleFilter(loginLimiter), BasicAuthenticationFilter.class)
                 .headers(headers -> headers
                         .contentTypeOptions(Customizer.withDefaults())
                         .frameOptions(frame -> frame.deny())

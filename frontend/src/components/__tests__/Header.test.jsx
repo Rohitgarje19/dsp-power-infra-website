@@ -42,6 +42,22 @@ describe("Header", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 
+  it("TC-NAV-05: theme toggle switches the palette, persists and switches back", async () => {
+    const user = userEvent.setup();
+    setup();
+    const toggle = screen.getByRole("button", { name: /switch to dark theme/i });
+    expect(toggle).toHaveAttribute("aria-pressed", "false");
+    await user.click(toggle);
+    expect(document.documentElement.dataset.theme).toBe("dark");
+    expect(localStorage.getItem("dsp-theme")).toBe("dark");
+    expect(toggle).toHaveAttribute("aria-pressed", "true");
+    expect(toggle).toHaveAccessibleName(/switch to light theme/i);
+    await user.click(toggle);
+    expect(document.documentElement.dataset.theme).toBe("light");
+    expect(localStorage.getItem("dsp-theme")).toBe("light");
+    expect(toggle).toHaveAttribute("aria-pressed", "false");
+  });
+
   it("TC-NAV-04: Solutions accordion toggles and resets with the mobile menu", async () => {
     const user = userEvent.setup();
     setup();

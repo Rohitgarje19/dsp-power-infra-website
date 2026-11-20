@@ -6,21 +6,27 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import org.slf4j.MDC;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * Rejects admin requests from IPs that have failed Basic auth too often.
- * Runs before the security chain, so even correct credentials are refused
- * until the block expires. 401 responses on admin paths are counted;
- * successful admin responses reset the counter for that IP.
+ * Rejects repeated failed HTTP Basic attempts on /api/admin/** before
+ * BasicAuthenticationFilter verifies them again. Only requests that actually
+ * present credentials are counted, so unauthenticated probes always get the
+ * normal 401 and never consume the lockout budget.
  */
 public class AdminLoginThrottleFilter extends OncePerRequestFilter {
 
-    private final AdminLoginThrottle throttle;
+    private static final String RATE_LIMITED_BODY =
+        "{\"code\":\"RATE_LIMITED\",\"message\":\"Too many failed sign-in attempts. Try again later.\"";
 
-    public AdminLoginThrottleFilter(AdminLoginThrottle throttle) {
-        this.throttle = throttle;
+    private final AdminLoginAttemptLimiter limiter;
+
+    public AdminLoginThrottleFilter(AdminLoginAttemptLimiter limiter) {
+        this.limiter = limiter;
     }
 
     @Override
@@ -30,31 +36,61 @@ public class AdminLoginThrottleFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
     ) throws ServletException, IOException {
-        String ip = request.getRemoteAddr();
-        if (throttle.isBlocked(ip)) {
-            long retryAfter = throttle.retryAfterSeconds(ip);
-            response.setStatus(429);
-            response.setHeader("Retry-After", String.valueOf(retryAfter));
-            response.setContentType("application/json");
-            response.getWriter().write(
-                "{\"code\":\"RATE_LIMITED\",\"message\":\"Too many failed sign-in attempts. Try again in "
-                    + Math.max(1, Math.round(retryAfter / 60.0)) + " minutes.\",\"requestId\":\""
-                    + String.valueOf(MDC.get(RequestIdFilter.MDC_KEY)) + "\"}");
+        String username = basicUsername(request);
+        if (username == null) {
+            filterChain.doFilter(request, response);
             return;
         }
-
-        filterChain.doFilter(request, response);
-
-        if (request.getHeader("Authorization") != null && request.getRequestURI().startsWith("/api/admin/")) {
+        String ipKey = "ip:" + request.getRemoteAddr();
+        String userKey = ipKey + "|user:" + username;
+        String blockedKey = limiter.isBlocked(ipKey) ? ipKey
+            : limiter.isBlocked(userKey) ? userKey
+            : null;
+        if (blockedKey != null) {
+            writeRateLimited(response, limiter.retryAfterSeconds(blockedKey));
+            return;
+        }
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
             if (response.getStatus() == HttpServletResponse.SC_UNAUTHORIZED) {
-                throttle.recordFailure(ip);
+                limiter.recordFailure(ipKey);
+                limiter.recordFailure(userKey);
             } else if (response.getStatus() < 400) {
-                throttle.recordSuccess(ip);
+                limiter.clear(ipKey);
+                limiter.clear(userKey);
             }
         }
+    }
+
+    private static String basicUsername(HttpServletRequest request) {
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header == null || !header.regionMatches(true, 0, "Basic ", 0, 6)) {
+            return null;
+        }
+        try {
+            String decoded = new String(
+                Base64.getDecoder().decode(header.substring(6).trim()),
+                StandardCharsets.UTF_8);
+            int separator = decoded.indexOf(':');
+            return separator > 0 ? decoded.substring(0, separator) : null;
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    }
+
+    private static void writeRateLimited(HttpServletResponse response, long retryAfterSeconds) throws IOException {
+        response.setStatus(429);
+        response.setContentType("application/json");
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setHeader("Cache-Control", "no-store");
+        response.setHeader(HttpHeaders.RETRY_AFTER, String.valueOf(retryAfterSeconds));
+        String requestId = MDC.get(RequestIdFilter.MDC_KEY);
+        String suffix = requestId == null ? "" : ",\"requestId\":\"" + requestId + "\"";
+        response.getWriter().write(RATE_LIMITED_BODY + suffix + "}");
     }
 }

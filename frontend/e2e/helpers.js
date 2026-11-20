@@ -49,7 +49,7 @@ export async function fillLeadForm(scope, { name, phone = "9876543210", email, c
 export async function logIn(page) {
   await page.goto("/admin");
   await page.getByLabel("Username").fill(ADMIN_USER);
-  await page.getByLabel("Password").fill(ADMIN_PASSWORD);
+  await page.getByLabel("Password", { exact: true }).fill(ADMIN_PASSWORD);
   await page.getByRole("button", { name: "Sign in securely" }).click();
   await expect(page.getByRole("heading", { name: "Enquiry dashboard" })).toBeVisible();
 }

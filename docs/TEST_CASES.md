@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-20):** Backend 74/74 JUnit tests pass (`mvn test`), frontend 118/118 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
+**Status snapshot (2026-11-20):** Backend 86/86 JUnit tests pass (`mvn test`), frontend 127/127 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
 
 ---
 
@@ -160,6 +160,7 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 | TC-NAV-02 ✅ | Escape from header modal | dialog closes |
 | TC-NAV-03 ✅ | Mobile menu | toggles open and closes after navigation |
 | TC-NAV-04 ✅ | Mobile Solutions group | accordion toggles `aria-expanded`, collapses when the drawer closes |
+| TC-NAV-05 ✅ | Theme toggle | switches `data-theme` + palette, persists to `localStorage`, flips `aria-pressed` and the accessible name, and switches back |
 
 ### TC-VISIT — free-visit booking page (`pages/BookVisit.jsx`)
 | ID | Case | Expected |
@@ -238,6 +239,7 @@ Browser smoke (same round, 754px viewport): at top the header is `.overlay` (tra
 | TC-ADMIN-09 ✅ | Pagination | "Showing X–Y of N" and Previous/Next request the right page/size |
 | TC-ADMIN-10 ✅ | Bulk actions | selecting a row and Resolve posts `{ ids: [7], action: "resolve" }` |
 | TC-ADMIN-11 ✅ | Login throttling | a 429 sign-in shows the retry-later message |
+| TC-ADMIN-12 ✅ | Password reveal | Eye toggle switches `type` password ↔ text; `aria-pressed` and the accessible label track the state |
 
 ### TC-CITY-01…04 — ten Maharashtra city guides (`pages/CitySolar.jsx`, `data/cities.js`)
 | ID | Case | Expected |
@@ -334,6 +336,27 @@ Performance: built site measured under Lighthouse mobile (gzip like production) 
 |---|---|---|
 | TC-RES-FE-01 ✅ | Render error | a throwing page shows the recovery screen (role=alert, reload button, home link) and children render normally when nothing fails |
 | TC-RES-FE-02 ✅ | Malformed 2xx body | non-JSON success response becomes a typed `ApiError` 502 and maps to a friendly message |
+
+---
+
+## Feature-branch port round (2026-11-20) — theme toggle + sign-in lockout
+
+Hand-ported from `feature/next-steps` onto the current main (no merge). Theme preference lives in `lib/theme.js` (`localStorage` key `dsp-theme`, falling back to `prefers-color-scheme`); the saved theme is applied by an inline script in `index.html` before first paint. `dark.css` maps the palette onto the current tokens. Sign-in failures are counted by `AdminLoginAttemptLimiter` in a sliding window per IP and per IP+username (`ADMIN_LOGIN_MAX_ATTEMPTS`, default 5; `ADMIN_LOGIN_WINDOW_MS`, default 15 min) and enforced before password verification.
+
+| ID | Case | Expected |
+|---|---|---|
+| TC-THEME-01 ✅ | Stored choice wins | `localStorage` `dark`/`light` returned as-is |
+| TC-THEME-02 ✅ | System fallback | no stored value → `prefers-color-scheme` result |
+| TC-THEME-03 ✅ | Unknown value | any non-`dark`/`light` value falls back to the system preference |
+| TC-THEME-04 ✅ | Apply + persist | `applyTheme` sets `data-theme`/`color-scheme`, writes `localStorage` and returns the theme |
+| TC-LOGIN-01 ✅ | Lockout threshold | five failed attempts from one IP return 401, the next returns 429 with `Retry-After` and a `RATE_LIMITED` body plus request id |
+| TC-LOGIN-02 ✅ | Correct password while locked | still 429 until the window expires |
+| TC-LOGIN-03 ✅ | Reset on success | a successful sign-in clears earlier failures for that IP/username |
+| TC-LOGIN-04 ✅ | Per-IP scoping | a locked IP does not block another IP |
+| TC-LOGIN-05 ✅ | Requests without credentials | 401s with no Authorization header do not consume the failure budget |
+| TC-LOGIN-06 ✅ | Window expiry + key isolation (unit) | counter unblocks after the window, keys are independent, `clear` resets |
+
+Browser smoke (Playwright, 1440 px + 390 px): home, calculator, admin login/dashboard and the mobile drawer in light and dark; theme persists across reload, no horizontal overflow, no console errors.
 
 ---
 

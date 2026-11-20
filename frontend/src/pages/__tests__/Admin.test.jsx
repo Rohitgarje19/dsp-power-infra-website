@@ -115,7 +115,7 @@ function mockFetch({
 
 async function signIn() {
   fireEvent.change(screen.getByLabelText(/username/i), { target: { value: "admin" } });
-  fireEvent.change(screen.getByLabelText(/password/i), { target: { value: "local-dev-admin" } });
+  fireEvent.change(screen.getByLabelText("Password"), { target: { value: "local-dev-admin" } });
   fireEvent.click(screen.getByRole("button", { name: /sign in securely/i }));
   await screen.findByRole("heading", { name: "Enquiry dashboard" });
 }
@@ -151,7 +151,7 @@ describe("Admin enquiry desk", () => {
     mockFetch({ loginStatus: 401 });
     setup();
     fireEvent.change(screen.getByLabelText(/username/i), { target: { value: "admin" } });
-    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: "wrong" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "wrong" } });
     fireEvent.click(screen.getByRole("button", { name: /sign in securely/i }));
     expect(await screen.findByText(/username or password was not accepted/i)).toBeInTheDocument();
   });
@@ -270,9 +270,24 @@ describe("Admin enquiry desk", () => {
     mockFetch({ loginStatus: 429 });
     setup();
     fireEvent.change(screen.getByLabelText(/username/i), { target: { value: "admin" } });
-    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: "wrong" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "wrong" } });
     fireEvent.click(screen.getByRole("button", { name: /sign in securely/i }));
     expect(await screen.findByText(/too many failed sign-in attempts/i)).toBeInTheDocument();
+  });
+
+  it("TC-ADMIN-12: password reveal toggle switches the input type", () => {
+    mockFetch();
+    setup();
+    const field = screen.getByLabelText("Password");
+    expect(field).toHaveAttribute("type", "password");
+    const show = screen.getByRole("button", { name: /show password/i });
+    expect(show).toHaveAttribute("aria-pressed", "false");
+    fireEvent.click(show);
+    expect(field).toHaveAttribute("type", "text");
+    const hide = screen.getByRole("button", { name: /hide password/i });
+    expect(hide).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(hide);
+    expect(field).toHaveAttribute("type", "password");
   });
 });
 

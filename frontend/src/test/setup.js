@@ -7,6 +7,8 @@ afterEach(() => {
   vi.restoreAllMocks();
   sessionStorage.clear();
   localStorage.clear();
+  delete document.documentElement.dataset.theme;
+  document.documentElement.style.colorScheme = "";
 });
 
 // jsdom lacks these; components use them for scroll effects.
