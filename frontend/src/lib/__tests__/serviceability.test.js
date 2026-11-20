@@ -14,21 +14,25 @@ afterEach(() => {
 
 // TC-SVC-* from docs/TEST_CASES.md
 describe("serviceability", () => {
-  it("TC-SVC-01: Pune prefixes are serviceable", () => {
-    for (const pin of ["411046", "412033", "411001"]) {
+  it("TC-SVC-01: all Maharashtra prefixes are serviceable", () => {
+    for (const pin of ["411046", "412033", "411001", "400001", "413102", "440010", "445001"]) {
       const r = checkPincode(pin);
       expect(r.valid).toBe(true);
       expect(r.serviceable).toBe(true);
-      expect(r.label).toBe("Pune region");
+      expect(r.label).toBe("Maharashtra");
     }
-    expect(SERVICEABLE_PREFIXES).toEqual(["411", "412"]);
+    expect(SERVICEABLE_PREFIXES[0]).toBe("400");
+    expect(SERVICEABLE_PREFIXES).toHaveLength(45);
+    expect(SERVICEABLE_PREFIXES).not.toContain("403");
   });
 
-  it("TC-SVC-02: unknown PINs are valid but flagged, not rejected", () => {
-    const r = checkPincode("400001");
-    expect(r.valid).toBe(true);
-    expect(r.serviceable).toBe(false);
-    expect(r.message).toMatch(/haven't confirmed/i);
+  it("TC-SVC-02: Goa and other states are valid but flagged, not rejected", () => {
+    for (const pin of ["403001", "452001"]) {
+      const r = checkPincode(pin);
+      expect(r.valid).toBe(true);
+      expect(r.serviceable).toBe(false);
+      expect(r.message).toMatch(/haven't confirmed/i);
+    }
   });
 
   it("TC-SVC-03: invalid PIN formats", () => {
@@ -48,7 +52,7 @@ describe("serviceability", () => {
     expect(cityForPincode(" 411001 ")).toBe("Pune");
   });
 
-  it("does not guess a city outside the confirmed region or for invalid PINs", () => {
+  it("does not guess a city outside the local hint list or for invalid PINs", () => {
     expect(cityForPincode("400001")).toBeNull();
     expect(cityForPincode("41104")).toBeNull();
     expect(cityForPincode("")).toBeNull();
@@ -62,7 +66,7 @@ describe("serviceability", () => {
 });
 
 describe("resolveCity (any Indian PIN)", () => {
-  it("uses the backend lookup outside the service region", async () => {
+  it("uses the backend lookup for PINs without a local hint", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ city: "Mumbai", state: "Maharashtra" }),

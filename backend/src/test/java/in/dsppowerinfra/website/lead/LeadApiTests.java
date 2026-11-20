@@ -441,21 +441,33 @@ class LeadApiTests {
     // ---------- serviceability ----------
 
     @Test
-    void serviceablePincodeReturnsPuneRegion() throws Exception {
+    void serviceablePincodeReturnsMaharashtra() throws Exception {
         mvc.perform(get("/api/serviceability/411046"))
             .andExpect(status().isOk())
             .andExpect(header().exists("X-Request-Id"))
             .andExpect(jsonPath("$.pincode").value("411046"))
             .andExpect(jsonPath("$.serviceable").value(true))
-            .andExpect(jsonPath("$.area").value("Pune region"));
+            .andExpect(jsonPath("$.area").value("Maharashtra"));
     }
 
     @Test
-    void unserviceablePincodeReturnsFalseWithNullArea() throws Exception {
-        mvc.perform(get("/api/serviceability/999999"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.serviceable").value(false))
-            .andExpect(jsonPath("$.area").value(nullValue()));
+    void allMaharashtraRegionsAreServiceable() throws Exception {
+        for (String pin : new String[] { "400001", "412033", "413102", "440010", "445001" }) {
+            mvc.perform(get("/api/serviceability/" + pin))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.serviceable").value(true))
+                .andExpect(jsonPath("$.area").value("Maharashtra"));
+        }
+    }
+
+    @Test
+    void goaAndOtherStatesAreNotServiceable() throws Exception {
+        for (String pin : new String[] { "403001", "452001", "999999" }) {
+            mvc.perform(get("/api/serviceability/" + pin))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.serviceable").value(false))
+                .andExpect(jsonPath("$.area").value(nullValue()));
+        }
     }
 
     @Test

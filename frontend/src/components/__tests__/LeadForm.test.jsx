@@ -58,9 +58,9 @@ describe("LeadForm", () => {
     const user = userEvent.setup();
     setup();
     await user.type(screen.getByLabelText(/pin code/i), "411046");
-    expect(screen.getByText(/core service region/i)).toBeInTheDocument();
+    expect(screen.getByText(/Maharashtra service region/i)).toBeInTheDocument();
     await user.clear(screen.getByLabelText(/pin code/i));
-    await user.type(screen.getByLabelText(/pin code/i), "400001");
+    await user.type(screen.getByLabelText(/pin code/i), "452001");
     expect(screen.getByText(/haven't confirmed service/i)).toBeInTheDocument();
   });
 
@@ -74,7 +74,7 @@ describe("LeadForm", () => {
   it("TC-FORM-12: outside the region the city is only filled when the lookup answers", async () => {
     const user = userEvent.setup();
     setup();
-    await user.type(screen.getByLabelText(/pin code/i), "400001");
+    await user.type(screen.getByLabelText(/pin code/i), "452001");
     // No backend in this test, so the lookup is unavailable and the field stays empty.
     await new Promise((resolve) => setTimeout(resolve, 400));
     expect(screen.getByLabelText(/^city/i)).toHaveValue("");

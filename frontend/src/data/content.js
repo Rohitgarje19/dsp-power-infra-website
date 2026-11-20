@@ -41,7 +41,7 @@ export const HOME_FAQS = [
   },
   {
     q: "Do you work outside Pune?",
-    a: "Pune and nearby regions are our core service area. For other locations, share your PIN code — coverage depends on project size, team availability and site conditions, and we confirm case by case before committing.",
+    a: "Maharashtra is our core service area. For other locations, share your PIN code — coverage depends on project size, team availability and site conditions, and we confirm case by case before committing.",
   },
   {
     q: "What exactly is a rooftop solar system made of?",

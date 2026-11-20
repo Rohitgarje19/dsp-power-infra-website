@@ -1,9 +1,15 @@
-// Serviceability is config-driven. DSP is based in Pune; prefixes below are the
-// confirmed planning region. Unknown PINs are NOT rejected — the lead is still
-// accepted and flagged for the team to confirm.
+// Serviceability mirrors the backend's app.serviceability.* settings: the whole
+// of Maharashtra is covered (PIN prefixes 400–445) except Goa's 403. Unknown
+// PINs are NOT rejected — the lead is still accepted and flagged for the team
+// to confirm.
 
-export const SERVICEABLE_PREFIXES = ["411", "412"]; // Pune region
-export const SERVICEABLE_LABEL = "Pune region";
+function prefixRange(from, to, excluded = []) {
+  return Array.from({ length: to - from + 1 }, (_, index) => String(from + index))
+    .filter((prefix) => !excluded.includes(prefix));
+}
+
+export const SERVICEABLE_PREFIXES = prefixRange(400, 445, ["403"]); // Maharashtra
+export const SERVICEABLE_LABEL = "Maharashtra";
 
 // City hints for PIN -> City autofill. Only confirmed serviceable prefixes are
 // listed — never guess a city outside the region. Visitors can always edit it.
@@ -58,7 +64,7 @@ export function checkPincode(pin) {
     serviceable,
     label: serviceable ? SERVICEABLE_LABEL : null,
     message: serviceable
-      ? "Great — this PIN is in our core service region."
+      ? "Great — this PIN is in our Maharashtra service region."
       : "We haven't confirmed service at this PIN yet. Send your enquiry and the team will check availability.",
   };
 }

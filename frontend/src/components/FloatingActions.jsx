@@ -35,7 +35,7 @@ export default function FloatingActions() {
       </a>
       {!hideOn && (
         <div className={`mobile-cta ${showBar ? "show" : ""}`}>
-          <div><b>Planning solar?</b><small>Free consultation · Pune & nearby</small></div>
+          <div><b>Planning solar?</b><small>Free consultation · Maharashtra</small></div>
           <button type="button" className="button gold" onClick={() => setQuoteOpen(true)}>Get free quote <ArrowRight size={15} /></button>
         </div>
       )}

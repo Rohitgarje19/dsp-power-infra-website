@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, MapPin, Search } from "lucide-react";
 import PageHero from "../components/PageHero";
-import { checkPincode, SERVICEABLE_PREFIXES } from "../lib/serviceability";
+import { checkPincode } from "../lib/serviceability";
 import { usePageMeta } from "../lib/seo";
 
 export default function ServiceAreas() {
-  usePageMeta("Service areas", "DSP Power Infra is based in Pune. Check your PIN code against our core service region — other locations confirmed case by case.");
+  usePageMeta("Service areas", "DSP Power Infra covers Maharashtra. Check your PIN code against our service region — other states confirmed case by case.");
   const [pin, setPin] = useState("");
   const [result, setResult] = useState(null);
   function check(e) {
@@ -18,7 +18,7 @@ export default function ServiceAreas() {
       <PageHero
         eyebrow="Service areas"
         title="Check whether DSP can serve your location."
-        lede="We are based in Pune. Coverage depends on project type, team availability and site conditions — share your PIN code for a straight answer."
+        lede="We are based in Pune and serve all of Maharashtra. Coverage depends on project type, team availability and site conditions — share your PIN code for a straight answer."
         image="/images/house-dusk.jpg"
         imageAlt="Homes at dusk in the service region"
       />
@@ -36,7 +36,7 @@ export default function ServiceAreas() {
               <div className={`svc-result ${result.serviceable ? "ok" : "check"}`} role="status">
                 <MapPin size={20} />
                 <div>
-                  <b>{result.serviceable ? "Yes — core service region." : "Not confirmed yet."}</b>
+                  <b>{result.serviceable ? "Yes — in our service region." : "Not confirmed yet."}</b>
                   <p>{result.message}</p>
                   <Link to={`/contact?pincode=${pin}`}>{result.serviceable ? "Book a survey" : "Ask the team to confirm"} <ArrowRight size={14} /></Link>
                 </div>
@@ -45,11 +45,11 @@ export default function ServiceAreas() {
           </form>
           <div className="svc-info">
             <span className="eyebrow">How coverage works</span>
-            <h2>Pune first, then case by case.</h2>
-            <p>Our core region covers Pune and nearby PIN prefixes ({SERVICEABLE_PREFIXES.join(", ")}…). Outside it, we take projects where team availability, site access and project size make sense — and we say so honestly before you commit.</p>
+            <h2>Maharashtra wide, then case by case.</h2>
+            <p>Our service region covers all of Maharashtra (PIN prefixes 400–445, excluding Goa's 403). Outside the state, we take projects where team availability, site access and project size make sense — and we say so honestly before you commit.</p>
             <ul className="check-list">
-              <li><MapPin /> Residential: Pune & nearby regions</li>
-              <li><MapPin /> Commercial/industrial: wider Maharashtra, case by case</li>
+              <li><MapPin /> Residential: all of Maharashtra</li>
+              <li><MapPin /> Commercial/industrial: Maharashtra, other states case by case</li>
               <li><MapPin /> Other states: larger projects considered</li>
             </ul>
             <p className="table-note">A PIN check is a planning aid, not a commitment. Final availability is confirmed after a brief call.</p>

@@ -55,7 +55,7 @@ describe("Calculator city autofill", () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
     const user = userEvent.setup();
     renderAt();
-    await user.type(screen.getByLabelText(/pin code/i), "400001");
+    await user.type(screen.getByLabelText(/pin code/i), "452001");
     await new Promise((resolve) => setTimeout(resolve, 400));
     expect(screen.getByLabelText(/^city/i)).toHaveValue("");
   });

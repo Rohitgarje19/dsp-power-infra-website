@@ -25,13 +25,13 @@ class ServiceabilityEndpointTests {
 
     @Test
     void resolvesCityForAnyIndianPincode() throws Exception {
-        when(directory.lookup("400001"))
-            .thenReturn(Optional.of(new PincodeDirectory.PincodeInfo("Mumbai", "Maharashtra")));
-        mvc.perform(get("/api/serviceability/400001"))
+        when(directory.lookup("452001"))
+            .thenReturn(Optional.of(new PincodeDirectory.PincodeInfo("Indore", "Madhya Pradesh")));
+        mvc.perform(get("/api/serviceability/452001"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.serviceable").value(false))
-            .andExpect(jsonPath("$.city").value("Mumbai"))
-            .andExpect(jsonPath("$.state").value("Maharashtra"));
+            .andExpect(jsonPath("$.city").value("Indore"))
+            .andExpect(jsonPath("$.state").value("Madhya Pradesh"));
     }
 
     @Test
@@ -41,7 +41,7 @@ class ServiceabilityEndpointTests {
         mvc.perform(get("/api/serviceability/411046"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.serviceable").value(true))
-            .andExpect(jsonPath("$.area").value("Pune region"))
+            .andExpect(jsonPath("$.area").value("Maharashtra"))
             .andExpect(jsonPath("$.city").value("Pune"))
             .andExpect(jsonPath("$.state").value("Maharashtra"));
     }

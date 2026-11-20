@@ -27,7 +27,7 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 4. Visit http://127.0.0.1:5173. The Vite development server proxies `/api` requests to the backend on port 8081. The private team area is at http://127.0.0.1:5173/admin.
 
 ## Run the tests
-- Backend: `cd backend && mvn test` — 50 JUnit/MockMvc tests on H2 (lead API, validation, rate limiting, honeypot, admin workflows, CSV, cleanup job, notification fail-safe, security headers, PIN directory parsing/caching, serviceability, readiness, prod secret guard).
+- Backend: `cd backend && mvn test` — 51 JUnit/MockMvc tests on H2 (lead API, validation, rate limiting, honeypot, admin workflows, CSV, cleanup job, notification fail-safe, security headers, PIN directory parsing/caching, Maharashtra serviceability, readiness, prod secret guard).
 - Frontend: `cd frontend && npm test` — 95 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability + PIN→city hints, API client/error mapping/retry policy, lead form incl. city autofill, quote modal + focus trap, header/mobile nav + Solutions accordion, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results + autofill, admin desk + detail-modal lifecycle).
 - E2E: with MySQL, the backend and Vite running, `cd frontend && npm run test:e2e` — 6 Playwright specs (TC-E2E-01…06) covering the hero quote lead, the hero-estimate → calculator → results → calculator-sourced lead flow, shareable-results parity across contexts, the full admin lifecycle (note → resolve → restore → delete → restore → purge), a 390 px mobile pass without horizontal overflow, and an API-outage-then-clean-retry check. First run needs `npx playwright install chromium`. Admin credentials default to the local-dev values; override with `E2E_ADMIN_USER` / `E2E_ADMIN_PASSWORD`.
 
@@ -37,7 +37,7 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 - Routed pages: home, residential, commercial, housing societies, grid-connected, hybrid and off-grid solar, how-it-works, projects, about, blog + article pages, service areas, refer-a-friend, experience centre, webinars, partners, contact, privacy, terms, 404.
 - Solar calculator (`/solar-calculator`) with live preview and shareable results (`/solar-calculator/results`): system size, roof area, PM Surya Ghar subsidy (₹30k/kW first 2 kW + ₹18k third kW, capped ₹78k, residential only), net cost, payback and EMI — every assumption visible and adjustable, results labelled as planning estimates.
 - Calculator → results → prefilled contact enquiry flow; leads carry source page and UTM attribution.
-- Serviceability PIN check (Pune prefixes 411/412; unknown PINs accepted and flagged, never rejected).
+- Serviceability PIN check (all Maharashtra prefixes 400–445, excluding Goa's 403; other PINs accepted and flagged, never rejected).
 - SEO: per-route titles/descriptions, Open Graph, JSON-LD LocalBusiness + FAQPage (homepage), robots.txt, sitemap.xml, HTML sitemap page.
 
 ### SolarSquare parity round (2026-11-20)
@@ -95,7 +95,7 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 ### Phase 2 — needs company data / integrations (not buildable without DSP input)
 - Verified pricing, tariff and generation assumptions (current calculator defaults are illustrative and must be reviewed before client use).
 - Real project photos/case studies, customer testimonials, certifications (only with permission and proof).
-- City/area landing pages beyond the Pune region once service coverage is confirmed.
+- City/area landing pages across Maharashtra once location details are confirmed.
 - Richer blog/article content and solar guides.
 - Customer portal, live inverter/generation monitoring (requires a compatible monitoring integration — never fabricate data).
 - Advanced lead workflows (assignment, pipelines, WhatsApp/email automation).

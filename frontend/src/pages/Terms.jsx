@@ -20,7 +20,7 @@ export default function Terms() {
         <p>Subsidy information reflects our understanding of the PM Surya Ghar scheme rules at the time of writing (₹30,000/kW for the first 2 kW and ₹18,000 for the third kW, capped at ₹78,000 for eligible residential systems). Scheme rules, amounts and eligibility are set by the government and can change. Approval and disbursement are decided by the relevant authorities, not by us. We do not guarantee subsidy approval, amounts or timelines. Always verify current rules on the official portal, pmsuryaghar.gov.in.</p>
 
         <h2>Service area</h2>
-        <p>We currently focus on the Pune region. A PIN code check on this site indicates likely serviceability only; final confirmation happens when our team reviews your enquiry.</p>
+        <p>We currently focus on Maharashtra (PIN prefixes 400–445, excluding Goa's 403). A PIN code check on this site indicates likely serviceability only; final confirmation happens when our team reviews your enquiry.</p>
 
         <h2>Enquiries and contact</h2>
         <p>By submitting an enquiry you consent to being contacted about your request by phone, WhatsApp or email. You can ask us to stop at any time. Please provide accurate details so our proposals are meaningful.</p>
