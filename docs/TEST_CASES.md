@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-20):** Backend 38/38 JUnit tests pass (`mvn test`), frontend 73/73 Vitest tests pass (`npm test`), production build clean. The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test` and `frontend/src/**/__tests__` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) and Day 4 (deployment) remain deferred by decision.
+**Status snapshot (2026-11-20):** Backend 41/41 JUnit tests pass (`mvn test`), frontend 79/79 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean. The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
 
 ---
 
@@ -115,12 +115,12 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
 | ID | Journey | Steps | Expected |
 |---|---|---|---|
-| TC-E2E-01 ☐ | Visitor → lead | home → hero CTA → fill form → submit | success message; row in DB via admin API |
-| TC-E2E-02 ☐ | Calculator journey | home quick-estimate (PIN+bill) → calculator → adjust assumptions → results → "Discuss this estimate" | results math matches inputs; form prefilled; lead source=calculator |
-| TC-E2E-03 ☐ | Shareable results | copy results URL, open in new context | identical numbers rendered |
-| TC-E2E-04 ☐ | Admin lifecycle | login → see E2E-01 lead → add note → resolve → restore → delete → restore → purge | each state visible in correct tab; gone after purge |
-| TC-E2E-05 ☐ | Mobile viewport (390×844) | nav drawer, calculator sliders, form submit, sticky CTA, admin table | no overflow/overlap; all controls reachable |
-| TC-E2E-06 ☐ | Resilience | stop API container, submit form; restart, submit again | clear "not saved" error then success; no duplicate lead on retry |
+| TC-E2E-01 ✅ | Visitor → lead | home → hero CTA → fill form → submit | success message; row in DB via admin API |
+| TC-E2E-02 ✅ | Calculator journey | home quick-estimate (PIN+bill) → calculator → adjust assumptions → results → "Discuss this estimate" | results math matches inputs; form prefilled; lead source=calculator |
+| TC-E2E-03 ✅ | Shareable results | copy results URL, open in new context | identical numbers rendered |
+| TC-E2E-04 ✅ | Admin lifecycle | login → see E2E-01 lead → add note → resolve → restore → delete → restore → purge | each state visible in correct tab; gone after purge |
+| TC-E2E-05 ✅ | Mobile viewport (390×844) | nav drawer, calculator sliders, form submit, sticky CTA, admin table | no overflow/overlap; all controls reachable |
+| TC-E2E-06 ✅ | Resilience | stop API container, submit form; restart, submit again | clear "not saved" error then success; no duplicate lead on retry |
 | TC-E2E-07 ☐ | Repeated navigation | visit all 18+ routes twice via nav links | no console errors, no duplicate observers/timers, scroll resets |
 
 ---

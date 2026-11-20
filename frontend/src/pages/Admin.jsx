@@ -66,6 +66,7 @@ export default function Admin() {
   const [notesSaved, setNotesSaved] = useState(false);
   const [savingNotes, setSavingNotes] = useState(false);
   const detailRef = useRef(null);
+  const notesLeadIdRef = useRef(null);
   const closeDetail = useCallback(() => setSelected(null), []);
   useDialog(Boolean(selected), closeDetail, detailRef);
 
@@ -146,7 +147,12 @@ export default function Admin() {
 
   useEffect(() => {
     setNotes(selected?.notes || "");
-    setNotesSaved(false);
+    // Saving notes refreshes `selected` with the same lead; keep the "Saved" cue in that case.
+    const nextId = selected?.id ?? null;
+    if (notesLeadIdRef.current !== nextId) {
+      notesLeadIdRef.current = nextId;
+      setNotesSaved(false);
+    }
   }, [selected]);
 
   async function updateLead(id, action) {

@@ -27,8 +27,9 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 4. Visit http://127.0.0.1:5173. The Vite development server proxies `/api` requests to the backend on port 8081. The private team area is at http://127.0.0.1:5173/admin.
 
 ## Run the tests
-- Backend: `cd backend && mvn test` — 38 JUnit/MockMvc tests on H2 (lead API, validation, rate limiting, honeypot, admin workflows, CSV, cleanup job, notification fail-safe, readiness, prod secret guard).
-- Frontend: `cd frontend && npm test` — 74 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability, API client/error mapping, lead form, quote modal + focus trap, header/mobile nav + Solutions accordion, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results, admin desk + detail-modal lifecycle).
+- Backend: `cd backend && mvn test` — 41 JUnit/MockMvc tests on H2 (lead API, validation, rate limiting, honeypot, admin workflows, CSV, cleanup job, notification fail-safe, security headers, readiness, prod secret guard).
+- Frontend: `cd frontend && npm test` — 79 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability, API client/error mapping/retry policy, lead form, quote modal + focus trap, header/mobile nav + Solutions accordion, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results, admin desk + detail-modal lifecycle).
+- E2E: with MySQL, the backend and Vite running, `cd frontend && npm run test:e2e` — 6 Playwright specs (TC-E2E-01…06) covering the hero quote lead, the hero-estimate → calculator → results → calculator-sourced lead flow, shareable-results parity across contexts, the full admin lifecycle (note → resolve → restore → delete → restore → purge), a 390 px mobile pass without horizontal overflow, and an API-outage-then-clean-retry check. First run needs `npx playwright install chromium`. Admin credentials default to the local-dev values; override with `E2E_ADMIN_USER` / `E2E_ADMIN_PASSWORD`.
 
 ## Status — what is done ✅
 
@@ -61,6 +62,12 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 - Sticky bottom bars reconciled: the calculator consult bar gets its own dark treatment and clears the WhatsApp float (chat float raised above the bar); the mobile "Planning solar?" quote bar is suppressed on the calculator, which already carries a consult CTA.
 - QA: captured every route at 1440 px and key routes at 390 px via Playwright + installed Chrome; mobile scroll width confirmed 390 px (no horizontal overflow) on home, solutions, calculator and contact; fixed a leftover green consultation-band scrim and a stray-orphan heading.
 - Header CTA renamed to "Get a free consultation"; tests cover the header CTA, mobile drawer and the new Solutions accordion (74 tests).
+
+### Testing & security hardening round (2026-11-20)
+- Playwright E2E suite (`frontend/e2e`, `npm run test:e2e`) — TC-E2E-01…06 green against the local stack: hero quote-modal lead, hero-estimate → calculator → results → calculator-sourced lead, shared-results parity across browser contexts, admin note/resolve/restore/delete/purge lifecycle, 390 px mobile pass (no horizontal overflow), and API-outage error + exactly-one-lead retry. Each spec cleans up its lead through the admin API.
+- Security headers: the API sends `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` plus a deny-all CSP (`default-src 'none'; frame-ancestors 'none'; base-uri 'none'`), `Referrer-Policy: strict-origin-when-cross-origin`, a restrictive `Permissions-Policy`, and HSTS (1 year, includeSubDomains) on HTTPS requests only — covered by `SecurityHeadersTests` (3 MockMvc tests). Vite dev/preview serves a site CSP compatible with HMR and Google Fonts, with frame-ancestors/base-uri/form-action locked down.
+- E2E testing found and fixed a real admin bug: the "Saved" note confirmation was wiped immediately because refreshing the selected lead re-ran the reset effect.
+- Vitest scoped to `src/**` so it no longer collects the Playwright specs.
 
 ### Lead desk (`/admin`)
 - Active / resolved / deleted tabs, search, lead detail modal, internal notes, resolve / restore / soft-delete / permanent delete, CSV export, 15-day auto-delete of soft-deleted leads.
@@ -96,8 +103,8 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 - Production hosting, HTTPS, domain + absolute sitemap URLs.
 - Env-driven CORS origins for the production domain (currently dev origins only).
 - Production secrets + `SPRING_PROFILES_ACTIVE=prod`, DB backups, monitoring/alerting.
-- CI workflow runs both suites on push/PR; optional E2E (Playwright) suite remains open.
-- Nice-to-haves: CSP/HSTS headers, desktop-width visual QA pass.
+- CI workflow runs both unit suites on push/PR; wiring the Playwright suite into CI waits on a MySQL service job (the specs need the backend).
+- Nice-to-haves: serving the production CSP/HSTS from nginx or the host (dev server and API already send headers).
 
 ## Content rules (must always hold)
 Do not publish unverified pricing, subsidy amounts, service coverage, guarantees, certifications or testimonials. Representative imagery must be labelled as such. Estimates must show their assumptions and carry no savings or subsidy guarantee. Live generation data requires a real inverter/monitoring integration and must never be fabricated.
