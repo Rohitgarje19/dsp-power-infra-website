@@ -2,7 +2,7 @@
 
 The desk can already store recipients; this guide connects a real mail server so the emails actually leave. Brevo's free plan (about 300 emails a day at the time of writing) is enough for website enquiries and needs no payment method for the free tier.
 
-No code changes are needed — the backend already speaks standard SMTP. You only add five settings on the machine that runs the backend.
+No code changes are needed — the backend already speaks standard SMTP. You only add a few settings on the machine that runs the backend.
 
 ## 1. Create the free Brevo account
 
@@ -34,9 +34,10 @@ SMTP_HOST=smtp-relay.brevo.com
 SMTP_PORT=587
 SMTP_USERNAME=your-brevo-login@example.com
 SMTP_PASSWORD=<the SMTP key from step 3>
+SITE_URL=https://your-public-site.example  # for the "Open enquiry desk" button
 ```
 
-`NOTIFY_TO` is optional: it adds one server-level fallback inbox on top of the addresses managed in the desk. Duplicates are removed automatically.
+`NOTIFY_TO` is optional: it adds one server-level fallback inbox on top of the addresses managed in the desk. Duplicates are removed automatically. `SITE_URL` is optional too: without it the alert still arrives, just without the desk button.
 
 Locally, the project keeps these values in `backend/.env.local` (gitignored). Start the backend with `powershell -ExecutionPolicy Bypass -File scripts/start-backend.ps1` and it loads that file automatically, so mail stays on across restarts. Never commit `.env.local`.
 

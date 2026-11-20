@@ -1,6 +1,9 @@
 package in.dsppowerinfra.website.notify;
 
 import in.dsppowerinfra.website.lead.Lead;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,13 +15,13 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
- * Sends a plain-text notification email when a new lead is saved.
+ * Sends an HTML enquiry alert (with a plain-text twin) when a new lead is saved.
  * Default OFF. Recipients come from the admin desk (notification_recipients)
  * plus the optional server-level NOTIFY_TO fallback, de-duplicated.
  * Entirely fail-safe: any problem here is logged (leadId and counts only,
@@ -35,6 +38,7 @@ public class LeadNotificationService {
     private final String fallbackRecipient;
     private final String mailHost;
     private final String from;
+    private final String siteUrl;
 
     public LeadNotificationService(
         ObjectProvider<JavaMailSender> mailSenders,
@@ -43,7 +47,8 @@ public class LeadNotificationService {
         @Value("${app.notify.to:}") String to,
         @Value("${spring.mail.host:}") String mailHost,
         @Value("${app.notify.from:}") String from,
-        @Value("${spring.mail.username:}") String mailUsername
+        @Value("${spring.mail.username:}") String mailUsername,
+        @Value("${app.site.url:}") String siteUrl
     ) {
         this.mailSenders = mailSenders;
         this.recipients = recipients;
@@ -51,6 +56,7 @@ public class LeadNotificationService {
         this.fallbackRecipient = isBlank(to) ? null : to.trim();
         this.mailHost = mailHost;
         this.from = !isBlank(from) ? from.trim() : (isBlank(mailUsername) ? null : mailUsername.trim());
+        this.siteUrl = isBlank(siteUrl) ? null : siteUrl.trim();
     }
 
     public boolean notificationsEnabled() {
@@ -94,7 +100,7 @@ public class LeadNotificationService {
             int sent = 0;
             for (String address : addresses) {
                 try {
-                    sender.send(messageFor(lead, address));
+                    sender.send(messageFor(sender, lead, address));
                     sent += 1;
                 } catch (Exception ex) {
                     // Never log the address itself; one bad inbox must not stop the rest.
@@ -147,7 +153,7 @@ public class LeadNotificationService {
         String failure = null;
         for (String address : addresses) {
             try {
-                sender.send(testMessage(address));
+                sender.send(testMessage(sender, address));
                 sent += 1;
             } catch (Exception ex) {
                 failure = describeFailure(ex);
@@ -196,48 +202,62 @@ public class LeadNotificationService {
         return detail.length() > 160 ? detail.substring(0, 157) + "..." : detail;
     }
 
-    private SimpleMailMessage messageFor(Lead lead, String address) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        if (from != null) {
-            message.setFrom(from);
-        }
-        message.setTo(address);
-        if (!isBlank(lead.getEmail())) {
-            message.setReplyTo(lead.getEmail().trim());
-        }
-        message.setSubject("New solar enquiry — " + lead.getFullName());
-        message.setText(buildBody(lead));
-        return message;
+    private MimeMessage messageFor(JavaMailSender sender, Lead lead, String address) throws MessagingException {
+        EnquiryEmailTemplate.Enquiry enquiry = new EnquiryEmailTemplate.Enquiry(
+            lead.getId(),
+            lead.getFullName(),
+            lead.getPhone(),
+            lead.getEmail(),
+            lead.getCity(),
+            lead.getPincode(),
+            lead.getMonthlyBill() == null ? null : String.valueOf(lead.getMonthlyBill()),
+            lead.getSource(),
+            lead.getCreatedAt(),
+            siteUrl);
+        return envelope(
+            sender,
+            address,
+            EnquiryEmailTemplate.subject(enquiry),
+            EnquiryEmailTemplate.plainText(enquiry),
+            EnquiryEmailTemplate.html(enquiry),
+            isBlank(lead.getEmail()) ? null : lead.getEmail().trim());
     }
 
-    private SimpleMailMessage testMessage(String address) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        if (from != null) {
-            message.setFrom(from);
-        }
-        message.setTo(address);
-        message.setSubject("Test email — DSP enquiry alerts");
-        message.setText("""
-            This is a test message from the DSP Power Infra enquiry desk.
-
-            If you received it, this inbox is set up to receive an alert for every new enquiry.
-
-            You can change recipients in the enquiry desk under "Email recipients".
-            """);
-        return message;
+    private MimeMessage testMessage(JavaMailSender sender, String address) throws MessagingException {
+        return envelope(
+            sender,
+            address,
+            "Test email — DSP enquiry alerts",
+            EnquiryEmailTemplate.testPlainText(siteUrl),
+            EnquiryEmailTemplate.testHtml(siteUrl),
+            null);
     }
 
-    private String buildBody(Lead lead) {
-        return "New solar enquiry received.\n\n"
-            + "Name: " + lead.getFullName() + "\n"
-            + "Phone: " + lead.getPhone() + "\n"
-            + (isBlank(lead.getEmail()) ? "" : "Email: " + lead.getEmail() + "\n")
-            + "City: " + lead.getCity() + "\n"
-            + "Pincode: " + lead.getPincode() + "\n"
-            + "Monthly bill: " + (lead.getMonthlyBill() == null ? "not provided" : "Rs " + lead.getMonthlyBill()) + "\n"
-            + "Source: " + lead.getSource() + "\n\n"
-            + "Lead ID: " + lead.getId() + "\n"
-            + "Open the enquiry desk to see full details and notes.\n";
+    /** Multipart/alternative: HTML for modern clients, identical plain text for the rest. */
+    private MimeMessage envelope(
+        JavaMailSender sender,
+        String to,
+        String subject,
+        String text,
+        String html,
+        String replyTo
+    ) throws MessagingException {
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+        if (from != null) {
+            try {
+                helper.setFrom(from, "DSP Power Infra");
+            } catch (java.io.UnsupportedEncodingException ex) {
+                helper.setFrom(from);
+            }
+        }
+        helper.setTo(to);
+        if (replyTo != null) {
+            helper.setReplyTo(replyTo);
+        }
+        helper.setSubject(subject);
+        helper.setText(text, html);
+        return message;
     }
 
     private static boolean isBlank(String value) {

@@ -9,7 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.BodyPart;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
     "app.notify.enabled=true",
     "app.notify.to=owner@example.com",
     "app.notify.from=alerts@dsppowerinfra.example",
+    "app.site.url=https://desk.example.test",
     "spring.mail.properties.mail.smtp.auth=false",
     "spring.mail.properties.mail.smtp.starttls.enable=false"
 })
@@ -93,12 +96,18 @@ class LeadEmailNotificationTests {
         MimeMessage[] messages = GREEN_MAIL.getReceivedMessages();
         assertThat(messages).hasSize(1);
         assertThat(messages[0].getAllRecipients()[0].toString()).isEqualTo("owner@example.com");
-        assertThat(messages[0].getFrom()[0].toString()).isEqualTo("alerts@dsppowerinfra.example");
+        assertThat(messages[0].getFrom()[0].toString()).isEqualTo("DSP Power Infra <alerts@dsppowerinfra.example>");
         assertThat(messages[0].getSubject()).contains("New solar enquiry").contains("Notify Email Test");
         assertThat(GreenMailUtil.getBody(messages[0]))
             .contains("Notify Email Test")
             .contains("9876543210")
             .contains("Pune");
+        String html = htmlPart(messages[0]);
+        assertThat(html)
+            .contains("DSP POWER INFRA")
+            .contains("Notify Email Test")
+            .contains("https://desk.example.test/admin")
+            .contains("tel:+919876543210");
     }
 
     @Test
@@ -162,6 +171,29 @@ class LeadEmailNotificationTests {
                 throw new IllegalStateException(ex);
             }
         });
+        assertThat(htmlPart(messages[0]))
+            .contains("Alerts are working")
+            .contains("Test message");
+    }
+
+    private static String htmlPart(MimeMessage message) throws Exception {
+        return findHtml(message.getContent());
+    }
+
+    private static String findHtml(Object content) throws Exception {
+        if (content instanceof MimeMultipart multipart) {
+            for (int i = 0; i < multipart.getCount(); i++) {
+                BodyPart part = multipart.getBodyPart(i);
+                if (part.getContentType().toLowerCase().startsWith("text/html")) {
+                    return part.getContent().toString();
+                }
+                String nested = findHtml(part.getContent());
+                if (!nested.isEmpty()) {
+                    return nested;
+                }
+            }
+        }
+        return "";
     }
 
     private static MimeMessage[] waitForMessages(int count) throws InterruptedException {

@@ -138,7 +138,7 @@ class ExceptionResilienceTests {
         when(recipients.findByActiveTrueOrderByIdAsc())
             .thenThrow(new DataAccessResourceFailureException("connection refused"));
         LeadNotificationService service = new LeadNotificationService(
-            senders, recipients, true, "", "smtp.example.test", "", "");
+            senders, recipients, true, "", "smtp.example.test", "", "", "");
 
         LeadNotificationService.TestResult result = service.sendTestEmail();
 

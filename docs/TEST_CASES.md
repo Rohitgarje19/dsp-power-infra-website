@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-20):** Backend 86/86 JUnit tests pass (`mvn test`), frontend 127/127 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
+**Status snapshot (2026-11-20):** Backend 90/90 JUnit tests pass (`mvn test`), frontend 127/127 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
 
 ---
 
@@ -311,6 +311,17 @@ Performance: built site measured under Lighthouse mobile (gzip like production) 
 | TC-NOTIFY-MAIL-01 ✅ | Fallback | with no desk recipients, a new lead emails `NOTIFY_TO` once (GreenMail) |
 | TC-NOTIFY-MAIL-02 ✅ | Every active inbox | owner fallback + two desk recipients each get one individual message; a paused recipient is skipped |
 | TC-NOTIFY-MAIL-03 ✅ | Test endpoint | test email reaches every active inbox and reports the count |
+
+## Branded enquiry email round (2026-11-20)
+
+### TC-NOTIFY-EMAIL-01…05 — HTML alert template (`EnquiryEmailTemplateTests`, `LeadEmailNotificationTests`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-NOTIFY-EMAIL-01 ✅ | Escaping | a name containing `<b>`, `&`, quotes renders as escaped text, never markup |
+| TC-NOTIFY-EMAIL-02 ✅ | Contact actions | brand header, `tel:+91…`, `mailto:`, `SITE_URL` + `/admin` desk button, and the reply hint are present |
+| TC-NOTIFY-EMAIL-03 ✅ | Missing email | the detail grid shows "Not provided" and the reply note tells the reader to reply or call |
+| TC-NOTIFY-EMAIL-04 ✅ | Test message | the test email uses the same design, says "Alerts are working", and contains no customer phone number |
+| TC-NOTIFY-EMAIL-05 ✅ | Multipart twin | the real GreenMail message carries both plain text and the HTML part with the brand, desk link and `tel:` link |
 
 ## Exception resilience round (2026-11-20)
 
