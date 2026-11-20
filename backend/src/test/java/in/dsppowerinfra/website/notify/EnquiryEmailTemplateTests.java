@@ -62,4 +62,13 @@ class EnquiryEmailTemplateTests {
             .contains("This is a test message")
             .doesNotContain("9876543210");
     }
+
+    @Test
+    void stackedMobileGridDropsColumnIndentSoEveryFieldAligns() {
+        String html = EnquiryEmailTemplate.html(enquiry("Asha Patil", "asha@example.com"));
+        assertThat(html)
+            .contains(".detail{display:block!important;width:100%!important;padding:0 0 14px 0!important}")
+            .contains(".stack{display:block!important;width:100%!important;padding:0 0 10px 0!important}")
+            .contains(".btn{display:block!important;width:100%!important}");
+    }
 }

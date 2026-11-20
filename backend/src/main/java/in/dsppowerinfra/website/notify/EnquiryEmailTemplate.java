@@ -85,8 +85,9 @@ public final class EnquiryEmailTemplate {
             + "<style>"
             + "@media only screen and (max-width:480px){"
             + ".wrap{width:100%!important}.pad{padding:22px!important}.h1{font-size:24px!important}"
-            + ".stack{display:block!important;width:100%!important}.stack-gap{padding:0 0 10px 0!important}"
-            + ".detail{display:block!important;width:100%!important}.detail-gap{padding:0 0 14px 0!important}"
+            + ".stack{display:block!important;width:100%!important;padding:0 0 10px 0!important}"
+            + ".btn{display:block!important;width:100%!important}"
+            + ".detail{display:block!important;width:100%!important;padding:0 0 14px 0!important}"
             + "}"
             + "</style></head><body style=\"margin:0;padding:0;background:" + PAGE + ";\">"
             + "<div style=\"display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;\">"
@@ -112,7 +113,7 @@ public final class EnquiryEmailTemplate {
             + "</td></tr></table></td></tr>"
             + "<tr><td class=\"pad\" style=\"padding:22px 34px 6px 34px;\">"
             + "<table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr>"
-            + "<td class=\"stack stack-gap\" style=\"padding-right:10px;\">" + deskButton + "</td>"
+            + "<td class=\"stack\" style=\"padding-right:10px;\">" + deskButton + "</td>"
             + "<td class=\"stack\" style=\"padding-left:10px;\">" + callButton + "</td>"
             + "</tr></table></td></tr>"
             + "<tr><td class=\"pad\" style=\"padding:14px 34px 26px 34px;font-size:13px;line-height:1.6;color:" + MUTED + ";\">"
@@ -276,7 +277,7 @@ public final class EnquiryEmailTemplate {
         String bg = primary ? DARK : "#fffdf8";
         String fg = primary ? "#ffffff" : INK;
         String border = primary ? DARK : "#cfc6b3";
-        return "<a href=\"" + escape(href) + "\" class=\"stack\" style=\"display:inline-block;"
+        return "<a href=\"" + escape(href) + "\" class=\"btn\" style=\"display:inline-block;"
             + "padding:12px 22px;border-radius:999px;background:" + bg + ";color:" + fg
             + ";border:1px solid " + border + ";font-size:14px;font-weight:600;text-decoration:none;"
             + "font-family:" + FONT + ";\">" + escape(text) + "</a>";

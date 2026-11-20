@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-20):** Backend 90/90 JUnit tests pass (`mvn test`), frontend 127/127 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
+**Status snapshot (2026-11-20):** Backend 91/91 JUnit tests pass (`mvn test`), frontend 127/127 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
 
 ---
 
@@ -314,7 +314,7 @@ Performance: built site measured under Lighthouse mobile (gzip like production) 
 
 ## Branded enquiry email round (2026-11-20)
 
-### TC-NOTIFY-EMAIL-01…05 — HTML alert template (`EnquiryEmailTemplateTests`, `LeadEmailNotificationTests`)
+### TC-NOTIFY-EMAIL-01…06 — HTML alert template (`EnquiryEmailTemplateTests`, `LeadEmailNotificationTests`)
 | ID | Case | Expected |
 |---|---|---|
 | TC-NOTIFY-EMAIL-01 ✅ | Escaping | a name containing `<b>`, `&`, quotes renders as escaped text, never markup |
@@ -322,6 +322,7 @@ Performance: built site measured under Lighthouse mobile (gzip like production) 
 | TC-NOTIFY-EMAIL-03 ✅ | Missing email | the detail grid shows "Not provided" and the reply note tells the reader to reply or call |
 | TC-NOTIFY-EMAIL-04 ✅ | Test message | the test email uses the same design, says "Alerts are working", and contains no customer phone number |
 | TC-NOTIFY-EMAIL-05 ✅ | Multipart twin | the real GreenMail message carries both plain text and the HTML part with the brand, desk link and `tel:` link |
+| TC-NOTIFY-EMAIL-06 ✅ | Mobile alignment | under 480 px each detail cell and button cell resets its column padding, so stacked fields and buttons sit flush left (no alternating 10–12 px indent) |
 
 ## Exception resilience round (2026-11-20)
 
