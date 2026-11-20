@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest(properties = {
     "app.notify.enabled=true",
     "app.notify.to=owner@example.com",
+    "app.notify.from=alerts@dsppowerinfra.example",
     "spring.mail.properties.mail.smtp.auth=false",
     "spring.mail.properties.mail.smtp.starttls.enable=false"
 })
@@ -92,6 +93,7 @@ class LeadEmailNotificationTests {
         MimeMessage[] messages = GREEN_MAIL.getReceivedMessages();
         assertThat(messages).hasSize(1);
         assertThat(messages[0].getAllRecipients()[0].toString()).isEqualTo("owner@example.com");
+        assertThat(messages[0].getFrom()[0].toString()).isEqualTo("alerts@dsppowerinfra.example");
         assertThat(messages[0].getSubject()).contains("New solar enquiry").contains("Notify Email Test");
         assertThat(GreenMailUtil.getBody(messages[0]))
             .contains("Notify Email Test")
