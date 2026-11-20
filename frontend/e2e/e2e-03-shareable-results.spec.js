@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const RESULTS_URL =
-  "/solar-calculator/results?pincode=411046&billValue=4000&city=Pune&tariff=9&yield=120&costPerKw=60000&areaPerKw=80";
+  "/solar-calculator/results?pincode=411046&billValue=4000&city=Pune&tariff=9&yield=120&customerType=Residential&costPerKw=70000&areaPerKw=80";
 
 async function resultStats(page) {
   await page.goto(RESULTS_URL);

@@ -16,10 +16,10 @@ describe("solar math", () => {
     expect(systemSizeKw(310, 120)).toBe(3);   // 2.583 → 3.0
   });
 
-  it("TC-CALC-03: minimum system size is 0.5 kW", () => {
-    expect(systemSizeKw(0)).toBe(0.5);
-    expect(systemSizeKw(10, 120)).toBe(0.5);
-    expect(systemSizeKw(-50)).toBe(0.5);
+  it("TC-CALC-03: minimum system size is 1 kW (rate-card floor)", () => {
+    expect(systemSizeKw(0)).toBe(1);
+    expect(systemSizeKw(10, 120)).toBe(1);
+    expect(systemSizeKw(-50)).toBe(1);
   });
 
   it("TC-CALC-04: bill offset never exceeds the bill", () => {
@@ -52,9 +52,21 @@ describe("solar math", () => {
     expect(e.generation).toBe(300);
     expect(e.offset).toBe(2400);
     expect(e.yearly).toBe(28800);
-    expect(e.cost).toBe(150000);
+    expect(e.cost).toBe(175000);
     expect(e.roof).toBe(200);
-    expect(e.payback).toBeCloseTo(5.2083, 3);
+    expect(e.payback).toBeCloseTo(6.076, 3);
+  });
+
+  it("TC-RATE: prices each DSP connection type from the rate card", () => {
+    expect(estimate({ bill: 2400 }).cost).toBe(175000); // residential 2.5 kW × ₹70k
+    expect(estimate({ bill: 2400, connectionType: "Commercial" }).cost).toBe(87500);
+    expect(estimate({ bill: 2400, connectionType: "Industrial" }).cost).toBe(80000);
+  });
+
+  it("TC-RATE: adds ₹1,000 per metre above the 20 m allowance", () => {
+    const e = estimate({ bill: 2400, heightM: 24 });
+    expect(e.heightSurcharge).toBe(4000);
+    expect(e.cost).toBe(179000);
   });
 
   it("clamps out-of-range assumptions to safe bounds", () => {
@@ -76,7 +88,7 @@ describe("solar math", () => {
   it("helper geometry and cost functions", () => {
     expect(roofAreaSqFt(3)).toBe(240);
     expect(monthlyGeneration(2.5)).toBe(300);
-    expect(systemCost(2.5)).toBe(150000);
+    expect(systemCost(2.5)).toBe(175000);
     expect(DEFAULTS.tariff).toBe(8);
   });
 

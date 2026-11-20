@@ -1,10 +1,12 @@
 // Pure solar-planning math. Every function is side-effect free and unit-tested.
 // All monetary values in INR, energy in kWh, capacity in kW.
 
+import { RATE_CARD, quoteFor, rateFor } from "../data/rates";
+
 export const DEFAULTS = Object.freeze({
   tariff: 8,          // ₹ per kWh
   yieldPerKw: 120,    // kWh generated per kW per month
-  costPerKw: 60000,   // indicative ₹ per kW installed
+  costPerKw: RATE_CARD.connections.Residential.perKw, // DSP turnkey ₹ per kW
   areaPerKw: 80,      // sq ft of unshaded roof per kW
 });
 
@@ -23,11 +25,11 @@ export function monthlyUsage(bill, tariff = DEFAULTS.tariff) {
   return Math.max(0, num(bill)) / t;
 }
 
-/** System size rounded UP to the nearest 0.5 kW, never below 0.5 kW. */
+/** System size rounded UP to the nearest 0.5 kW, never below the 1 kW rate-card floor. */
 export function systemSizeKw(usage, yieldPerKw = DEFAULTS.yieldPerKw) {
   const y = Math.max(1, num(yieldPerKw, DEFAULTS.yieldPerKw));
   const raw = Math.max(0, num(usage)) / y;
-  return Math.max(0.5, Math.ceil(raw * 2) / 2);
+  return Math.max(RATE_CARD.minKw, Math.ceil(raw * 2) / 2);
 }
 
 export function roofAreaSqFt(kw, areaPerKw = DEFAULTS.areaPerKw) {
@@ -64,20 +66,28 @@ export function emi(principal, annualRatePct, months) {
 }
 
 /** Full estimate bundle used by the calculator and results pages. */
-export function estimate({ bill, tariff, yieldPerKw, costPerKw, areaPerKw }) {
+export function estimate({ bill, tariff, yieldPerKw, costPerKw, areaPerKw, connectionType = "Residential", heightM = 0 }) {
   const t = clamp(num(tariff, DEFAULTS.tariff), 1, 100);
   const y = clamp(num(yieldPerKw, DEFAULTS.yieldPerKw), 20, 250);
-  const c = clamp(num(costPerKw, DEFAULTS.costPerKw), 10000, 200000);
+  const sheet = rateFor(connectionType);
+  const c = clamp(num(costPerKw, sheet ? sheet.perKw : DEFAULTS.costPerKw), 10000, 200000);
   const area = clamp(num(areaPerKw, DEFAULTS.areaPerKw), 20, 200);
   const b = Math.max(0, num(bill));
   const usage = monthlyUsage(b, t);
   const kw = systemSizeKw(usage, y);
   const generation = monthlyGeneration(kw, y);
   const offset = billOffset(b, generation, t);
-  const cost = systemCost(kw, c);
+  const quote = quoteFor({ kw, connectionType, heightM, ratePerKw: c });
+  const cost = quote.total;
   const yearly = offset * 12;
   return {
     bill: b, tariff: t, yieldPerKw: y, costPerKw: c, areaPerKw: area,
+    connectionType: quote.connectionType,
+    rateSupported: Boolean(sheet),
+    heightM: Math.max(0, num(heightM)),
+    billableKw: quote.billableKw,
+    baseCost: quote.baseCost,
+    heightSurcharge: quote.heightSurcharge,
     usage, kw, generation, offset, yearly, cost,
     roof: roofAreaSqFt(kw, area),
     payback: simplePaybackYears(cost, yearly),

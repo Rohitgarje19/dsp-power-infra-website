@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-20):** Backend 91/91 JUnit tests pass (`mvn test`), frontend 127/127 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
+**Status snapshot (2026-11-20):** Backend 91/91 JUnit tests pass (`mvn test`), frontend 140/140 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
 
 ---
 
@@ -16,12 +16,23 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 |---|---|---|---|
 | TC-CALC-01 ☐ | Usage from bill | bill ₹2400, tariff ₹8/kWh | 300 kWh/month |
 | TC-CALC-02 ☐ | System sizing rounds up to 0.5 kW | 300 kWh, yield 120 kWh/kW/mo | 2.5 kW |
-| TC-CALC-03 ☐ | Minimum capacity floor | bill ₹500, tariff ₹10 | ≥ 0.5 kW, never 0/negative |
+| TC-CALC-03 ☐ | Minimum capacity floor | bill ₹500, tariff ₹10 | 1 kW (rate-card floor), never 0/negative |
 | TC-CALC-04 ☐ | Bill offset capped at bill | generation×tariff > bill | offset = bill (no negative bills) |
-| TC-CALC-05 ☐ | Payback | cost ₹60k/kW, 2.5 kW, offset ₹2400/mo | 150000 / 28800 ≈ 5.2 years |
+| TC-CALC-05 ☐ | Payback | cost ₹70k/kW, 2.5 kW, offset ₹2400/mo | 175000 / 28800 ≈ 6.1 years |
 | TC-CALC-06 ☐ | Zero/invalid inputs | bill=0, tariff=0, yield="" | no NaN/Infinity rendered; safe defaults |
 | TC-CALC-07 ☐ | EMI formula | ₹250000, 10%, 60 mo | ₹5,312/mo (±1), total ≈ ₹3,18,708 |
 | TC-CALC-08 ☐ | EMI zero interest | ₹120000, 0%, 60 mo | ₹2,000/mo exactly |
+
+### TC-RATE — DSP rate card (`data/rates.js`) — synced 2026-11-20
+| ID | Case | Input | Expected |
+|---|---|---|---|
+| TC-RATE-01 ☐ | Sheet formulas | 3 kW res, 10 kW com, 200 kW ind | ₹2,10,000, ₹3,50,000, ₹64,00,000 |
+| TC-RATE-02 ☐ | Fractional capacity | 2.5 kW | priced at the same per-kW rate (₹1,75,000 res) |
+| TC-RATE-03 ☐ | Capacity bounds | 0.5 / 0 / -5 / 250 kW | billable 1 / 1 / 1 / 200 kW |
+| TC-RATE-04 ☐ | Height allowance | 18, 20, 24, 22.5 m | ₹0, ₹0, ₹4,000, ₹2,500 surcharge |
+| TC-RATE-05 ☐ | Subsidy eligibility | Residential vs Commercial/Industrial | eligible vs not eligible |
+| TC-RATE-06 ☐ | Unknown type | Housing Society | unsupported (custom proposal), no invented rate |
+| TC-RATE-07 ☐ | Corrupt sheet cells | 1, 21, 41, 200 kW | formula values ₹70,000 / ₹14,70,000 / ₹28,70,000 / ₹1,40,00,000 |
 
 ### TC-SUB — PM Surya Ghar subsidy (`lib/subsidy.js`) — *verify slabs before launch*
 | ID | Case | Input | Expected |
@@ -31,7 +42,7 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 | TC-SUB-03 ☐ | 3 kW residential | 3 kW | ₹78,000 (cap) |
 | TC-SUB-04 ☐ | Above cap | 5 kW, 10 kW | ₹78,000 (cap) |
 | TC-SUB-05 ☐ | Non-residential | commercial/society segment | ₹0 + "not eligible" note shown |
-| TC-SUB-06 ☐ | Results page integration | 3 kW, ₹60k/kW | net cost ₹1,02,000; payback recomputed on net cost; disclaimer visible |
+| TC-SUB-06 ☐ | Results page integration | 2.5 kW at ₹70k/kW | gross ₹1,75,000; subsidy ₹69,000; net ₹1,06,000; payback on net; disclaimer visible |
 
 ### TC-SVC — serviceability
 | ID | Case | Input | Expected |

@@ -303,6 +303,14 @@ footer{padding:64px var(--pad) 0;background:var(--g-dark);color:#e9efe7}
 .assumption-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-top:16px}
 .assumption-fields label{font-size:12px}
 .assumption-fields input{font-size:14px;padding:10px 12px}
+.assumption-fields label small{font-size:11px;font-weight:500;color:var(--muted);line-height:1.4}
+.rate-reset{grid-column:span 2;justify-self:start;border:0;background:none;padding:0;color:var(--g);font-size:12px;font-weight:700;text-decoration:underline;cursor:pointer}
+.savings-inputs select{width:100%;padding:14px;border:1.5px solid var(--line);border-radius:11px;background:#fbfdfb;font-size:16px;color:var(--ink);font-weight:400}
+.savings-inputs select:focus{outline:2px solid var(--g-mid);outline-offset:1px}
+.rate-badge{display:grid;gap:2px;align-content:center;padding:10px 14px;border:1.5px solid var(--line);border-radius:11px;background:var(--sage);font-size:12px;font-weight:700;color:var(--muted)}
+.rate-badge strong{font:600 18px var(--display);color:var(--g)}
+.rate-badge span{font-size:12px;font-weight:500;color:var(--muted)}
+.surcharge-note{display:block;color:#c8ddd1;font-size:12px;margin-top:4px}
 .savings-inputs>.submit{grid-column:span 2}
 .estimate-note{grid-column:span 2;font-size:12px}
 .savings-preview{border-radius:24px;background:linear-gradient(160deg,var(--g),var(--g-dark));color:#fff;padding:30px;align-self:start;position:sticky;top:104px}

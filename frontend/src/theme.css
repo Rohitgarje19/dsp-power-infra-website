@@ -107,8 +107,8 @@ html{scrollbar-color:var(--bronze) var(--cream)}
 .money:focus-within{border-color:var(--bronze);box-shadow:0 0 0 3px rgba(163,118,63,.16)}
 
 /* ---------- Forms & inputs ---------- */
-.fields input,.fields select,.fields textarea,.quick-form input:not([type=range]),.savings-inputs input:not([type=range]),.assumption-fields input,.svc-input input,.admin-notes textarea{background:var(--paper);border-color:var(--line);border-radius:10px;color:var(--ink)}
-.fields input:focus,.fields select:focus,.fields textarea:focus,.quick-form input:focus,.savings-inputs input:focus,.assumption-fields input:focus,.svc-input input:focus,.admin-notes textarea:focus{outline:2px solid var(--bronze);outline-offset:1px}
+.fields input,.fields select,.fields textarea,.quick-form input:not([type=range]),.savings-inputs input:not([type=range]),.savings-inputs select,.assumption-fields input,.svc-input input,.admin-notes textarea{background:var(--paper);border-color:var(--line);border-radius:10px;color:var(--ink)}
+.fields input:focus,.fields select:focus,.fields textarea:focus,.quick-form input:focus,.savings-inputs input:focus,.savings-inputs select:focus,.assumption-fields input:focus,.svc-input input:focus,.admin-notes textarea:focus{outline:2px solid var(--bronze);outline-offset:1px}
 .fields label,.quick-form label,.calc-fields>label,.savings-inputs>label,.assumption-fields label,.admin-notes label,.svc-input{color:#6d6355}
 input[type=range]{background:linear-gradient(90deg,var(--bronze) var(--pct,50%),#ded3c0 var(--pct,50%))}
 input[type=range]::-webkit-slider-thumb{border-color:var(--ink);background:var(--champagne);box-shadow:0 2px 8px rgba(23,19,13,.25)}

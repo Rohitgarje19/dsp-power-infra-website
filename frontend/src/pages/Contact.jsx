@@ -18,13 +18,27 @@ export default function Contact() {
   usePageMeta("Contact & free consultation", "Talk to DSP Power Infra about rooftop solar for your home, society or business. Free consultation, survey-first proposals.");
   const [q] = useSearchParams();
   const fromCalculator = q.get("source") === "calculator";
+  const bill = Number(q.get("billValue") || 0);
+  const estimateType = q.get("customerType") || "";
+  const estimateKw = Number(q.get("systemKw") || 0);
+  const estimateCost = Number(q.get("estimateCost") || 0);
+  const estimateBits = [
+    estimateType,
+    estimateKw > 0 ? `${estimateKw.toFixed(1)} kW` : "",
+    estimateCost > 0 ? `indicative cost ₹${estimateCost.toLocaleString("en-IN")}` : "",
+  ].filter(Boolean);
+  const calculatorMessage = [
+    "I used the solar calculator",
+    estimateBits.length ? ` (${estimateBits.join(", ")})` : "",
+    bill > 0 ? ` with a bill of about ₹${bill.toLocaleString("en-IN")}/month` : "",
+    " and would like a site-specific proposal.",
+  ].join("");
   const defaults = {
     pincode: q.get("pincode") || "",
     city: q.get("city") || "",
-    monthlyBill: billToOption(q.get("billValue")),
-    message: fromCalculator
-      ? `I used the solar calculator (bill ≈ ₹${Number(q.get("billValue") || 0).toLocaleString("en-IN")}/month) and would like a site-specific proposal.`
-      : "",
+    customerType: estimateType || undefined,
+    monthlyBill: billToOption(bill),
+    message: fromCalculator ? calculatorMessage : "",
   };
   return (
     <>

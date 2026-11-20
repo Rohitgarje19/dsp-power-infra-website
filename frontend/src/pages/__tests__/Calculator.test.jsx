@@ -16,6 +16,31 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+// TC-CALC-RATE: the DSP rate card drives the calculator cost.
+describe("Calculator connection pricing", () => {
+  it("switches the system rate with the connection type", async () => {
+    const user = userEvent.setup();
+    renderAt();
+    // Default bill ₹2,500 → 3.0 kW; residential ₹70,000/kW → ₹2,10,000
+    expect(screen.getByText("₹2,10,000")).toBeInTheDocument();
+    expect(screen.getByLabelText(/system cost/i)).toHaveValue(70000);
+
+    await user.selectOptions(screen.getByLabelText(/connection type/i), "Commercial");
+    expect(screen.getByLabelText(/system cost/i)).toHaveValue(35000);
+    expect(screen.getByText("₹1,05,000")).toBeInTheDocument(); // 3.0 kW × ₹35,000
+  });
+
+  it("keeps a manually adjusted rate and offers a reset", async () => {
+    const user = userEvent.setup();
+    renderAt();
+    await user.click(screen.getByText("Adjust the estimate assumptions"));
+    const cost = screen.getByLabelText(/system cost/i);
+    await user.clear(cost);
+    await user.type(cost, "65000");
+    expect(screen.getByRole("button", { name: /reset to dsp rate/i })).toBeInTheDocument();
+  });
+});
+
 // TC-CALC: PIN -> City autofill on the planning tool.
 describe("Calculator city autofill", () => {
   it("fills the city from a serviceable PIN", async () => {
