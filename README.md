@@ -76,6 +76,8 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 - Graceful shutdown (20s drain), readiness probe, request-ID log correlation.
 - `ProdConfigGuard`: with `SPRING_PROFILES_ACTIVE=prod` the app refuses to boot with default dev credentials.
 - `.env.example` committed; no real secrets in the repo.
+- API client retries transient 5xx and network failures on idempotent requests only (3 attempts, backoff); lead POSTs are never retried so an enquiry cannot be duplicated.
+- CI workflow (`.github/workflows/ci.yml`) runs both test suites on every push/PR — activates on the next push.
 - Full local smoke test passed: calculator → enquiry → admin → notes/resolve/export, both PIN branches, mobile navigation.
 
 ## Status — what remains ⏳
@@ -94,8 +96,8 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 - Production hosting, HTTPS, domain + absolute sitemap URLs.
 - Env-driven CORS origins for the production domain (currently dev origins only).
 - Production secrets + `SPRING_PROFILES_ACTIVE=prod`, DB backups, monitoring/alerting.
-- CI running both test suites on push; optional E2E (Playwright) suite.
-- Nice-to-haves: 5xx retry in the API client, CSP/HSTS headers, desktop-width visual QA pass.
+- CI workflow runs both suites on push/PR; optional E2E (Playwright) suite remains open.
+- Nice-to-haves: CSP/HSTS headers, desktop-width visual QA pass.
 
 ## Content rules (must always hold)
 Do not publish unverified pricing, subsidy amounts, service coverage, guarantees, certifications or testimonials. Representative imagery must be labelled as such. Estimates must show their assumptions and carry no savings or subsidy guarantee. Live generation data requires a real inverter/monitoring integration and must never be fabricated.

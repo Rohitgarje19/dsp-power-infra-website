@@ -9,7 +9,28 @@ export class ApiError extends Error {
   }
 }
 
+// Only idempotent methods are retried so a retried POST never creates a
+// duplicate lead; transient 5xx and network failures get two extra attempts.
+const RETRYABLE_METHODS = new Set(["GET", "HEAD", "PUT", "DELETE"]);
+const MAX_ATTEMPTS = 3;
+const RETRY_BASE_DELAY_MS = 300;
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export async function api(path, { method = "GET", body, auth, headers } = {}) {
+  const attempts = RETRYABLE_METHODS.has(method) ? MAX_ATTEMPTS : 1;
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      return await request(path, { method, body, auth, headers });
+    } catch (error) {
+      const retryable = error instanceof TypeError || (error instanceof ApiError && error.status >= 500);
+      if (!retryable || attempt >= attempts) throw error;
+      await sleep(RETRY_BASE_DELAY_MS * 3 ** (attempt - 1));
+    }
+  }
+}
+
+async function request(path, { method, body, auth, headers }) {
   let response;
   try {
     response = await fetch(path, {

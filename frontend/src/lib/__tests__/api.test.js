@@ -48,6 +48,42 @@ describe("api client", () => {
   });
 });
 
+describe("retry behaviour", () => {
+  it("retries idempotent GET on 5xx and succeeds", async () => {
+    fetch
+      .mockResolvedValueOnce(jsonRes(503, {}))
+      .mockResolvedValueOnce(jsonRes(200, []));
+    await expect(api("/api/admin/leads")).resolves.toEqual([]);
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("stops after three attempts on persistent 5xx", async () => {
+    fetch.mockResolvedValue(jsonRes(500, {}));
+    await expect(api("/api/admin/leads")).rejects.toMatchObject({ name: "ApiError", status: 500 });
+    expect(fetch).toHaveBeenCalledTimes(3);
+  });
+
+  it("retries GET after a network failure", async () => {
+    fetch
+      .mockRejectedValueOnce(new Error("socket hang up"))
+      .mockResolvedValueOnce(jsonRes(200, { status: "ok" }));
+    await expect(api("/api/health")).resolves.toEqual({ status: "ok" });
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("never retries POST so a lead is not created twice", async () => {
+    fetch.mockResolvedValue(jsonRes(503, {}));
+    await expect(postLead({})).rejects.toMatchObject({ name: "ApiError", status: 503 });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not retry non-5xx errors", async () => {
+    fetch.mockResolvedValue(jsonRes(429, {}));
+    await expect(api("/api/admin/leads")).rejects.toMatchObject({ status: 429 });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("error mapping", () => {
   it("TC-FORM-05: 422 joins field messages", () => {
     const err = new ApiError(422, { errors: [{ field: "phone", message: "Phone is invalid." }, { field: "city", message: "City is required." }] });
