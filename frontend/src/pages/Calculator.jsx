@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { estimate, inr, DEFAULTS } from "../lib/solar";
 import { pct } from "../lib/format";
-import { checkPincode, cityForPincode } from "../lib/serviceability";
+import { checkPincode } from "../lib/serviceability";
+import { useCityAutofill } from "../lib/useCityAutofill";
 import { usePageMeta } from "../lib/seo";
 
 export default function Calculator() {
@@ -11,7 +12,7 @@ export default function Calculator() {
   const [q] = useSearchParams();
   const navigate = useNavigate();
   const [pin, setPin] = useState(q.get("pincode") || "");
-  const [city, setCity] = useState(q.get("city") || "");
+  const { city, onCityChange } = useCityAutofill(pin, q.get("city") || "");
   const [bill, setBill] = useState(q.get("billValue") || "2500");
   const [tariff, setTariff] = useState(q.get("tariff") || String(DEFAULTS.tariff));
   const [yieldRate, setYieldRate] = useState(q.get("yield") || String(DEFAULTS.yieldPerKw));
@@ -21,20 +22,6 @@ export default function Calculator() {
   const live = estimate({ bill, tariff, yieldPerKw: yieldRate, costPerKw: cost, areaPerKw: area });
   const pinInfo = pin.length === 6 ? checkPincode(pin) : null;
 
-  // Autofill the city from a confirmed serviceable PIN unless the visitor has
-  // typed a city themselves; a shared link with ?pincode= also gets the hint.
-  const cityAutoFilled = useRef(false);
-  const cityManual = useRef(false);
-  useEffect(() => {
-    const hint = cityForPincode(pin);
-    if (hint && !cityManual.current && (!city.trim() || cityAutoFilled.current)) {
-      cityAutoFilled.current = true;
-      setCity(hint);
-    } else if (!hint && cityAutoFilled.current) {
-      cityAutoFilled.current = false;
-      setCity("");
-    }
-  }, [pin, city]);
 
   function calculate(e) {
     e.preventDefault();
@@ -65,7 +52,7 @@ export default function Calculator() {
               <input required pattern="[0-9]{6}" inputMode="numeric" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="e.g. 411046" />
             </label>
             <label>City
-              <input required value={city} onChange={(e) => { cityAutoFilled.current = false; cityManual.current = true; setCity(e.target.value); }} placeholder="Pune" maxLength={100} />
+              <input required value={city} onChange={(e) => onCityChange(e.target.value)} placeholder="Pune" maxLength={100} />
             </label>
             {pinInfo?.valid && <p className={`pin-note span2 ${pinInfo.serviceable ? "ok" : "check"}`}>{pinInfo.message}</p>}
             <label className="bill-control">Average monthly electricity bill <strong>{inr(bill)}</strong>

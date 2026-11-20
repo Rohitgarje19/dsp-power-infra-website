@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-20):** Backend 41/41 JUnit tests pass (`mvn test`), frontend 90/90 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean. The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
+**Status snapshot (2026-11-20):** Backend 50/50 JUnit tests pass (`mvn test`), frontend 95/95 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean. The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
 
 ---
 

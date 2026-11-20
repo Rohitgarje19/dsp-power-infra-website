@@ -1,5 +1,16 @@
-import { describe, it, expect } from "vitest";
-import { isValidPincode, checkPincode, cityForPincode, PIN_CITY_HINTS, SERVICEABLE_PREFIXES } from "../serviceability";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import {
+  isValidPincode,
+  checkPincode,
+  cityForPincode,
+  resolveCity,
+  PIN_CITY_HINTS,
+  SERVICEABLE_PREFIXES,
+} from "../serviceability";
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 // TC-SVC-* from docs/TEST_CASES.md
 describe("serviceability", () => {
@@ -47,5 +58,36 @@ describe("serviceability", () => {
     for (const { prefix } of PIN_CITY_HINTS) {
       expect(SERVICEABLE_PREFIXES).toContain(prefix);
     }
+  });
+});
+
+describe("resolveCity (any Indian PIN)", () => {
+  it("uses the backend lookup outside the service region", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ city: "Mumbai", state: "Maharashtra" }),
+    }));
+    await expect(resolveCity("400001")).resolves.toBe("Mumbai");
+    expect(fetch).toHaveBeenCalledWith(
+      "/api/serviceability/400001",
+      expect.objectContaining({ headers: { Accept: "application/json" } }),
+    );
+  });
+
+  it("falls back to the local hint when the lookup fails", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
+    await expect(resolveCity("411046")).resolves.toBe("Pune");
+  });
+
+  it("does not call the API for an invalid PIN", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(resolveCity("12345")).resolves.toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("returns null when the lookup has no city and there is no local hint", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) }));
+    await expect(resolveCity("400001")).resolves.toBeNull();
   });
 });

@@ -19,6 +19,7 @@ export default function Privacy() {
           <li>To respond to your enquiry and prepare a solar proposal or estimate discussion.</li>
           <li>To contact you by phone, WhatsApp or email about your request.</li>
           <li>To check whether your PIN code falls within our current service region.</li>
+          <li>To suggest your city from the PIN code you type, the PIN is looked up in the public India Post PIN directory (district and state only).</li>
           <li>To keep internal records of enquiries so our team can follow up consistently.</li>
         </ul>
 

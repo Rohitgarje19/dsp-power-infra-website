@@ -23,6 +23,30 @@ export function isValidPincode(pin) {
   return /^[1-9][0-9]{5}$/.test(String(pin || "").trim());
 }
 
+// Resolves the city for any Indian PIN through the backend's cached India Post
+// lookup. The local confirmed-region hint is used immediately and whenever the
+// lookup is unavailable, so autofill still works offline.
+export async function resolveCity(pin) {
+  const fallback = cityForPincode(pin);
+  if (!isValidPincode(pin) || typeof fetch !== "function") return fallback;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 3500);
+  try {
+    const response = await fetch(`/api/serviceability/${pin}`, {
+      signal: controller.signal,
+      headers: { Accept: "application/json" },
+    });
+    if (!response.ok) return fallback;
+    const data = await response.json();
+    const city = typeof data?.city === "string" ? data.city.trim() : "";
+    return city || fallback;
+  } catch {
+    return fallback;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export function checkPincode(pin) {
   const p = String(pin || "").trim();
   if (!isValidPincode(p)) {
