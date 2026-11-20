@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ChevronLeft, ChevronRight, Download, RefreshCw, Save } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Download, Mail, RefreshCw, Save, Send, Trash2 } from "lucide-react";
 import { useDialog } from "../lib/useDialog";
 import { usePageMeta } from "../lib/seo";
 
@@ -48,6 +48,29 @@ function createCustomerMessage(customer) {
 const isResolved = (row) => Boolean(row.resolvedAt) || String(row.status || "").toUpperCase().includes("RESOLVED");
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+function notificationStatus(settings) {
+  if (!settings) return null;
+  if (!settings.smtpConfigured) {
+    return {
+      tone: "warn",
+      title: "Email alerts are not switched on yet.",
+      text: "You can add inboxes now. A developer still needs to add the mail server details on the server before messages can be delivered.",
+    };
+  }
+  if (!settings.notificationsEnabled) {
+    return {
+      tone: "warn",
+      title: "Email alerts are switched off on the server.",
+      text: "The mail server is set up, but sending is turned off. Ask a developer to enable it.",
+    };
+  }
+  return {
+    tone: "ok",
+    title: "Email alerts are on.",
+    text: "Every new enquiry is emailed to each active address below.",
+  };
+}
+
 export default function Admin() {
   usePageMeta("Enquiry dashboard", "Private enquiry management desk for the DSP Power Infra team.");
   const [username, setUsername] = useState("");
@@ -78,6 +101,16 @@ export default function Admin() {
   const [notes, setNotes] = useState("");
   const [notesSaved, setNotesSaved] = useState(false);
   const [savingNotes, setSavingNotes] = useState(false);
+  const [notifyOpen, setNotifyOpen] = useState(false);
+  const [notifySettings, setNotifySettings] = useState(null);
+  const [notifyLoading, setNotifyLoading] = useState(false);
+  const [notifyError, setNotifyError] = useState("");
+  const [notifyNotice, setNotifyNotice] = useState("");
+  const [recipientEmail, setRecipientEmail] = useState("");
+  const [recipientLabel, setRecipientLabel] = useState("");
+  const [addingRecipient, setAddingRecipient] = useState(false);
+  const [recipientBusyId, setRecipientBusyId] = useState(null);
+  const [testingEmail, setTestingEmail] = useState(false);
   const detailRef = useRef(null);
   const notesLeadIdRef = useRef(null);
   const closeDetail = useCallback(() => setSelected(null), []);
@@ -108,7 +141,10 @@ export default function Admin() {
     });
     if (!response.ok) {
       let message = "";
-      try { const data = await response.json(); message = data.message || ""; } catch { /* non-JSON error */ }
+      try {
+        const data = await response.json();
+        message = data.errors?.[0]?.message || data.message || "";
+      } catch { /* non-JSON error */ }
       throw new Error(message || `Request failed (${response.status})`);
     }
     if (response.status === 204) return null;
@@ -380,6 +416,120 @@ export default function Admin() {
     }
   }
 
+  async function loadNotifySettings() {
+    setNotifyLoading(true);
+    setNotifyError("");
+    try {
+      const data = await request("/api/admin/notification-recipients");
+      setNotifySettings({
+        items: Array.isArray(data?.items) ? data.items : [],
+        notificationsEnabled: Boolean(data?.notificationsEnabled),
+        smtpConfigured: Boolean(data?.smtpConfigured),
+        fallbackRecipient: data?.fallbackRecipient || null,
+        maxRecipients: Number(data?.maxRecipients) || 20,
+      });
+    } catch (exception) {
+      setNotifyError(exception.message || "Could not load the email recipients.");
+    } finally {
+      setNotifyLoading(false);
+    }
+  }
+
+  function toggleNotifyPanel() {
+    const next = !notifyOpen;
+    setNotifyOpen(next);
+    setNotifyError("");
+    setNotifyNotice("");
+    if (next && !notifySettings) loadNotifySettings();
+  }
+
+  async function addRecipient(event) {
+    event.preventDefault();
+    const email = recipientEmail.trim();
+    if (!email) return;
+    setAddingRecipient(true);
+    setNotifyError("");
+    setNotifyNotice("");
+    try {
+      const created = await request("/api/admin/notification-recipients", "POST", {
+        email,
+        label: recipientLabel.trim() || null,
+      });
+      setNotifySettings((previous) => ({
+        ...(previous || { items: [], maxRecipients: 20 }),
+        items: [...(previous?.items || []), created],
+      }));
+      setRecipientEmail("");
+      setRecipientLabel("");
+      setNotifyNotice(`${created.email} will get an email for every new enquiry.`);
+    } catch (exception) {
+      setNotifyError(exception.message || "Could not add this email address.");
+    } finally {
+      setAddingRecipient(false);
+    }
+  }
+
+  async function toggleRecipient(recipient) {
+    setRecipientBusyId(recipient.id);
+    setNotifyError("");
+    setNotifyNotice("");
+    try {
+      const updated = await request(`/api/admin/notification-recipients/${recipient.id}`, "PATCH", {
+        active: !recipient.active,
+      });
+      setNotifySettings((previous) => ({
+        ...previous,
+        items: (previous?.items || []).map((item) => (item.id === updated.id ? updated : item)),
+      }));
+      setNotifyNotice(
+        updated.active
+          ? `${updated.email} will get new enquiry emails again.`
+          : `${updated.email} will stop receiving new enquiry emails.`,
+      );
+    } catch (exception) {
+      setNotifyError(exception.message || "Could not update this recipient.");
+    } finally {
+      setRecipientBusyId(null);
+    }
+  }
+
+  async function removeRecipient(recipient) {
+    if (!window.confirm(`Stop sending enquiry emails to ${recipient.email}?`)) return;
+    setRecipientBusyId(recipient.id);
+    setNotifyError("");
+    setNotifyNotice("");
+    try {
+      await request(`/api/admin/notification-recipients/${recipient.id}`, "DELETE");
+      setNotifySettings((previous) => ({
+        ...previous,
+        items: (previous?.items || []).filter((item) => item.id !== recipient.id),
+      }));
+      setNotifyNotice(`${recipient.email} was removed from enquiry emails.`);
+    } catch (exception) {
+      setNotifyError(exception.message || "Could not remove this recipient.");
+    } finally {
+      setRecipientBusyId(null);
+    }
+  }
+
+  async function sendTestEmail() {
+    setTestingEmail(true);
+    setNotifyError("");
+    setNotifyNotice("");
+    try {
+      const result = await request("/api/admin/notification-recipients/test", "POST");
+      if (Number(result?.sent) > 0) {
+        setNotifyNotice(result.message || "Test email sent.");
+      } else {
+        setNotifyError(result?.message || "No test email was sent.");
+      }
+    } catch (exception) {
+      setNotifyError(exception.message || "Could not send a test email.");
+    } finally {
+      setTestingEmail(false);
+    }
+  }
+
   if (rows === null) {
     return (
       <main className="admin admin-login">
@@ -405,12 +555,13 @@ export default function Admin() {
   const lastIndex = Math.min(total, page * PAGE_SIZE);
   const allSelected = rows.length > 0 && rows.every((row) => selectedIds.has(row.id));
   const hasFilters = Boolean(search.trim() || source || from || to);
+  const emailStatus = notificationStatus(notifySettings);
 
   return (
     <main className="admin-dashboard">
       <header className="admin-topbar">
         <Link to="/" className="admin-brand"><img src="/dsp-logo.jpg" alt="DSP Power Infra" /><span>DSP POWER INFRA<small>ENQUIRY DESK</small></span></Link>
-        <div><Link to="/">Back to website</Link><button className="admin-logout" onClick={() => { setRows(null); setPassword(""); setAuth(""); }}>Sign out</button></div>
+        <div><Link to="/">Back to website</Link><button className="admin-logout" onClick={() => { setRows(null); setPassword(""); setAuth(""); setNotifyOpen(false); setNotifySettings(null); setNotifyError(""); setNotifyNotice(""); }}>Sign out</button></div>
       </header>
       <section className="admin-content">
         <div className="admin-heading">
@@ -430,6 +581,81 @@ export default function Admin() {
           <article><span>Deleted</span><strong>{counts.deleted}</strong><small>Moved to deleted area</small></article>
           <article><span>Total records</span><strong>{counts.active + counts.resolved + counts.deleted}</strong><small>Saved in database</small></article>
         </div>
+        <section className="admin-panel admin-notify">
+          <div className="admin-panel-head">
+            <div>
+              <h2>Email alerts for new enquiries</h2>
+              <p>Choose which inboxes receive every new enquiry — add a Gmail or company address for each person who should know.</p>
+            </div>
+            <button type="button" className="admin-refresh" onClick={toggleNotifyPanel} aria-expanded={notifyOpen} aria-controls="email-recipients">
+              <Mail size={15} /> {notifyOpen ? "Hide recipients" : "Email recipients"}
+            </button>
+          </div>
+          {notifyOpen && (
+            <div id="email-recipients" className="admin-notify-body">
+              {notifyLoading && !notifySettings && <p className="admin-empty">Loading email settings…</p>}
+              {notifyError && <p className="error admin-error" role="alert">{notifyError}</p>}
+              {notifyNotice && <p className="admin-notice" role="status">{notifyNotice}</p>}
+              {notifySettings && (
+                <>
+                  {emailStatus && (
+                    <div className={`notify-status ${emailStatus.tone}`} role="status">
+                      <b>{emailStatus.title}</b>
+                      <p>{emailStatus.text}</p>
+                    </div>
+                  )}
+                  {notifySettings.fallbackRecipient && (
+                    <p className="notify-fallback">Server default inbox: <b>{notifySettings.fallbackRecipient}</b> — always included.</p>
+                  )}
+                  <ul className="recipient-list" aria-label="Email recipients">
+                    {notifySettings.items.map((recipient) => (
+                      <li key={recipient.id}>
+                        <div className="recipient-who">
+                          <b>{recipient.email}</b>
+                          {recipient.label && <span>{recipient.label}</span>}
+                        </div>
+                        <span className={`recipient-state ${recipient.active ? "" : "off"}`}>
+                          {recipient.active ? "Active" : "Paused"}
+                        </span>
+                        <div className="recipient-actions">
+                          <button type="button" onClick={() => toggleRecipient(recipient)} disabled={recipientBusyId === recipient.id}>
+                            {recipientBusyId === recipient.id ? "Saving…" : recipient.active ? "Pause" : "Resume"}
+                          </button>
+                          <button type="button" className="danger" onClick={() => removeRecipient(recipient)} disabled={recipientBusyId === recipient.id} aria-label={`Remove ${recipient.email}`}>
+                            <Trash2 size={13} /> Remove
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                    {notifySettings.items.length === 0 && (
+                      <li className="recipient-empty">No inboxes added yet. Add the first one below.</li>
+                    )}
+                  </ul>
+                  <form className="recipient-form" onSubmit={addRecipient}>
+                    <label>Email address
+                      <input type="email" required maxLength={254} value={recipientEmail} placeholder="name@example.com" onChange={(event) => setRecipientEmail(event.target.value)} />
+                    </label>
+                    <label>Who is this? (optional)
+                      <input maxLength={80} value={recipientLabel} placeholder="e.g. Rohit — sales" onChange={(event) => setRecipientLabel(event.target.value)} />
+                    </label>
+                    <button className="button primary" disabled={addingRecipient}>{addingRecipient ? "Adding…" : "Add recipient"}</button>
+                  </form>
+                  <p className="notify-help">Up to {notifySettings.maxRecipients} addresses. Each one gets its own copy of every new enquiry. You can pause someone without deleting their address.</p>
+                  <div className="notify-test">
+                    <button type="button" className="admin-refresh" onClick={sendTestEmail} disabled={testingEmail || !notifySettings.smtpConfigured || !notifySettings.notificationsEnabled}>
+                      <Send size={14} /> {testingEmail ? "Sending…" : "Send test email"}
+                    </button>
+                    <span>
+                      {notifySettings.smtpConfigured && notifySettings.notificationsEnabled
+                        ? "Confirms delivery to the active addresses above."
+                        : "Available once the mail server is switched on."}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </section>
         <section className="admin-panel">
           <div className="admin-panel-head"><div><h2>Enquiries</h2><p>Open a record to review its details and contact the customer.</p></div><input className="admin-search" value={searchInput} onChange={(event) => setSearchInput(event.target.value)} placeholder="Search name, phone, city, source…" aria-label="Search enquiries" /></div>
           <div className="admin-tabs">

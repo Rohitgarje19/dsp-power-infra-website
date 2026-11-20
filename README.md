@@ -27,11 +27,18 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 4. Visit http://127.0.0.1:5173. The Vite development server proxies `/api` requests to the backend on port 8081. The private team area is at http://127.0.0.1:5173/admin.
 
 ## Run the tests
-- Backend: `cd backend && mvn test` — 60 JUnit/MockMvc tests on H2 (lead API incl. filtered pagination, bulk actions and CSV filters, validation, rate limiting, admin login throttling, honeypot, cleanup job, email delivery over a real GreenMail SMTP server, notification fail-safe, security headers, PIN directory parsing/caching, Maharashtra serviceability, readiness, prod secret guard).
-- Frontend: `cd frontend && npm test` — 112 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability + PIN→city hints, API client/error mapping/retry policy, lead form incl. city autofill, quote modal + focus trap, header/mobile nav + Solutions accordion, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results + autofill, server-driven admin desk incl. filters/pagination/bulk actions/login throttling, city landing pages, blog + projects gallery, consent-aware analytics).
+- Backend: `cd backend && mvn test` — 74 JUnit/MockMvc tests on H2 (lead API incl. filtered pagination, bulk actions and CSV filters, validation, rate limiting, admin login throttling, honeypot, cleanup job, email delivery over a real GreenMail SMTP server, multi-recipient alerts, recipient API, notification fail-safe, security headers, PIN directory parsing/caching, Maharashtra serviceability, readiness, prod secret guard).
+- Frontend: `cd frontend && npm test` — 118 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability + PIN→city hints, API client/error mapping/retry policy, lead form incl. city autofill, quote modal + focus trap, header/mobile nav + Solutions accordion, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results + autofill, server-driven admin desk incl. filters/pagination/bulk actions/login throttling/email recipients, city landing pages, blog + projects gallery, consent-aware analytics).
 - E2E: with MySQL, the backend and Vite running, `cd frontend && npm run test:e2e` — 6 Playwright specs (TC-E2E-01…06) covering the hero quote lead, the hero-estimate → calculator → results → calculator-sourced lead flow, shareable-results parity across contexts, the full admin lifecycle (note → resolve → restore → delete → restore → purge), a 390 px mobile pass without horizontal overflow, and an API-outage-then-clean-retry check. First run needs `npx playwright install chromium`. Admin credentials default to the local-dev values; override with `E2E_ADMIN_USER` / `E2E_ADMIN_PASSWORD`.
 
 ## Status — what is done ✅
+
+### Admin email recipients round (2026-11-20)
+1. **Who gets alerts** — every new enquiry is emailed to each active recipient added in the desk, plus the optional server-level `NOTIFY_TO` fallback (de-duplicated). Each recipient gets an individual plain-text message; when the enquirer supplied an email, it is set as `Reply-To` so the team can reply directly.
+2. **Desk panel** — `/admin` now has an “Email alerts for new enquiries” panel: plain-language delivery status, add a Gmail/company inbox (name optional), pause/resume without deleting, remove with confirmation, and a “Send test email” button. Addresses are normalised and capped at 20; duplicates are rejected.
+3. **API + schema** — `GET/POST/PATCH/DELETE /api/admin/notification-recipients` and `POST /api/admin/notification-recipients/test`, Flyway `V2__create_notification_recipients.sql`, all ADMIN-only. The status response tells the UI whether the mail server is configured so it can explain why alerts are not going out yet.
+4. **CORS for desk writes** — the API now accepts writes from the site's own host (browser POST/PATCH/DELETE send an `Origin` header even same-origin) while still rejecting foreign origins; the local preview proxy forwards no `Origin`/`Referer`, so desk writes work through the tunnel too.
+5. **Tests** — 14 new backend tests (recipient API, same-origin vs foreign-origin CORS, multi-recipient delivery, paused-recipient skip, test email over GreenMail) and 6 new frontend tests; suites now 74 backend / 118 frontend.
 
 ### Implementation completion round (2026-11-20)
 1. **Performance & Lighthouse** — self-hosted variable fonts (Archivo, DM Sans) with preload; WebP `<picture>` sets for every photo; route-level code splitting (home 101 KB gzip entry; admin 6.6 KB, solution template 6.9 KB, other pages 1–3 KB each); hero preload; home widget chunks deferred. Measured mobile Lighthouse on the built site (gzip like production): **home 94 / 100 / 100 / 100**, **calculator 93 / 100 / 100 / 100** (performance / accessibility / best-practices / SEO), CLS 0.
@@ -86,8 +93,9 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 ### Backend API
 - `POST /api/leads` (public, validated, rate-limited 5/min/IP, honeypot silently dropped), `GET /api/serviceability/{pincode}`, `GET /api/health` (liveness), `GET /api/ready` (DB readiness, 503 when down).
 - Admin: filtered paginated list (`?status=&q=&source=&from=&to=&page=&size=`), notes PATCH, resolve/restore/delete, permanent DELETE, bulk actions, filtered `export.csv`; repeated Basic-auth failures are throttled per IP.
+- Admin notifications: recipient list/add/pause/remove (`/api/admin/notification-recipients`), a test-email action, and delivery status (`smtpConfigured`, `notificationsEnabled`, `fallbackRecipient`) for the desk panel.
 - Typed error responses with request IDs; every log line carries the same `X-Request-Id`.
-- Optional fail-safe email notification on new leads (off by default).
+- Optional fail-safe email notifications on new leads (off by default; recipients managed in the desk, `NOTIFY_TO` still works as a server fallback).
 
 ### Production hardening (local-verified)
 - Flyway migrations (`V1__create_leads.sql`); Hibernate set to `validate`. Verified on both a fresh and the existing database.
@@ -106,7 +114,7 @@ Order of work (decided 2026-11-20): implementation is now complete; production a
 - Review and confirm the calculator's default tariff, generation and cost assumptions (currently illustrative).
 - Real project photos, case studies, testimonials and certifications — publish only with permission and proof.
 - Confirm the WhatsApp number, business hours and experience-centre address.
-- SMTP credentials for go-live and a GA4 measurement ID if analytics is wanted (set `VITE_GA_MEASUREMENT_ID` at build time; see `frontend/.env.example`).
+- SMTP credentials for go-live (recipient inboxes can already be added in `/admin`, but nothing is delivered until `SMTP_HOST`/`SMTP_USERNAME`/`SMTP_PASSWORD` and `NOTIFY_ENABLED=true` are set on the server) and a GA4 measurement ID if analytics is wanted (set `VITE_GA_MEASUREMENT_ID` at build time; see `frontend/.env.example`).
 
 ### Deployment — next phase
 - Dockerfiles + full compose stack: nginx serving the built frontend and proxying `/api`, the Spring Boot jar, and MySQL; nginx config for SPA fallback, gzip, immutable asset caching and HTTPS redirect.

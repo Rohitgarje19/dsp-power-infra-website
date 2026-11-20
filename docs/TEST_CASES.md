@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-20):** Backend 60/60 JUnit tests pass (`mvn test`), frontend 112/112 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
+**Status snapshot (2026-11-20):** Backend 74/74 JUnit tests pass (`mvn test`), frontend 118/118 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
 
 ---
 
@@ -274,6 +274,41 @@ Browser smoke (same round, 754px viewport): at top the header is `.overlay` (tra
 | TC-MAIL-02 ✅ | SMTP delivery | GreenMail receives the new-lead message with recipient, subject and body |
 
 Performance: built site measured under Lighthouse mobile (gzip like production) — home 94/100/100/100, calculator 93/100/100/100; LCP improved by self-hosted variable fonts, WebP picture sets and the hero preload.
+
+## Admin email recipients round (2026-11-20)
+
+### TC-NOTIFY-01…06 — desk panel (`pages/Admin.jsx`, `Admin.test.jsx`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-NOTIFY-01 ✅ | Panel states | opening "Email recipients" lists inboxes and explains that alerts are not switched on while mail is unconfigured; test button disabled |
+| TC-NOTIFY-02 ✅ | Add inbox | submitting an email + optional name POSTs it and confirms that inbox will get every new enquiry |
+| TC-NOTIFY-03 ✅ | Duplicate | a 422 field error shows the server explanation ("already on the list") |
+| TC-NOTIFY-04 ✅ | Pause | Pause PATCHes `{ active: false }` and the row flips to Paused |
+| TC-NOTIFY-05 ✅ | Remove | Remove asks for confirmation, DELETEs, and drops the row |
+| TC-NOTIFY-06 ✅ | Test email | when mail is on, "Send test email" reports delivery to the active addresses |
+
+### TC-NOTIFY-API-01…10 — recipient API (`NotificationRecipientApiTests`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-NOTIFY-API-01 ✅ | Auth | list requires an ADMIN role |
+| TC-NOTIFY-API-02 ✅ | Status | empty list reports `notificationsEnabled=false`, `smtpConfigured=false`, max 20 |
+| TC-NOTIFY-API-03 ✅ | Add | email is trimmed/lower-cased, label kept, active by default, appears in the list |
+| TC-NOTIFY-API-04 ✅ | Invalid email | 422 on the `email` field |
+| TC-NOTIFY-API-05 ✅ | Duplicate | case-insensitive duplicate → 422 "already on the list" |
+| TC-NOTIFY-API-06 ✅ | Pause/resume | PATCH toggles `active` both ways |
+| TC-NOTIFY-API-07 ✅ | Remove | DELETE returns 204 and the list is empty |
+| TC-NOTIFY-API-08 ✅ | Unknown id | DELETE 999999 → 404 |
+| TC-NOTIFY-API-09 ✅ | Limit | a 21st recipient is rejected with the 20-address explanation |
+| TC-NOTIFY-API-10 ✅ | Test while off | test endpoint returns `sent=0` and says sending is switched off |
+| TC-NOTIFY-API-11 ✅ | Same-origin write | POST with the site's own `Origin` is accepted (browser POST/PATCH/DELETE always send it) |
+| TC-NOTIFY-API-12 ✅ | Foreign origin | POST with another site's `Origin` is rejected with 403 |
+
+### TC-NOTIFY-MAIL-01…03 — delivery (`LeadEmailNotificationTests`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-NOTIFY-MAIL-01 ✅ | Fallback | with no desk recipients, a new lead emails `NOTIFY_TO` once (GreenMail) |
+| TC-NOTIFY-MAIL-02 ✅ | Every active inbox | owner fallback + two desk recipients each get one individual message; a paused recipient is skipped |
+| TC-NOTIFY-MAIL-03 ✅ | Test endpoint | test email reaches every active inbox and reports the count |
 
 ---
 

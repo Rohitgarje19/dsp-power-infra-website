@@ -14,8 +14,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -77,34 +79,63 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOrigins(List.of(
+        // Same-origin browser calls (POST/PATCH/DELETE send an Origin header) plus the
+        // Vite dev servers. Matching on host keeps one deployed build working whether the
+        // site is served from a domain, a preview host or a tunnel.
+        List<String> devOrigins = List.of(
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
                 "http://localhost:5174",
                 "http://127.0.0.1:5174"
-        ));
+        );
 
-        configuration.setAllowedMethods(List.of(
-                "GET",
-                "POST",
-                "PUT",
-                "PATCH",
-                "DELETE",
-                "OPTIONS"
-        ));
+        return request -> {
+            String origin = request.getHeader("Origin");
+            List<String> allowed = new ArrayList<>(devOrigins);
+            if (origin != null && sameHost(origin, request) && !allowed.contains(origin)) {
+                allowed.add(origin);
+            }
 
-        configuration.setAllowedHeaders(List.of(
-                "Authorization",
-                "Content-Type"
-        ));
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.setAllowedOrigins(allowed);
+            configuration.setAllowedMethods(List.of(
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "PATCH",
+                    "DELETE",
+                    "OPTIONS"
+            ));
+            configuration.setAllowedHeaders(List.of(
+                    "Authorization",
+                    "Content-Type"
+            ));
+            return configuration;
+        };
+    }
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/api/**", configuration);
-
-        return source;
+    /** True when the browser origin host matches the host this request reached us on. */
+    private static boolean sameHost(String origin, HttpServletRequest request) {
+        try {
+            URI uri = URI.create(origin);
+            String originHost = uri.getHost();
+            if (originHost == null) {
+                return false;
+            }
+            String forwardedHost = request.getHeader("X-Forwarded-Host");
+            String host = (forwardedHost == null || forwardedHost.isBlank())
+                    ? request.getHeader("Host")
+                    : forwardedHost.split(",")[0].trim();
+            if (host == null || host.isBlank()) {
+                host = request.getServerName();
+            }
+            host = host.split(",")[0].trim();
+            String hostOnly = host.startsWith("[")
+                    ? host.substring(0, host.indexOf(']') + 1)
+                    : host.split(":")[0];
+            return originHost.equalsIgnoreCase(hostOnly);
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
     }
 }

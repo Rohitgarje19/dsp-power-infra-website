@@ -1,6 +1,7 @@
 package in.dsppowerinfra.website.shared;
 
 import in.dsppowerinfra.website.lead.LeadNotFoundException;
+import in.dsppowerinfra.website.notify.RecipientNotFoundException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(LeadNotFoundException.class)
     public ResponseEntity<ApiError> handleNotFound(LeadNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ApiError.of("NOT_FOUND", ex.getMessage(), requestId()));
+    }
+
+    @ExceptionHandler(RecipientNotFoundException.class)
+    public ResponseEntity<ApiError> handleRecipientNotFound(RecipientNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(ApiError.of("NOT_FOUND", ex.getMessage(), requestId()));
     }

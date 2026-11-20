@@ -20,6 +20,17 @@ const lead = {
   deleted: false,
 };
 
+const notifySeed = {
+  items: [
+    { id: 1, email: "owner@example.com", label: "Owner", active: true, createdAt: "2026-11-20T09:00:00" },
+    { id: 2, email: "sales@example.com", label: null, active: false, createdAt: "2026-11-20T09:05:00" },
+  ],
+  notificationsEnabled: false,
+  smtpConfigured: false,
+  fallbackRecipient: null,
+  maxRecipients: 20,
+};
+
 function jsonResponse(data, status = 200) {
   return {
     ok: status < 400,
@@ -45,10 +56,42 @@ function pagePayload(items, overrides = {}) {
   };
 }
 
-function mockFetch({ rows = [lead], loginStatus = 200, payloadOverrides = {} } = {}) {
+function mockFetch({
+  rows = [lead],
+  loginStatus = 200,
+  payloadOverrides = {},
+  notify = notifySeed,
+  addRecipientResponse = null,
+} = {}) {
   const calls = [];
   const fetchMock = vi.fn(async (url, options = {}) => {
     calls.push({ url, options });
+    if (url === "/api/admin/notification-recipients" && (!options.method || options.method === "GET")) {
+      return jsonResponse(notify);
+    }
+    if (url === "/api/admin/notification-recipients" && options.method === "POST") {
+      if (addRecipientResponse) return jsonResponse(addRecipientResponse.body, addRecipientResponse.status);
+      const body = JSON.parse(options.body);
+      return jsonResponse({
+        id: 99,
+        email: String(body.email).trim().toLowerCase(),
+        label: body.label,
+        active: true,
+        createdAt: "2026-11-20T12:00:00",
+      }, 201);
+    }
+    if (url === "/api/admin/notification-recipients/test" && options.method === "POST") {
+      return jsonResponse({ sent: 2, message: "Test email sent to 2 addresses." });
+    }
+    if (/\/api\/admin\/notification-recipients\/\d+$/.test(url)) {
+      if (options.method === "PATCH") {
+        const found = notify.items.find((item) => url.endsWith(`/${item.id}`));
+        return jsonResponse({ ...found, active: JSON.parse(options.body).active });
+      }
+      if (options.method === "DELETE") {
+        return { ok: true, status: 204, json: async () => null, text: async () => "" };
+      }
+    }
     if (url.startsWith("/api/admin/leads?") && (!options.method || options.method === "GET")) {
       return jsonResponse(pagePayload(rows, payloadOverrides), loginStatus);
     }
@@ -230,5 +273,83 @@ describe("Admin enquiry desk", () => {
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: "wrong" } });
     fireEvent.click(screen.getByRole("button", { name: /sign in securely/i }));
     expect(await screen.findByText(/too many failed sign-in attempts/i)).toBeInTheDocument();
+  });
+});
+
+describe("Admin email recipients", () => {
+  async function openRecipients() {
+    setup();
+    await signIn();
+    fireEvent.click(screen.getByRole("button", { name: /email recipients/i }));
+    await screen.findByText(/email alerts are not switched on yet|email alerts are on/i);
+  }
+
+  it("TC-NOTIFY-01: lists inboxes and explains when mail is off", async () => {
+    mockFetch();
+    await openRecipients();
+    expect(screen.getByText("owner@example.com")).toBeInTheDocument();
+    expect(screen.getByText("sales@example.com")).toBeInTheDocument();
+    expect(screen.getByText("Paused")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /send test email/i })).toBeDisabled();
+  });
+
+  it("TC-NOTIFY-02: adds a Gmail address for new enquiries", async () => {
+    const { calls } = mockFetch();
+    await openRecipients();
+    fireEvent.change(screen.getByLabelText(/^email address$/i), { target: { value: "Rohit@Example.com" } });
+    fireEvent.change(screen.getByLabelText(/who is this/i), { target: { value: "Rohit — sales" } });
+    fireEvent.click(screen.getByRole("button", { name: /add recipient/i }));
+    await waitFor(() => expect(calls.some((call) => call.url === "/api/admin/notification-recipients" && call.options.method === "POST")).toBe(true));
+    const post = calls.find((call) => call.url === "/api/admin/notification-recipients" && call.options.method === "POST");
+    expect(JSON.parse(post.options.body)).toEqual({ email: "Rohit@Example.com", label: "Rohit — sales" });
+    expect(await screen.findByText("rohit@example.com")).toBeInTheDocument();
+    expect(screen.getByText(/will get an email for every new enquiry/i)).toBeInTheDocument();
+  });
+
+  it("TC-NOTIFY-03: a duplicate address shows the server explanation", async () => {
+    mockFetch({
+      addRecipientResponse: {
+        status: 422,
+        body: {
+          code: "VALIDATION_ERROR",
+          message: "Validation failed",
+          errors: [{ field: "email", message: "this address is already on the list" }],
+        },
+      },
+    });
+    await openRecipients();
+    fireEvent.change(screen.getByLabelText(/^email address$/i), { target: { value: "owner@example.com" } });
+    fireEvent.click(screen.getByRole("button", { name: /add recipient/i }));
+    expect(await screen.findByText(/already on the list/i)).toBeInTheDocument();
+  });
+
+  it("TC-NOTIFY-04: pausing an inbox updates it in place", async () => {
+    const { calls } = mockFetch();
+    await openRecipients();
+    fireEvent.click(screen.getByRole("button", { name: /^pause$/i }));
+    await waitFor(() => expect(calls.some((call) => call.url === "/api/admin/notification-recipients/1")).toBe(true));
+    const patch = calls.find((call) => call.url === "/api/admin/notification-recipients/1");
+    expect(JSON.parse(patch.options.body)).toEqual({ active: false });
+    expect(await screen.findByText(/will stop receiving new enquiry emails/i)).toBeInTheDocument();
+    expect(screen.getAllByText("Paused")).toHaveLength(2);
+  });
+
+  it("TC-NOTIFY-05: removing an inbox asks first and drops the row", async () => {
+    const { calls } = mockFetch();
+    await openRecipients();
+    fireEvent.click(screen.getByRole("button", { name: /remove sales@example.com/i }));
+    await waitFor(() => expect(calls.some((call) => call.url === "/api/admin/notification-recipients/2" && call.options.method === "DELETE")).toBe(true));
+    expect(window.confirm).toHaveBeenCalled();
+    await waitFor(() => expect(screen.queryByText("sales@example.com")).not.toBeInTheDocument());
+  });
+
+  it("TC-NOTIFY-06: a test email reports delivery when mail is on", async () => {
+    mockFetch({ notify: { ...notifySeed, notificationsEnabled: true, smtpConfigured: true } });
+    setup();
+    await signIn();
+    fireEvent.click(screen.getByRole("button", { name: /email recipients/i }));
+    await screen.findByText(/email alerts are on/i);
+    fireEvent.click(screen.getByRole("button", { name: /send test email/i }));
+    expect(await screen.findByText(/test email sent to 2 addresses/i)).toBeInTheDocument();
   });
 });
