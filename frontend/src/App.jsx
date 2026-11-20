@@ -7,6 +7,7 @@ import FloatingActions from "./components/FloatingActions";
 // the first visit downloads only what it renders.
 import Home from "./pages/Home";
 import CookieConsent from "./components/CookieConsent";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { initAnalytics, trackPageview } from "./lib/analytics";
 
 // Solution pages all render the same data-driven template; the copy for each
@@ -77,9 +78,12 @@ function PublicLayout() {
     <>
       <Header />
       <main>
-        <Suspense fallback={<RouteFallback />}>
-          <Outlet />
-        </Suspense>
+        {/* Keeps the header/footer usable if a single page fails to render. */}
+        <ErrorBoundary>
+          <Suspense fallback={<RouteFallback />}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <Footer />
       <FloatingActions />
@@ -119,7 +123,14 @@ export default function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
         </Route>
-        <Route path="/admin" element={<Suspense fallback={<RouteFallback />}><Admin /></Suspense>} />
+        <Route
+          path="/admin"
+          element={
+            <ErrorBoundary>
+              <Suspense fallback={<RouteFallback />}><Admin /></Suspense>
+            </ErrorBoundary>
+          }
+        />
       </Routes>
       <CookieConsent />
     </BrowserRouter>

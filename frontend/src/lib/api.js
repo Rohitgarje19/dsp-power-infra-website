@@ -52,7 +52,14 @@ async function request(path, { method, body, auth, headers }) {
   }
   if (response.status === 204) return null;
   const text = await response.text();
-  return text ? JSON.parse(text) : null;
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    // A proxy or crashed upstream can return HTML with a 2xx status. Surface
+    // it as a typed 502 so callers show a friendly message (and GETs retry).
+    throw new ApiError(502, { message: "The server returned an unexpected response." });
+  }
 }
 
 export function getErrorMessage(error) {

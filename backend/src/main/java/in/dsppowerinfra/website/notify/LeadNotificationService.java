@@ -130,7 +130,16 @@ public class LeadNotificationService {
         if (sender == null) {
             return new TestResult(0, "The mail sender is not available.");
         }
-        List<String> addresses = alertAddresses();
+        List<String> addresses;
+        try {
+            addresses = alertAddresses();
+        } catch (Exception ex) {
+            // The desk button should explain the outage, not show a server error.
+            logger.error(
+                "Could not read notification recipients for a test email ({})",
+                ex.getClass().getSimpleName());
+            return new TestResult(0, "Could not read the recipient list right now. Please try again in a moment.");
+        }
         if (addresses.isEmpty()) {
             return new TestResult(0, "Add at least one recipient first.");
         }

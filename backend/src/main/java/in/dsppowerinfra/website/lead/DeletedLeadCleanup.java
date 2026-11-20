@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DeletedLeadCleanup {
@@ -22,18 +21,27 @@ public class DeletedLeadCleanup {
     }
 
     @Scheduled(fixedDelay = 60 * 60 * 1000)
-    @Transactional
     public void permanentlyDeleteExpiredLeads() {
+        // A background job must never take the application down: if the
+        // database is briefly unavailable the failure is logged and the next
+        // scheduled run tries again.
+        try {
+            Instant cutoff = Instant.now().minus(Duration.ofDays(15));
 
-        Instant cutoff = Instant.now().minus(Duration.ofDays(15));
+            long deletedCount =
+                leads.deleteAllByDeletedTrueAndDeletedAtBefore(cutoff);
 
-        long deletedCount =
-            leads.deleteAllByDeletedTrueAndDeletedAtBefore(cutoff);
-
-        if (deletedCount > 0) {
-            logger.info(
-                "Automatically deleted {} expired enquiries.",
-                deletedCount
+            if (deletedCount > 0) {
+                logger.info(
+                    "Automatically deleted {} expired enquiries.",
+                    deletedCount
+                );
+            }
+        } catch (RuntimeException ex) {
+            logger.error(
+                "Scheduled cleanup of expired enquiries failed ({}); will retry on the next run.",
+                ex.getClass().getSimpleName(),
+                ex
             );
         }
     }

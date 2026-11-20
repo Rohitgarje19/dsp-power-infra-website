@@ -41,6 +41,22 @@ describe("api client", () => {
     await expect(api("/api/admin/leads/1/resolve", { method: "PUT" })).resolves.toBeNull();
   });
 
+  it("turns a malformed 2xx body into a typed 502 instead of an uncaught SyntaxError", async () => {
+    fetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({}),
+      text: async () => "<html>proxy error</html>",
+    });
+
+    const error = await api("/api/health").catch((caught) => caught);
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error.status).toBe(502);
+    expect(getErrorMessage(error)).toMatch(/went wrong/i);
+    expect(fetch).toHaveBeenCalledTimes(3);
+  });
+
   it("auth header is attached when provided", async () => {
     fetch.mockResolvedValue(jsonRes(200, []));
     await api("/api/admin/leads", { auth: "Basic abc" });

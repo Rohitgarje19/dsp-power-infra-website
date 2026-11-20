@@ -310,6 +310,31 @@ Performance: built site measured under Lighthouse mobile (gzip like production) 
 | TC-NOTIFY-MAIL-02 ✅ | Every active inbox | owner fallback + two desk recipients each get one individual message; a paused recipient is skipped |
 | TC-NOTIFY-MAIL-03 ✅ | Test endpoint | test email reaches every active inbox and reports the count |
 
+## Exception resilience round (2026-11-20)
+
+### TC-RES-01…05 — HTTP error mapping (`ExceptionResilienceTests`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-RES-01 ✅ | Wrong HTTP method | `PUT /api/leads` → 405 `METHOD_NOT_ALLOWED` with `Allow: POST` (not 500) |
+| TC-RES-02 ✅ | Wrong content type | `POST /api/leads` as text/plain → 415 `UNSUPPORTED_MEDIA_TYPE` |
+| TC-RES-03 ✅ | Bad query parameter | `GET /api/admin/leads?page=abc` → 400 `VALIDATION_ERROR` naming `page` |
+| TC-RES-04 ✅ | Database outage | `DataAccessException` → 503 `SERVICE_UNAVAILABLE` with a retry message |
+| TC-RES-05 ✅ | Malformed JSON | unreadable body → 400 `BAD_REQUEST` with request id |
+
+### TC-RES-06…09 — fail-safe background and best-effort paths
+| ID | Case | Expected |
+|---|---|---|
+| TC-RES-06 ✅ | Scheduled cleanup | repository failure is logged and swallowed; the app stays up and retries on the next run (`DeletedLeadCleanup`) |
+| TC-RES-07 ✅ | PIN lookup | malformed lookup template or null PIN returns empty instead of throwing (`PincodeDirectory`) |
+| TC-RES-08 ✅ | Bad serviceability config | malformed, reversed and oversized ranges are skipped with a warning; valid `400-445` still serves |
+| TC-RES-09 ✅ | Test email | unreadable recipient list returns `sent=0` and "try again in a moment" instead of a 500 |
+
+### TC-RES-FE-01…02 — frontend crash safety (`ErrorBoundary.test.jsx`, `api.test.js`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-RES-FE-01 ✅ | Render error | a throwing page shows the recovery screen (role=alert, reload button, home link) and children render normally when nothing fails |
+| TC-RES-FE-02 ✅ | Malformed 2xx body | non-JSON success response becomes a typed `ApiError` 502 and maps to a friendly message |
+
 ---
 
 ## Regression rule

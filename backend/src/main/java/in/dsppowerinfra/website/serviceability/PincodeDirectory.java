@@ -52,20 +52,27 @@ public class PincodeDirectory {
     }
 
     public Optional<PincodeInfo> lookup(String pincode) {
-        if (lookupUrlTemplate == null || lookupUrlTemplate.isBlank()) {
+        if (pincode == null || lookupUrlTemplate == null || lookupUrlTemplate.isBlank()) {
             return Optional.empty();
         }
-        Cached cached = cache.get(pincode);
-        if (cached != null && cached.expiresAt().isAfter(Instant.now())) {
-            return cached.info();
+        // Best-effort by contract: cache bookkeeping or a malformed lookup URL
+        // must never turn a valid serviceability answer into a 500.
+        try {
+            Cached cached = cache.get(pincode);
+            if (cached != null && cached.expiresAt().isAfter(Instant.now())) {
+                return cached.info();
+            }
+            Optional<PincodeInfo> info = fetch(pincode);
+            if (cache.size() >= MAX_CACHE_ENTRIES) {
+                cache.clear();
+            }
+            Duration ttl = info.isPresent() ? POSITIVE_TTL : NEGATIVE_TTL;
+            cache.put(pincode, new Cached(info, Instant.now().plus(ttl)));
+            return info;
+        } catch (RuntimeException e) {
+            log.warn("PIN lookup skipped for {}: {}", pincode, e.getClass().getSimpleName());
+            return Optional.empty();
         }
-        Optional<PincodeInfo> info = fetch(pincode);
-        if (cache.size() >= MAX_CACHE_ENTRIES) {
-            cache.clear();
-        }
-        Duration ttl = info.isPresent() ? POSITIVE_TTL : NEGATIVE_TTL;
-        cache.put(pincode, new Cached(info, Instant.now().plus(ttl)));
-        return info;
     }
 
     private Optional<PincodeInfo> fetch(String pincode) {

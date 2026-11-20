@@ -34,6 +34,10 @@ public class ReadinessController {
             }
         } catch (SQLException ex) {
             logger.warn("Readiness check failed: database unreachable ({})", ex.getMessage());
+        } catch (RuntimeException ex) {
+            // A closed or misconfigured pool can throw unchecked exceptions too;
+            // the probe must always answer with a status, never a stack trace.
+            logger.warn("Readiness check failed: {}", ex.getClass().getSimpleName());
         }
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
             .body(new Readiness("degraded", "down"));

@@ -1,5 +1,6 @@
 package in.dsppowerinfra.website.config;
 
+import in.dsppowerinfra.website.shared.RequestIdFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +43,7 @@ public class AdminLoginThrottleFilter extends OncePerRequestFilter {
             response.getWriter().write(
                 "{\"code\":\"RATE_LIMITED\",\"message\":\"Too many failed sign-in attempts. Try again in "
                     + Math.max(1, Math.round(retryAfter / 60.0)) + " minutes.\",\"requestId\":\""
-                    + String.valueOf(MDC.get("requestId")) + "\"}");
+                    + String.valueOf(MDC.get(RequestIdFilter.MDC_KEY)) + "\"}");
             return;
         }
 
