@@ -82,7 +82,7 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
           {fields.fullName && <small className="field-error">{fields.fullName}</small>}
         </label>
         <label>Phone
-          <input required name="phone" pattern="[-+0-9 ()]{10,20}" placeholder="+91 98765 43210" defaultValue={defaults.phone || ""} />
+          <input required name="phone" pattern="[0-9+\(\)\- ]{10,20}" placeholder="+91 98765 43210" defaultValue={defaults.phone || ""} />
           {fields.phone && <small className="field-error">{fields.phone}</small>}
         </label>
         <label>Email

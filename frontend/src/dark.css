@@ -1,118 +1,145 @@
 /* ============================================================
-   DARK THEME — palette swap over styles.css / theme.css tokens
+   DARK THEME — deep-navy counterpart of the light design system.
    Loaded after theme.css. Opt-in via <html data-theme="dark">.
-   Fixed dark bands (header, footer, photo heroes, visit, tools,
-   savings preview, consult bar) stay dark in both themes.
+   Photo heroes, the visit band and the footer stay dark.
    ============================================================ */
 
 :root[data-theme="dark"]{
-  --g:#f3ede2;--g-dark:#0e0b07;--g-mid:#c8a273;
-  --gold:#d8b489;--gold-deep:#dcbd93;--gold-soft:#2a2115;--sun:#e2c096;
-  --bronze:#c8a273;
-  --mint:#241d14;--sage:#1e1912;--ink:#f3ede2;--ink-soft:#e7ddcd;--muted:#b6aa96;--line:#3b3226;
-  --cream:#12100b;--cream-2:#1a160f;--paper:#1c1711;
-  --shadow:0 24px 60px rgba(0,0,0,.5);
+  --navy:#eef2ff;--navy-deep:#0a0f22;--navy-soft:#16203c;
+  --accent:#6fd8a9;--accent-strong:#8ce7bd;--accent-soft:#123b2d;
+  --g:#6fd8a9;--g-dark:#080d1c;--g-mid:#5cc397;
+  --gold:#6fd8a9;--gold-deep:#7fe0b5;--gold-soft:#123b2d;--sun:#6fd8a9;
+  --champagne:#6fd8a9;--champagne-2:#8ce7bd;--bronze:#6fd8a9;
+  --mint:#0e1f2c;--sage:#101830;
+  --ink:#eef2ff;--ink-soft:#dbe3ff;--muted:#a6b0ca;--line:#243052;
+  --night:#080d1c;--night-2:#0b1226;--cream:#0b1124;--cream-2:#111a33;--paper:#141d3a;
+  --surface:#141d3a;--surface-alt:#101830;--surface-tint:#101830;--surface-mint:#0e1f2c;
+  --header-bg:#0d1528;--footer-bg:#080d1c;--card-border:#243052;--input-bg:#0f1830;
+  --btn:#3350dc;--btn-hover:#2943c2;
+  --shadow:0 20px 50px rgba(0,0,0,.45);
+  --shadow-sm:0 6px 20px rgba(0,0,0,.35);
+  --shadow-md:0 18px 44px rgba(0,0,0,.4);
+  --ring:rgba(111,216,169,.2);
   color-scheme:dark;
 }
 
-/* ---------- Page surfaces ---------- */
-:root[data-theme="dark"] html{scrollbar-color:var(--bronze) var(--cream)}
-:root[data-theme="dark"] body{background:var(--cream)}
-:root[data-theme="dark"] .calculator-page{background:linear-gradient(180deg,#17130d,var(--cream) 42%)}
-:root[data-theme="dark"] .why-art{border-color:rgba(255,255,255,.08)}
+/* ---------- Header ---------- */
+:root[data-theme="dark"] .site-header,
+:root[data-theme="dark"] .site-header.scrolled,
+:root[data-theme="dark"] .site-header.overlay,
+:root[data-theme="dark"] .site-header.overlay:not(.scrolled){background:var(--header-bg);border-bottom-color:var(--line);box-shadow:none}
+:root[data-theme="dark"] .site-header.scrolled{box-shadow:0 6px 22px rgba(0,0,0,.4)}
+:root[data-theme="dark"] nav>a,
+:root[data-theme="dark"] .dd-btn{color:#c3cce6}
+:root[data-theme="dark"] nav>a.active{color:var(--ink)}
+:root[data-theme="dark"] .nav-cta,
+:root[data-theme="dark"] .nav-quote{background:transparent!important;border-color:rgba(255,255,255,.42)!important;color:#fff!important}
+:root[data-theme="dark"] .nav-cta:hover,
+:root[data-theme="dark"] .nav-quote:hover{background:#fff!important;color:#182150!important}
+:root[data-theme="dark"] .theme-toggle{color:#c3cce6}
+:root[data-theme="dark"] .theme-toggle:hover{color:var(--ink);background:var(--surface-alt)}
+:root[data-theme="dark"] .dd-menu{box-shadow:0 24px 60px rgba(0,0,0,.5)}
 
-/* ---------- Literal text colors → tokens ---------- */
-:root[data-theme="dark"] .proof span,
-:root[data-theme="dark"] .fields label,
-:root[data-theme="dark"] .quick-form label,
-:root[data-theme="dark"] .calc-fields>label,
-:root[data-theme="dark"] .savings-inputs>label,
-:root[data-theme="dark"] .assumption-fields label,
-:root[data-theme="dark"] .admin-notes label,
-:root[data-theme="dark"] .svc-input,
-:root[data-theme="dark"] .post-body p,
-:root[data-theme="dark"] .legal-inner p,
-:root[data-theme="dark"] .legal-inner li,
-:root[data-theme="dark"] .admin-table td{color:var(--muted)}
-:root[data-theme="dark"] .field-error{color:#e7a396}
+/* ---------- Hero panel + inputs ---------- */
+:root[data-theme="dark"] .hero-panel{box-shadow:0 30px 80px rgba(0,0,0,.5)}
+:root[data-theme="dark"] .hs-pin input{border-color:var(--line);background:var(--surface);color:var(--ink)}
+:root[data-theme="dark"] .hs-pin input::placeholder{color:#7f8bab}
+:root[data-theme="dark"] .hs-bill input{background:linear-gradient(90deg,var(--accent) var(--pct,50%),#26324f var(--pct,50%))}
+:root[data-theme="dark"] .hs-bill input::-webkit-slider-thumb{background:#0f1830;border-color:var(--accent)}
+:root[data-theme="dark"] .hs-bill input::-moz-range-thumb{background:#0f1830;border-color:var(--accent)}
 
-/* ---------- Tinted panels ---------- */
-:root[data-theme="dark"] .assumption-editor,
-:root[data-theme="dark"] .assumption-chips span,
-:root[data-theme="dark"] .subsidy-note,
-:root[data-theme="dark"] .post-cta,
-:root[data-theme="dark"] .sitemap-groups>div,
-:root[data-theme="dark"] .route-links,
-:root[data-theme="dark"] .admin-source{background:#241d15;border-color:var(--line)}
-:root[data-theme="dark"] .energy-bars i{background:#2c2418}
-:root[data-theme="dark"] input[type=range]{background:linear-gradient(90deg,var(--bronze) var(--pct,50%),#3a3126 var(--pct,50%))}
+/* ---------- Sections and cards ---------- */
+:root[data-theme="dark"] .proof span{color:#c3cce6}
+:root[data-theme="dark"] .service:hover{border-color:#33456e}
+:root[data-theme="dark"] .why-section,
+:root[data-theme="dark"] .tools{background:var(--surface-tint)}
+:root[data-theme="dark"] .track-record{background:linear-gradient(180deg,#0d1c22,#0b181f);border-color:#1d3a31}
+:root[data-theme="dark"] .track-record p{color:#b6c3d6}
+:root[data-theme="dark"] .track-record-grid article{background:var(--surface);border-color:#1d3a31}
+:root[data-theme="dark"] .track-record-grid span{color:var(--muted)}
+:root[data-theme="dark"] .approach-points div{border-color:var(--line)}
+:root[data-theme="dark"] .tl-step:not(:last-child):before{border-left-color:#33456e}
+:root[data-theme="dark"] .process-card{background:linear-gradient(150deg,#12203a,#0f2430 60%,#0e2a22)}
+:root[data-theme="dark"] .ring{border-color:rgba(255,255,255,.1)}
+:root[data-theme="dark"] .process-card:hover .ring{border-color:rgba(255,255,255,.22)}
+:root[data-theme="dark"] .pc-glow{background:radial-gradient(280px circle at var(--gx) var(--gy),rgba(111,216,169,.12),transparent 70%)}
+:root[data-theme="dark"] .pc-info{background:var(--surface);color:var(--ink)}
+:root[data-theme="dark"] .banner{border-color:#1d3a31}
+:root[data-theme="dark"] .contact-row{color:var(--ink)}
+:root[data-theme="dark"] .faq-item.open{border-color:#2b4a3e;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+:root[data-theme="dark"] .form-card{box-shadow:0 20px 50px rgba(0,0,0,.35)}
+:root[data-theme="dark"] .form-card .fields input,
+:root[data-theme="dark"] .form-card .fields select,
+:root[data-theme="dark"] .form-card .fields textarea{border-color:var(--line)}
+:root[data-theme="dark"] .site-header .brand img{background:#fff}
+:root[data-theme="dark"] .footer-main .brand img{background:#fff}
 
-/* ---------- Status notes & errors ---------- */
+/* ---------- Status notes and errors ---------- */
 :root[data-theme="dark"] .pin-note.ok,
 :root[data-theme="dark"] .svc-result.ok,
 :root[data-theme="dark"] .admin-contact-actions .whatsapp-action,
-:root[data-theme="dark"] .admin-status.resolved,
 :root[data-theme="dark"] .admin-notice,
 :root[data-theme="dark"] .notify-status.ok,
-:root[data-theme="dark"] .recipient-state{background:#1f2c1a;color:#c4d9ad;border-color:#33472b}
-:root[data-theme="dark"] .admin-status.deleted,
+:root[data-theme="dark"] .recipient-state,
+:root[data-theme="dark"] .admin-status.resolved{background:#123b2d;color:#a9ecc9;border-color:#1d4a3a}
+:root[data-theme="dark"] .pin-note.check,
+:root[data-theme="dark"] .svc-result.check,
+:root[data-theme="dark"] .admin-status.active,
+:root[data-theme="dark"] .notify-status.warn,
+:root[data-theme="dark"] .admin-note{background:#2f2716;color:#e6c990;border-color:#4a3b1e}
 :root[data-theme="dark"] .error,
-:root[data-theme="dark"] .admin-bulk button.danger,
-:root[data-theme="dark"] .recipient-actions button.danger{background:#2b1713;color:#f0b4a6;border-color:#4b2a22}
+:root[data-theme="dark"] .admin-status.deleted{background:#2b1713;color:#f0b4a6;border-color:#4b2a22}
 :root[data-theme="dark"] .error{border-left-color:#c05a45}
+:root[data-theme="dark"] .field-error{color:#e7a396}
+:root[data-theme="dark"] .auto-delete{color:#e6c990}
 
-/* ---------- Fixed dark cards with light inlays ---------- */
-:root[data-theme="dark"] .visit .button{background:var(--champagne);color:#1b140b}
-:root[data-theme="dark"] .visit .button:hover{background:var(--champagne-2)}
-:root[data-theme="dark"] .pc-info{background:rgba(28,23,17,.96)}
-:root[data-theme="dark"] .consult-bar p{color:#efe7d8}
+/* ---------- Calculator + results ---------- */
+:root[data-theme="dark"] .savings-preview{background:linear-gradient(160deg,#10241f,#0d1c26);border-color:#1d4a3a}
+:root[data-theme="dark"] .preview-stat{background:var(--surface);border-color:#1d4a3a}
+:root[data-theme="dark"] .result-card,
+:root[data-theme="dark"] .assumptions{border-color:var(--line)}
+:root[data-theme="dark"] .energy-bars i{background:#26324f}
+:root[data-theme="dark"] .post-cta,
+:root[data-theme="dark"] .city-cta,
+:root[data-theme="dark"] .society-band,
+:root[data-theme="dark"] .subsidy-slabs .cap{border-color:#1d4a3a}
+:root[data-theme="dark"] .post-body p,
+:root[data-theme="dark"] .legal-inner p,
+:root[data-theme="dark"] .legal-inner li{color:#b6c3d6}
+:root[data-theme="dark"] .route-hero{background:linear-gradient(180deg,var(--surface-tint),var(--cream))}
+:root[data-theme="dark"] .route-art{background:linear-gradient(145deg,#13203a,#0f2430 60%,#0e2a22)}
+:root[data-theme="dark"] .journey-head b{color:#26324f}
+:root[data-theme="dark"] .assumption-editor,
+:root[data-theme="dark"] .assumption-chips span,
+:root[data-theme="dark"] .subsidy-note,
+:root[data-theme="dark"] .sitemap-groups>div,
+:root[data-theme="dark"] .route-links{background:var(--surface-tint);border-color:var(--line)}
+:root[data-theme="dark"] .spec-table tbody th{background:var(--surface-alt)}
+:root[data-theme="dark"] .quote-modal .form-card{box-shadow:0 40px 100px rgba(0,0,0,.6)}
 
-/* ---------- Hero estimate bar (glass over photo) ---------- */
-:root[data-theme="dark"] .hero-search{background:rgba(22,17,11,.78);border-color:rgba(255,255,255,.16);box-shadow:0 30px 70px rgba(0,0,0,.55)}
-:root[data-theme="dark"] .hs-pin span,
-:root[data-theme="dark"] .hs-bill span{color:rgba(243,237,226,.6)}
-:root[data-theme="dark"] .hs-pin input{color:#fbf6ec}
-:root[data-theme="dark"] .hs-pin input::placeholder{color:rgba(243,237,226,.45)}
-:root[data-theme="dark"] .hs-bill b{color:#fbf6ec}
-:root[data-theme="dark"] .hs-bill input{background:linear-gradient(90deg,var(--bronze) var(--pct,50%),rgba(255,255,255,.18) var(--pct,50%))}
-:root[data-theme="dark"] .hs-bill input::-webkit-slider-thumb{border-color:var(--champagne);background:#fbf6ec}
-:root[data-theme="dark"] .hs-divider{background:rgba(255,255,255,.16)}
-:root[data-theme="dark"] .hs-submit{background:var(--champagne);color:#1b140b}
-:root[data-theme="dark"] .hs-submit:hover{background:var(--champagne-2)}
+/* ---------- Footer + floating ---------- */
+:root[data-theme="dark"] footer{background:var(--footer-bg)}
+:root[data-theme="dark"] .wa-float{background:#0a6b48;color:#fff}
+:root[data-theme="dark"] .wa-float:hover{background:#0b7d52}
+:root[data-theme="dark"] .mobile-cta{background:#080d1c}
 
-/* ---------- Admin desk ---------- */
-:root[data-theme="dark"] .admin-search,
-:root[data-theme="dark"] .admin-login-card input{background:var(--paper);color:var(--ink);border-color:var(--line)}
-:root[data-theme="dark"] .password-toggle:hover{background:rgba(255,255,255,.08);color:var(--ink)}
+/* ---------- Admin ---------- */
 :root[data-theme="dark"] .admin-tabs{border-bottom-color:var(--line)}
-:root[data-theme="dark"] .admin-table th{background:#221b13;border-bottom-color:var(--line)}
-:root[data-theme="dark"] .admin-table td{border-bottom-color:#2e2619}
-:root[data-theme="dark"] .admin-actions button,
-:root[data-theme="dark"] .admin-row-actions button,
-:root[data-theme="dark"] .admin-logout,
-:root[data-theme="dark"] .admin-refresh,
-:root[data-theme="dark"] .recipient-actions button{background:#241d15;border-color:var(--line);color:#e6dccb}
-:root[data-theme="dark"] .admin-actions button.danger,
-:root[data-theme="dark"] .admin-row-actions button.danger{background:#2b1713;border-color:#4b2a22;color:#e6a99c}
-:root[data-theme="dark"] .admin-actions button:hover:not(:disabled),
-:root[data-theme="dark"] .admin-row-actions button:hover:not(:disabled),
-:root[data-theme="dark"] .recipient-actions button:hover:not(:disabled){background:#2d2517;box-shadow:none}
-:root[data-theme="dark"] .admin-actions button.danger:hover:not(:disabled),
-:root[data-theme="dark"] .admin-row-actions button.danger:hover:not(:disabled){background:#341d18;border-color:#5d3a2f}
-:root[data-theme="dark"] .admin-actions button.is-pending,
-:root[data-theme="dark"] .admin-row-actions button.is-pending{background:var(--mint);color:var(--gold-deep);border-color:var(--line)}
-:root[data-theme="dark"] .admin-detail-modal{background:var(--paper)}
-:root[data-theme="dark"] .admin-detail-modal h2{color:var(--ink)}
-:root[data-theme="dark"] .admin-detail-modal dd{color:var(--ink-soft)}
+:root[data-theme="dark"] .admin-tabs button.selected{color:var(--ink)}
+:root[data-theme="dark"] .admin-table th{border-bottom-color:var(--line)}
+:root[data-theme="dark"] .admin-table td{border-bottom-color:#1d2742}
+:root[data-theme="dark"] .admin-loading,
+:root[data-theme="dark"] .admin-empty{color:var(--muted)}
+:root[data-theme="dark"] .admin-detail-modal{box-shadow:0 25px 80px rgba(0,0,0,.55)}
 :root[data-theme="dark"] .admin-modal-close{color:var(--muted)}
-
-/* Notification panel and status chips */
-:root[data-theme="dark"] .notify-status{background:#241d15;border-color:var(--line)}
-:root[data-theme="dark"] .notify-status.warn{background:#2c2415;border-color:#5c4a28}
+:root[data-theme="dark"] .admin-actions button:hover:not(:disabled),
+:root[data-theme="dark"] .admin-row-actions button:hover:not(:disabled){background:var(--surface-alt)}
+:root[data-theme="dark"] .admin-actions button.danger,
+:root[data-theme="dark"] .admin-row-actions button.danger,
+:root[data-theme="dark"] .admin-lifecycle button.danger{background:#2b1713;border-color:#4b2a22;color:#e6a99c}
+:root[data-theme="dark"] .admin-bulk button.danger{background:#2b1713;border-color:#4b2a22;color:#e6a99c}
+:root[data-theme="dark"] .notify-status{background:var(--surface-alt);border-color:var(--line)}
+:root[data-theme="dark"] .notify-status.ok b{color:#a9ecc9}
 :root[data-theme="dark"] .notify-status.warn b{color:#e6c990}
-:root[data-theme="dark"] .notify-status.ok b{color:#c4d9ad}
-:root[data-theme="dark"] .recipient-state.off{background:#241d15;color:var(--muted)}
-:root[data-theme="dark"] .recipient-empty{color:var(--muted)}
-
-/* Header toggle: sits on the fixed dark header in both themes */
-:root[data-theme="dark"] .theme-toggle{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#f6efe2}
+:root[data-theme="dark"] .recipient-state.off{background:var(--surface-tint);color:var(--muted)}
+:root[data-theme="dark"] .password-toggle:hover{background:var(--surface-alt);color:var(--ink)}
