@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Camera } from "lucide-react";
 import PageHero from "../components/PageHero";
-import { PROJECT_GALLERY } from "../data/content";
+import { PROJECT_GALLERY, PROJECT_TAGS } from "../data/projects";
 import { usePageMeta } from "../lib/seo";
+import Picture from "../components/Picture";
 
 export default function Projects() {
   usePageMeta("Projects & work", "DSP Power Infra project gallery and capability overview. Customer project stories are published only with permission.");
+  const [filter, setFilter] = useState("All");
+  const shown = filter === "All" ? PROJECT_GALLERY : PROJECT_GALLERY.filter((p) => p.tag === filter);
   return (
     <>
       <PageHero
@@ -20,11 +24,25 @@ export default function Projects() {
           <div><span className="eyebrow">Design references</span><h2>The style we build to.</h2></div>
           <p><Camera size={15} style={{ verticalAlign: "-2px" }} /> Representative imagery — not claimed DSP installations.</p>
         </div>
+        <div className="project-filters" role="group" aria-label="Filter gallery by project type">
+          {["All", ...PROJECT_TAGS].map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              className={"project-filter" + (filter === tag ? " active" : "")}
+              aria-pressed={filter === tag}
+              onClick={() => setFilter(tag)}
+            >
+              {tag}
+              <span>{tag === "All" ? PROJECT_GALLERY.length : PROJECT_GALLERY.filter((p) => p.tag === tag).length}</span>
+            </button>
+          ))}
+        </div>
         <div className="project-grid">
-          {PROJECT_GALLERY.map((p) => (
+          {shown.map((p) => (
             <figure key={p.title}>
-              <img src={p.image} alt={p.title} loading="lazy" />
-              <figcaption><b>{p.title}</b><small>{p.caption}</small></figcaption>
+              <Picture src={p.image} alt={p.title} sizes="(max-width: 700px) 100vw, 50vw" />
+              <figcaption><b>{p.title}</b><small>{p.caption}</small><span className="project-tag">{p.tag}</span></figcaption>
             </figure>
           ))}
         </div>

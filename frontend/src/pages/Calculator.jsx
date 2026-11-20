@@ -6,6 +6,7 @@ import { pct } from "../lib/format";
 import { checkPincode } from "../lib/serviceability";
 import { useCityAutofill } from "../lib/useCityAutofill";
 import { usePageMeta } from "../lib/seo";
+import Picture from "../components/Picture";
 
 export default function Calculator() {
   usePageMeta("Solar calculator", "Estimate your rooftop solar system size, subsidy, cost and payback from your PIN code and monthly bill — with every assumption adjustable.");
@@ -30,9 +31,9 @@ export default function Calculator() {
   }
 
   return (
-    <main className="calculator-page">
+    <div className="calculator-page">
       <section className="calculator-heading photo-band">
-        <img className="band-img" src="/images/banner-a.jpg" alt="" loading="eager" />
+        <Picture className="band-img" src="/images/banner-a.jpg" alt="" loading="eager" fetchPriority="high" sizes="100vw" />
         <div className="band-scrim" />
         <div className="band-copy">
           <span className="eyebrow light">Solar planning tool</span>
@@ -94,6 +95,6 @@ export default function Calculator() {
         <p>Have questions about your estimate? Talk to our team.</p>
         <a className="button primary" href="/contact">Request a consultation <ArrowRight size={16} /></a>
       </div>
-    </main>
+    </div>
   );
 }

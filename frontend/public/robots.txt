@@ -2,4 +2,5 @@ User-agent: *
 Disallow: /admin
 Disallow: /api/
 
-Sitemap: /sitemap.xml
+# After deployment, add an absolute sitemap line with the live domain, e.g.
+# Sitemap: https://<domain>/sitemap.xml

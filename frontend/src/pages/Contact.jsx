@@ -27,7 +27,7 @@ export default function Contact() {
       : "",
   };
   return (
-    <main>
+    <>
       <PageHero
         eyebrow="Contact DSP Power Infra"
         title="Talk to a team that plans before it sells."
@@ -51,6 +51,6 @@ export default function Contact() {
         </div>
         <LeadForm source={fromCalculator ? "calculator" : "contact"} defaults={defaults} heading={fromCalculator ? "Get a proposal for your estimate." : "Start with a conversation."} />
       </section>
-    </main>
+    </>
   );
 }

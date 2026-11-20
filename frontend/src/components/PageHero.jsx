@@ -1,11 +1,19 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import Picture from "./Picture";
 
 /** Photo-backed page hero used across subpages. Pass `actions` to override the default CTAs (null hides them). */
 export default function PageHero({ eyebrow, title, lede, image, imageAlt, actions, compact = false, children }) {
   return (
     <section className={"page-hero" + (compact ? " compact" : "")}>
-      <img className="page-hero-img" src={image} alt={imageAlt || ""} loading="eager" />
+      <Picture
+        className="page-hero-img"
+        src={image}
+        alt={imageAlt || ""}
+        loading="eager"
+        fetchPriority="high"
+        sizes="100vw"
+      />
       <div className="page-hero-scrim" />
       <div className="page-hero-copy">
         <span className="eyebrow light">{eyebrow}</span>

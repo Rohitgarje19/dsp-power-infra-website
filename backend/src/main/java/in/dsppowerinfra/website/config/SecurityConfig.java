@@ -41,11 +41,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, AdminLoginThrottle throttle) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
+                .addFilterBefore(new AdminLoginThrottleFilter(throttle),
+                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers
                         .contentTypeOptions(Customizer.withDefaults())
                         .frameOptions(frame -> frame.deny())

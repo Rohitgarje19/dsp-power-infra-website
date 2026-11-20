@@ -314,10 +314,168 @@ class LeadApiTests {
         second.put("fullName", "Second Enquiry");
         long secondId = createLeadAndGetId(second);
 
-        mvc.perform(get("/api/admin/leads").with(httpBasic(ADMIN, PASSWORD)))
+        mvc.perform(get("/api/admin/leads?status=all").with(httpBasic(ADMIN, PASSWORD)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].id").value(secondId))
-            .andExpect(jsonPath("$[1].id").value(firstId));
+            .andExpect(jsonPath("$.items[0].id").value(secondId))
+            .andExpect(jsonPath("$.items[1].id").value(firstId))
+            .andExpect(jsonPath("$.total").value(2))
+            .andExpect(jsonPath("$.counts.active").value(2))
+            .andExpect(jsonPath("$.counts.deleted").value(0))
+            .andExpect(jsonPath("$.sources", hasItem("website")));
+    }
+
+    @Test
+    void adminListFiltersByStatusSearchSourceAndDate() throws Exception {
+        Map<String, Object> mumbai = validLead();
+        mumbai.put("fullName", "Mumbai Enquiry");
+        mumbai.put("source", "city-mumbai");
+        long mumbaiId = createLeadAndGetId(mumbai);
+
+        Map<String, Object> contact = validLead();
+        contact.put("fullName", "Contact Enquiry");
+        contact.put("source", "contact");
+        long contactId = createLeadAndGetId(contact);
+        mvc.perform(put("/api/admin/leads/" + contactId + "/resolve").with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isOk());
+
+        // Active tab excludes the resolved enquiry.
+        mvc.perform(get("/api/admin/leads?status=active").with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.total").value(1))
+            .andExpect(jsonPath("$.items[0].id").value(mumbaiId));
+
+        // Resolved tab only shows the resolved one.
+        mvc.perform(get("/api/admin/leads?status=resolved").with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.total").value(1))
+            .andExpect(jsonPath("$.items[0].id").value(contactId));
+
+        // Free-text search across name.
+        mvc.perform(get("/api/admin/leads?status=all&q=mumbai").with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.total").value(1))
+            .andExpect(jsonPath("$.items[0].id").value(mumbaiId));
+
+        // Exact source filter.
+        mvc.perform(get("/api/admin/leads?status=all&source=city-mumbai").with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.total").value(1))
+            .andExpect(jsonPath("$.items[0].id").value(mumbaiId));
+
+        // Date range covering today includes both; tomorrow excludes both.
+        String today = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).toString();
+        String tomorrow = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")).plusDays(1).toString();
+        mvc.perform(get("/api/admin/leads?status=all&from=" + today + "&to=" + today)
+                .with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.total").value(2));
+        mvc.perform(get("/api/admin/leads?status=all&from=" + tomorrow).with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.total").value(0));
+    }
+
+    @Test
+    void adminListPagesResults() throws Exception {
+        createLeadAndGetId(validLead());
+        Map<String, Object> second = validLead();
+        second.put("fullName", "Page Two");
+        createLeadAndGetId(second);
+        Map<String, Object> third = validLead();
+        third.put("fullName", "Page Three");
+        createLeadAndGetId(third);
+
+        mvc.perform(get("/api/admin/leads?status=all&size=2&page=1").with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.total").value(3))
+            .andExpect(jsonPath("$.items.length()").value(2));
+        mvc.perform(get("/api/admin/leads?status=all&size=2&page=2").with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.page").value(2))
+            .andExpect(jsonPath("$.items.length()").value(1));
+    }
+
+    @Test
+    void adminListRejectsUnknownStatusAndBadDates() throws Exception {
+        mvc.perform(get("/api/admin/leads?status=archived").with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(jsonPath("$.errors[*].field", hasItem("status")));
+        mvc.perform(get("/api/admin/leads?from=20-11-2026").with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(jsonPath("$.errors[*].field", hasItem("from")));
+        mvc.perform(get("/api/admin/leads?from=2026-11-20&to=2026-11-10").with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(jsonPath("$.errors[*].field", hasItem("to")));
+    }
+
+    @Test
+    void bulkActionsResolveDeleteAndPurge() throws Exception {
+        long firstId = createLeadAndGetId(validLead());
+        Map<String, Object> second = validLead();
+        second.put("fullName", "Bulk Second");
+        long secondId = createLeadAndGetId(second);
+
+        mvc.perform(post("/api/admin/leads/bulk")
+                .with(httpBasic(ADMIN, PASSWORD))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ids\":[" + firstId + "," + secondId + "],\"action\":\"resolve\"}"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.updated").value(2));
+        assertThat(leads.findById(firstId).orElseThrow().getResolvedAt()).isNotNull();
+        assertThat(leads.findById(secondId).orElseThrow().getResolvedAt()).isNotNull();
+
+        mvc.perform(post("/api/admin/leads/bulk")
+                .with(httpBasic(ADMIN, PASSWORD))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ids\":[" + firstId + "],\"action\":\"delete\"}"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.updated").value(1));
+        assertThat(leads.findById(firstId).orElseThrow().isDeleted()).isTrue();
+
+        mvc.perform(post("/api/admin/leads/bulk")
+                .with(httpBasic(ADMIN, PASSWORD))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ids\":[" + firstId + "],\"action\":\"purge\"}"))
+            .andExpect(status().isOk());
+        assertThat(leads.findById(firstId)).isEmpty();
+        assertThat(leads.findById(secondId)).isPresent();
+    }
+
+    @Test
+    void bulkRejectsUnknownActionAndRequiresAdmin() throws Exception {
+        long id = createLeadAndGetId(validLead());
+        mvc.perform(post("/api/admin/leads/bulk")
+                .with(httpBasic(ADMIN, PASSWORD))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ids\":[" + id + "],\"action\":\"archive\"}"))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(jsonPath("$.errors[*].field", hasItem("action")));
+
+        mvc.perform(post("/api/admin/leads/bulk")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ids\":[" + id + "],\"action\":\"resolve\"}"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void csvExportRespectsFilters() throws Exception {
+        Map<String, Object> mumbai = validLead();
+        mumbai.put("fullName", "Filtered Mumbai Lead");
+        mumbai.put("source", "city-mumbai");
+        createLeadAndGetId(mumbai);
+        Map<String, Object> other = validLead();
+        other.put("fullName", "Unfiltered Contact Lead");
+        other.put("source", "contact");
+        createLeadAndGetId(other);
+
+        String csv = mvc.perform(get("/api/admin/leads/export.csv?status=all&source=city-mumbai")
+                .with(httpBasic(ADMIN, PASSWORD)))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThat(csv).contains("Filtered Mumbai Lead");
+        assertThat(csv).doesNotContain("Unfiltered Contact Lead");
     }
 
     // ---------- lifecycle ----------

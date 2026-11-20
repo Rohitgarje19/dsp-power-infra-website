@@ -4,6 +4,7 @@ import { ArrowRight, MapPin, Search } from "lucide-react";
 import PageHero from "../components/PageHero";
 import { checkPincode } from "../lib/serviceability";
 import { usePageMeta } from "../lib/seo";
+import { CITIES } from "../data/cities";
 
 export default function ServiceAreas() {
   usePageMeta("Service areas", "DSP Power Infra covers Maharashtra. Check your PIN code against our service region — other states confirmed case by case.");
@@ -54,6 +55,21 @@ export default function ServiceAreas() {
             </ul>
             <p className="table-note">A PIN check is a planning aid, not a commitment. Final availability is confirmed after a brief call.</p>
           </div>
+        </div>
+      </section>
+      <section className="section city-directory">
+        <div className="section-head">
+          <div><span className="eyebrow">City guides</span><h2>Solar where you live.</h2></div>
+          <p>Local context for the Maharashtra cities we hear from most — from coastal high-rises to Marathwada bungalows.</p>
+        </div>
+        <div className="city-grid">
+          {CITIES.map((city) => (
+            <Link className="city-card" key={city.slug} to={`/service-areas/${city.slug}`}>
+              <MapPin size={18} />
+              <b>{city.name}</b>
+              <span>{city.region}</span>
+            </Link>
+          ))}
         </div>
       </section>
     </>

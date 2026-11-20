@@ -12,6 +12,16 @@
   <url><loc>/subsidy-guide</loc><priority>0.8</priority></url>
   <url><loc>/how-it-works</loc><priority>0.7</priority></url>
   <url><loc>/service-areas</loc><priority>0.7</priority></url>
+  <url><loc>/service-areas/pune</loc><priority>0.7</priority></url>
+  <url><loc>/service-areas/pimpri-chinchwad</loc><priority>0.6</priority></url>
+  <url><loc>/service-areas/mumbai</loc><priority>0.7</priority></url>
+  <url><loc>/service-areas/thane</loc><priority>0.6</priority></url>
+  <url><loc>/service-areas/navi-mumbai</loc><priority>0.6</priority></url>
+  <url><loc>/service-areas/nashik</loc><priority>0.6</priority></url>
+  <url><loc>/service-areas/nagpur</loc><priority>0.6</priority></url>
+  <url><loc>/service-areas/chhatrapati-sambhajinagar</loc><priority>0.6</priority></url>
+  <url><loc>/service-areas/kolhapur</loc><priority>0.6</priority></url>
+  <url><loc>/service-areas/solapur</loc><priority>0.6</priority></url>
   <url><loc>/projects</loc><priority>0.6</priority></url>
   <url><loc>/about</loc><priority>0.6</priority></url>
   <url><loc>/blog</loc><priority>0.7</priority></url>
@@ -19,6 +29,8 @@
   <url><loc>/blog/pm-surya-ghar-subsidy-explained</loc><priority>0.6</priority></url>
   <url><loc>/blog/on-grid-vs-hybrid-vs-off-grid</loc><priority>0.6</priority></url>
   <url><loc>/blog/keeping-solar-performing</loc><priority>0.6</priority></url>
+  <url><loc>/blog/housing-society-solar-checklist</loc><priority>0.6</priority></url>
+  <url><loc>/blog/solar-monsoon-readiness</loc><priority>0.6</priority></url>
   <url><loc>/refer-a-friend</loc><priority>0.5</priority></url>
   <url><loc>/experience-centre</loc><priority>0.5</priority></url>
   <url><loc>/webinars</loc><priority>0.5</priority></url>

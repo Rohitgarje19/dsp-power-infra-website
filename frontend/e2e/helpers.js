@@ -13,9 +13,12 @@ export function uniqueName(prefix) {
 }
 
 export async function fetchLeads(request) {
-  const response = await request.get("/api/admin/leads", { headers: { Authorization: basicAuth() } });
+  const response = await request.get("/api/admin/leads?status=all&size=200", {
+    headers: { Authorization: basicAuth() },
+  });
   expect(response.ok()).toBeTruthy();
-  return response.json();
+  const body = await response.json();
+  return body.items;
 }
 
 export async function deleteLead(request, id) {

@@ -82,6 +82,7 @@ html{scrollbar-color:var(--bronze) var(--cream)}
 .tools .section-head h2 em{color:var(--champagne)}
 .tools .section-head>p{color:rgba(247,240,229,.64)}
 .tools .eyebrow{color:var(--champagne)}
+.tools .calculator .eyebrow{color:var(--gold-deep)}
 .tools .calculator{background:var(--paper);border-color:transparent;border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
 .tools .calculator h3{color:var(--ink)}
 .tools .calculator p,.tools .calc-disclaimer{color:var(--muted)}
@@ -159,7 +160,7 @@ footer{background:#0c0a06;color:#ded4c4;padding:80px var(--pad) 0}
 .footer-main a:hover{color:var(--champagne)}
 .footer-main span{color:rgba(247,240,229,.62);font-size:14px}
 .footer-made{color:var(--champagne)!important;letter-spacing:2px!important}
-.footer-bottom{border-top-color:rgba(255,255,255,.09);color:rgba(247,240,229,.4);font-size:12px}
+.footer-bottom{border-top-color:rgba(255,255,255,.09);color:rgba(247,240,229,.62);font-size:12px}
 .footer-bottom a:hover{color:var(--champagne)}
 
 /* ---------- Solar calculator ---------- */
@@ -412,3 +413,71 @@ body:has(.consult-bar) .wa-float{bottom:96px}
   .calculator-heading .band-copy{padding:calc(var(--header-h) + 36px) var(--pad) 34px}
   .footer-main{gap:28px}
 }
+
+/* Admin desk: server-side filters, bulk bar and pagination */
+.admin-select-col{width:38px;min-width:38px!important;padding-right:0!important;text-align:center}
+.admin-select-col input{width:16px;height:16px;accent-color:var(--bronze);cursor:pointer}
+.admin-filters{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;padding:14px 24px;border-bottom:1px solid var(--line);background:var(--paper)}
+.admin-filters label{display:flex;flex-direction:column;gap:5px;font-size:11.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted)}
+.admin-filters input,.admin-filters select{height:38px;min-width:140px;padding:6px 10px;border:1px solid var(--line);border-radius:9px;background:var(--cream);color:var(--ink);font:13px "DM Sans"}
+.admin-filter-clear{align-self:flex-end;height:38px;padding:0 14px;border:1px solid var(--line);border-radius:9px;background:transparent;color:var(--ink);font-size:12.5px;font-weight:700;cursor:pointer}
+.admin-filter-clear:hover{border-color:var(--bronze)}
+.admin-bulk{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;background:var(--gold-soft);border-bottom:1px solid var(--line)}
+.admin-bulk>span{font-weight:700;font-size:13px;color:var(--ink)}
+.admin-bulk>div{display:flex;flex-wrap:wrap;gap:8px}
+.admin-bulk button{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font-size:12.5px;font-weight:700;cursor:pointer}
+.admin-bulk button.danger{border-color:#c98f84;color:#8a3f33}
+.admin-bulk button:disabled{opacity:.55;cursor:wait}
+.admin-notice{margin:0;padding:11px 24px;background:#edf3e3;color:#3f5430;font-size:13px;font-weight:600;border-bottom:1px solid var(--line)}
+.admin-pagination{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.admin-pagination>div{display:flex;align-items:center;gap:10px}
+.admin-pagination button{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);cursor:pointer}
+.admin-pagination button:disabled{opacity:.4;cursor:not-allowed}
+
+/* Responsive photo wrapper: keep the <img> as the layout box */
+picture{display:contents}
+.route-loading{display:flex;align-items:center;justify-content:center;min-height:60vh;color:var(--muted);font:500 15px "DM Sans";letter-spacing:.3px}
+
+/* Deferred home widgets keep their space while their chunk loads. */
+.emi-skeleton{min-height:340px;border-radius:24px;background:var(--paper);box-shadow:0 24px 60px rgba(23,19,13,.08)}
+
+/* City landing pages */
+.city-intro{max-width:760px;color:var(--muted);margin:6px 0 10px;font-size:16px;line-height:1.7}
+.city-pin{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:26px;flex-wrap:wrap}
+.city-pin a{color:var(--gold-deep);font-weight:600}
+.city-cta{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;background:var(--gold-soft)}
+.city-cta-actions{display:flex;gap:12px;flex-wrap:wrap}
+.city-nearby h2{margin:6px 0 18px}
+.city-links{display:flex;flex-wrap:wrap;gap:10px}
+.city-links a{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:1px solid var(--line);border-radius:999px;background:var(--paper);font-size:14px;font-weight:500}
+.city-links a:hover{border-color:var(--champagne);color:var(--gold-deep)}
+.city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.city-card{display:flex;flex-direction:column;gap:4px;padding:18px 20px;border:1px solid var(--line);border-radius:16px;background:var(--paper);transition:border-color .2s ease,transform .2s ease}
+.city-card:hover{border-color:var(--champagne);transform:translateY(-2px)}
+.city-card svg{color:var(--gold-deep);margin-bottom:4px}
+.city-card b{font:600 15px var(--display)}
+.city-card span{font-size:13px;color:var(--muted)}
+@media (max-width:700px){.city-cta{padding:28px 22px}.city-cta-actions .button{width:100%;justify-content:center}}
+
+/* Projects gallery filters */
+.project-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px}
+.project-filter{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--paper);font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;transition:background-color .2s ease,color .2s ease,border-color .2s ease}
+.project-filter span{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--gold-soft);color:var(--gold-deep);font-size:11px}
+.project-filter:hover{border-color:var(--champagne)}
+.project-filter.active{background:var(--ink);border-color:var(--ink);color:var(--cream)}
+.project-filter.active span{background:rgba(255,255,255,.16);color:var(--cream)}
+.project-tag{display:inline-block;margin-top:10px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold-deep);font-weight:700}
+
+/* Consent banner + cookie settings */
+.cookie-banner{position:fixed;left:16px;right:16px;bottom:16px;z-index:130;display:flex;align-items:flex-start;gap:14px;max-width:900px;margin:0 auto;background:var(--g-dark);color:#f6efe2;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:16px 18px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.cookie-banner>svg{color:var(--champagne);flex:none;margin-top:2px}
+.cookie-banner b{font:600 14px var(--display);letter-spacing:.3px}
+.cookie-banner p{margin:4px 0 0;font-size:12.5px;line-height:1.55;color:rgba(246,239,226,.8)}
+.cookie-banner a{color:var(--champagne);text-decoration:underline}
+.cookie-actions{display:flex;gap:8px;margin-left:auto;flex:none;align-items:center}
+.cookie-actions .button{font-size:12.5px;padding:9px 14px;white-space:nowrap}
+.cookie-actions .button.quiet{color:#f6efe2;border-color:rgba(255,255,255,.32);background:transparent}
+.cookie-actions .button.primary{background:var(--champagne);color:#1b140b;border-color:var(--champagne)}
+.footer-cookie{background:none;border:0;padding:0;color:inherit;font:inherit;cursor:pointer;display:inline-flex;align-items:center}
+.footer-cookie:hover{color:var(--champagne)}
+@media (max-width:760px){.cookie-banner{flex-wrap:wrap;bottom:74px;padding:14px}.cookie-actions{margin-left:0;width:100%}.cookie-actions .button{flex:1;justify-content:center}}

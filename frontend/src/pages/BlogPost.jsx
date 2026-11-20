@@ -1,8 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
-import { BLOG_ARTICLES } from "../data/content";
+import { BLOG_ARTICLES } from "../data/blog";
 import { usePageMeta } from "../lib/seo";
 import NotFound from "./NotFound";
+import Picture from "../components/Picture";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -11,9 +12,9 @@ export default function BlogPost() {
   if (!article) return <NotFound />;
   const others = BLOG_ARTICLES.filter((a) => a.slug !== slug).slice(0, 2);
   return (
-    <main>
+    <>
       <section className="page-hero compact">
-        <img className="page-hero-img" src={article.image} alt="" />
+        <Picture className="page-hero-img" src={article.image} alt="" loading="eager" fetchPriority="high" sizes="100vw" />
         <div className="page-hero-scrim" />
         <div className="page-hero-copy">
           <Link className="back-link light" to="/blog"><ArrowLeft size={15} /> All guides</Link>
@@ -39,12 +40,12 @@ export default function BlogPost() {
         <div className="blog-grid two">
           {others.map((a) => (
             <Link className="blog-card" to={`/blog/${a.slug}`} key={a.slug}>
-              <div className="blog-card-img"><img src={a.image} alt="" loading="lazy" /></div>
+              <div className="blog-card-img"><Picture src={a.image} alt="" sizes="(max-width: 700px) 100vw, 33vw" /></div>
               <div className="blog-card-body"><h2>{a.title}</h2><p>{a.excerpt}</p><span className="blog-read">Read <ArrowRight size={15} /></span></div>
             </Link>
           ))}
         </div>
       </section>
-    </main>
+    </>
   );
 }

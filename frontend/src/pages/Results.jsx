@@ -3,6 +3,7 @@ import { ArrowRight, BadgeIndianRupee, ShieldCheck } from "lucide-react";
 import { estimate, inr } from "../lib/solar";
 import { afterSubsidy, isSubsidyEligible } from "../lib/subsidy";
 import { usePageMeta } from "../lib/seo";
+import Picture from "../components/Picture";
 
 export default function Results() {
   usePageMeta("Your solar estimate", "Your indicative rooftop solar estimate: system size, subsidy, cost, bill offset and payback — with all assumptions shown.");
@@ -25,10 +26,10 @@ export default function Results() {
   });
 
   return (
-    <main className="results-main">
+    <div className="results-main">
       <Link className="back-link" to={"/solar-calculator?" + q.toString()}>← Edit estimate</Link>
       <section className="results-hero photo-band">
-        <img className="band-img" src="/images/banner-c.jpg" alt="" loading="eager" />
+        <Picture className="band-img" src="/images/banner-c.jpg" alt="" loading="eager" fetchPriority="high" sizes="100vw" />
         <div className="band-scrim" />
         <div className="band-copy">
           <span className="eyebrow light">Your solar estimate · {city}{pin ? " · " + pin : ""}</span>
@@ -100,6 +101,6 @@ export default function Results() {
         </div>
         <p>Eligibility and current rules must be checked for your project. This result does not confirm service coverage.</p>
       </section>
-    </main>
+    </div>
   );
 }

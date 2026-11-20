@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Download, RefreshCw, Save } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Download, RefreshCw, Save } from "lucide-react";
 import { useDialog } from "../lib/useDialog";
 import { usePageMeta } from "../lib/seo";
 
 const AUTO_DELETE_DAYS = 15;
+const PAGE_SIZE = 25;
+const SEARCH_DEBOUNCE_MS = 300;
 
 function autoDeleteInfo(deletedAt) {
   if (!deletedAt) return null;
@@ -51,12 +53,23 @@ export default function Admin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rows, setRows] = useState(null);
+  const [total, setTotal] = useState(0);
+  const [counts, setCounts] = useState({ active: 0, resolved: 0, deleted: 0 });
+  const [sources, setSources] = useState([]);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [tab, setTab] = useState("active");
+  const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+  const [source, setSource] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
   const [selected, setSelected] = useState(null);
   const [auth, setAuth] = useState("");
   const [copiedField, setCopiedField] = useState("");
@@ -84,10 +97,13 @@ export default function Admin() {
     }
   }
 
-  async function request(path, method = "GET", body) {
+  async function request(path, method = "GET", body, credentials = auth) {
     const response = await fetch(path, {
       method,
-      headers: { Authorization: auth, "Content-Type": "application/json" },
+      headers: {
+        ...(credentials ? { Authorization: credentials } : {}),
+        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      },
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
     if (!response.ok) {
@@ -95,8 +111,81 @@ export default function Admin() {
       try { const data = await response.json(); message = data.message || ""; } catch { /* non-JSON error */ }
       throw new Error(message || `Request failed (${response.status})`);
     }
-    return response.status === 204 ? null : response.json();
+    if (response.status === 204) return null;
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
   }
+
+  function filterParams({ paged = true } = {}) {
+    const params = new URLSearchParams();
+    params.set("status", tab);
+    if (search.trim()) params.set("q", search.trim());
+    if (source) params.set("source", source);
+    if (from) params.set("from", from);
+    if (to) params.set("to", to);
+    if (paged) {
+      params.set("page", String(page));
+      params.set("size", String(PAGE_SIZE));
+    }
+    return params;
+  }
+
+  function applyPayload(data, { keepSelection = false } = {}) {
+    setRows(Array.isArray(data?.items) ? data.items : []);
+    setTotal(Number(data?.total) || 0);
+    setCounts(data?.counts || { active: 0, resolved: 0, deleted: 0 });
+    setSources(Array.isArray(data?.sources) ? data.sources : []);
+    if (!keepSelection) setSelectedIds(new Set());
+  }
+
+  const load = useCallback(async ({ silent = false } = {}) => {
+    if (!auth) return;
+    try {
+      const data = await request("/api/admin/leads?" + filterParams().toString());
+      // An action emptied the last page — step back instead of showing a blank table.
+      if (Array.isArray(data?.items) && data.items.length === 0 && Number(data.total) > 0 && page > 1) {
+        setPage(page - 1);
+        return;
+      }
+      applyPayload(data);
+      if (!silent) setError("");
+    } catch (exception) {
+      if (!silent) setError(exception.message || "Could not refresh enquiries.");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth, tab, search, source, from, to, page]);
+
+  useEffect(() => {
+    if (!auth) return;
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth, tab, search, source, from, to, page]);
+
+  useEffect(() => {
+    if (!auth) return;
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === "visible") load({ silent: true });
+    }, 15000);
+    return () => window.clearInterval(interval);
+  }, [auth, load]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setSearch(searchInput);
+      setPage(1);
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
+
+  useEffect(() => {
+    setNotes(selected?.notes || "");
+    // Saving notes refreshes `selected` with the same lead; keep the "Saved" cue in that case.
+    const nextId = selected?.id ?? null;
+    if (notesLeadIdRef.current !== nextId) {
+      notesLeadIdRef.current = nextId;
+      setNotesSaved(false);
+    }
+  }, [selected]);
 
   async function login(event) {
     event.preventDefault();
@@ -104,14 +193,25 @@ export default function Admin() {
     setBusy(true);
     const credentials = `Basic ${btoa(`${username}:${password}`)}`;
     try {
-      const response = await fetch("/api/admin/leads", { headers: { Authorization: credentials } });
+      const response = await fetch(`/api/admin/leads?status=active&page=1&size=${PAGE_SIZE}`, {
+        headers: { Authorization: credentials },
+      });
       if (!response.ok) {
-        throw new Error(response.status === 401
-          ? "Username or password was not accepted."
-          : "Admin API is unavailable. Check that the backend and database are running.");
+        let message = "";
+        try { message = (await response.json()).message || ""; } catch { /* non-JSON error */ }
+        if (response.status === 401) {
+          throw new Error("Username or password was not accepted.");
+        }
+        if (response.status === 429) {
+          throw new Error(message || "Too many failed sign-in attempts. Please wait and try again.");
+        }
+        throw new Error("Admin API is unavailable. Check that the backend and database are running.");
       }
+      const data = await response.json();
+      setTab("active");
+      setPage(1);
       setAuth(credentials);
-      setRows(await response.json());
+      applyPayload(data);
     } catch (exception) {
       setError(exception.message || "Could not connect to the admin API.");
     } finally {
@@ -123,13 +223,12 @@ export default function Admin() {
     const started = Date.now();
     if (showFeedback) setRefreshing(true);
     try {
-      const latestRows = await request("/api/admin/leads");
+      await load({ silent: !showFeedback });
       if (showFeedback) {
         const remaining = 700 - (Date.now() - started);
         if (remaining > 0) await wait(remaining);
+        setSelected(null);
       }
-      setRows(latestRows);
-      if (showFeedback) setSelected(null);
     } catch (exception) {
       if (showFeedback) setError(exception.message || "Could not refresh enquiries.");
     } finally {
@@ -137,23 +236,21 @@ export default function Admin() {
     }
   }
 
-  useEffect(() => {
-    if (!auth) return;
-    const interval = window.setInterval(() => {
-      if (document.visibilityState === "visible") refresh(false);
-    }, 15000);
-    return () => window.clearInterval(interval);
-  }, [auth]);
+  function changeTab(next) {
+    setTab(next);
+    setPage(1);
+    setSelectedIds(new Set());
+    setNotice("");
+  }
 
-  useEffect(() => {
-    setNotes(selected?.notes || "");
-    // Saving notes refreshes `selected` with the same lead; keep the "Saved" cue in that case.
-    const nextId = selected?.id ?? null;
-    if (notesLeadIdRef.current !== nextId) {
-      notesLeadIdRef.current = nextId;
-      setNotesSaved(false);
-    }
-  }, [selected]);
+  function clearFilters() {
+    setSearchInput("");
+    setSearch("");
+    setSource("");
+    setFrom("");
+    setTo("");
+    setPage(1);
+  }
 
   async function updateLead(id, action) {
     const confirmation = action === "delete"
@@ -169,7 +266,7 @@ export default function Admin() {
       setLeavingId(id);
       await wait(350);
       setSelected(null);
-      await refresh(false);
+      await load({ silent: true });
     } catch (exception) {
       setError(exception.message || "Could not update the enquiry.");
     } finally {
@@ -189,13 +286,54 @@ export default function Admin() {
       setLeavingId(id);
       await wait(350);
       setSelected(null);
-      await refresh(false);
+      await load({ silent: true });
     } catch (exception) {
       setError(exception.message || "Could not delete the enquiry.");
     } finally {
       setPendingKey("");
       setLeavingId(null);
     }
+  }
+
+  async function applyBulk(action) {
+    if (selectedIds.size === 0) return;
+    const label = {
+      resolve: "resolved",
+      restore: "restored",
+      delete: "moved to deleted",
+      purge: "permanently deleted",
+    }[action];
+    if (action === "delete" && !window.confirm(`Move ${selectedIds.size} enquiries to the deleted area? They can be restored within 15 days.`)) return;
+    if (action === "purge" && !window.confirm(`Permanently delete ${selectedIds.size} enquiries? This cannot be undone.`)) return;
+    setBulkBusy(true);
+    setError("");
+    try {
+      const result = await request("/api/admin/leads/bulk", "POST", { ids: [...selectedIds], action });
+      setNotice(`${result.updated} ${result.updated === 1 ? "enquiry" : "enquiries"} ${label}.`);
+      setTimeout(() => setNotice(""), 4000);
+      setSelectedIds(new Set());
+      await load({ silent: true });
+    } catch (exception) {
+      setError(exception.message || "Could not update the selected enquiries.");
+    } finally {
+      setBulkBusy(false);
+    }
+  }
+
+  function toggleAll() {
+    if (!rows) return;
+    setSelectedIds((previous) => {
+      const allSelected = rows.length > 0 && rows.every((row) => previous.has(row.id));
+      return allSelected ? new Set() : new Set(rows.map((row) => row.id));
+    });
+  }
+
+  function toggleOne(id) {
+    setSelectedIds((previous) => {
+      const next = new Set(previous);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   }
 
   async function saveNotes() {
@@ -222,13 +360,15 @@ export default function Admin() {
     setExporting(true);
     setError("");
     try {
-      const response = await fetch("/api/admin/leads/export.csv", { headers: { Authorization: auth } });
+      const response = await fetch("/api/admin/leads/export.csv?" + filterParams({ paged: false }).toString(), {
+        headers: { Authorization: auth },
+      });
       if (!response.ok) throw new Error(`Export failed (${response.status})`);
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `dsp-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.download = `dsp-leads-${tab}-${new Date().toISOString().slice(0, 10)}.csv`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -239,17 +379,6 @@ export default function Admin() {
       setExporting(false);
     }
   }
-
-  const visibleRows = (rows || []).filter((row) => {
-    const deleted = Boolean(row.deleted);
-    const resolved = isResolved(row);
-    const matchesTab = tab === "active" ? !deleted && !resolved
-      : tab === "resolved" ? !deleted && resolved : deleted;
-    const needle = search.trim().toLowerCase();
-    const matchesSearch = !needle || [row.fullName, row.email, row.phone, row.city,
-      row.customerType, row.message, row.source].some((value) => String(value || "").toLowerCase().includes(needle));
-    return matchesTab && matchesSearch;
-  });
 
   if (rows === null) {
     return (
@@ -271,9 +400,11 @@ export default function Admin() {
     );
   }
 
-  const activeCount = rows.filter((row) => !row.deleted && !isResolved(row)).length;
-  const resolvedCount = rows.filter((row) => !row.deleted && isResolved(row)).length;
-  const deletedCount = rows.filter((row) => row.deleted).length;
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const firstIndex = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const lastIndex = Math.min(total, page * PAGE_SIZE);
+  const allSelected = rows.length > 0 && rows.every((row) => selectedIds.has(row.id));
+  const hasFilters = Boolean(search.trim() || source || from || to);
 
   return (
     <main className="admin-dashboard">
@@ -294,28 +425,74 @@ export default function Admin() {
           </div>
         </div>
         <div className="admin-metrics">
-          <article><span>Active enquiries</span><strong>{activeCount}</strong><small>Needs follow-up</small></article>
-          <article><span>Resolved</span><strong>{resolvedCount}</strong><small>Completed enquiries</small></article>
-          <article><span>Deleted</span><strong>{deletedCount}</strong><small>Moved to deleted area</small></article>
-          <article><span>Total records</span><strong>{rows.length}</strong><small>Saved in database</small></article>
+          <article><span>Active enquiries</span><strong>{counts.active}</strong><small>Needs follow-up</small></article>
+          <article><span>Resolved</span><strong>{counts.resolved}</strong><small>Completed enquiries</small></article>
+          <article><span>Deleted</span><strong>{counts.deleted}</strong><small>Moved to deleted area</small></article>
+          <article><span>Total records</span><strong>{counts.active + counts.resolved + counts.deleted}</strong><small>Saved in database</small></article>
         </div>
         <section className="admin-panel">
-          <div className="admin-panel-head"><div><h2>Enquiries</h2><p>Open a record to review its details and contact the customer.</p></div><input className="admin-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name, phone, city, source…" aria-label="Search enquiries" /></div>
+          <div className="admin-panel-head"><div><h2>Enquiries</h2><p>Open a record to review its details and contact the customer.</p></div><input className="admin-search" value={searchInput} onChange={(event) => setSearchInput(event.target.value)} placeholder="Search name, phone, city, source…" aria-label="Search enquiries" /></div>
           <div className="admin-tabs">
-            <button className={tab === "active" ? "selected" : ""} onClick={() => setTab("active")}>Active <b>{activeCount}</b></button>
-            <button className={tab === "resolved" ? "selected" : ""} onClick={() => setTab("resolved")}>Resolved <b>{resolvedCount}</b></button>
-            <button className={tab === "deleted" ? "selected" : ""} onClick={() => setTab("deleted")}>Deleted <b>{deletedCount}</b></button>
+            <button className={tab === "active" ? "selected" : ""} onClick={() => changeTab("active")}>Active <b>{counts.active}</b></button>
+            <button className={tab === "resolved" ? "selected" : ""} onClick={() => changeTab("resolved")}>Resolved <b>{counts.resolved}</b></button>
+            <button className={tab === "deleted" ? "selected" : ""} onClick={() => changeTab("deleted")}>Deleted <b>{counts.deleted}</b></button>
+          </div>
+          <div className="admin-filters">
+            <label>Source
+              <select value={source} onChange={(event) => { setSource(event.target.value); setPage(1); }} aria-label="Filter by source">
+                <option value="">All sources</option>
+                {sources.map((item) => <option key={item} value={item}>{item}</option>)}
+              </select>
+            </label>
+            <label>From
+              <input type="date" value={from} max={to || undefined} onChange={(event) => { setFrom(event.target.value); setPage(1); }} aria-label="Received from date" />
+            </label>
+            <label>To
+              <input type="date" value={to} min={from || undefined} onChange={(event) => { setTo(event.target.value); setPage(1); }} aria-label="Received to date" />
+            </label>
+            {hasFilters && <button type="button" className="admin-filter-clear" onClick={clearFilters}>Clear filters</button>}
           </div>
           {tab === "deleted" && (
             <p className="admin-note">Deleted enquiries are removed permanently after {AUTO_DELETE_DAYS} days. Restore an enquiry before then to keep it.</p>
           )}
-          {error && <p className="error admin-error">{error}</p>}
+          {error && <p className="error admin-error" role="alert">{error}</p>}
+          {notice && <p className="admin-notice" role="status">{notice}</p>}
+          {selectedIds.size > 0 && (
+            <div className="admin-bulk" role="region" aria-label="Bulk actions">
+              <span>{selectedIds.size} selected</span>
+              <div>
+                {tab === "active" && (
+                  <button onClick={() => applyBulk("resolve")} disabled={bulkBusy}>Resolve selected</button>
+                )}
+                {tab !== "active" && (
+                  <button onClick={() => applyBulk("restore")} disabled={bulkBusy}>Restore selected</button>
+                )}
+                {tab !== "deleted" && (
+                  <button className="danger" onClick={() => applyBulk("delete")} disabled={bulkBusy}>Move to deleted</button>
+                )}
+                {tab === "deleted" && (
+                  <button className="danger" onClick={() => applyBulk("purge")} disabled={bulkBusy}>Delete permanently</button>
+                )}
+                <button onClick={() => setSelectedIds(new Set())} disabled={bulkBusy}>Clear selection</button>
+              </div>
+            </div>
+          )}
           <div className="admin-table-wrap">
             <table className="admin-table">
-              <thead><tr><th>Customer</th><th>Project</th><th>Location</th><th>Source</th><th>Received</th><th>Status</th><th>Actions</th></tr></thead>
+              <thead>
+                <tr>
+                  <th className="admin-select-col">
+                    <input type="checkbox" checked={allSelected} onChange={toggleAll} aria-label="Select all enquiries on this page" />
+                  </th>
+                  <th>Customer</th><th>Project</th><th>Location</th><th>Source</th><th>Received</th><th>Status</th><th>Actions</th>
+                </tr>
+              </thead>
               <tbody>
-                {visibleRows.map((row) => (
+                {rows.map((row) => (
                   <tr key={row.id} className={leavingId === row.id ? "row-leaving" : ""}>
+                    <td className="admin-select-col">
+                      <input type="checkbox" checked={selectedIds.has(row.id)} onChange={() => toggleOne(row.id)} aria-label={`Select ${row.fullName || "enquiry"}`} />
+                    </td>
                     <td><button className="admin-customer" onClick={() => setSelected(row)}>{row.fullName || "Unnamed"}</button><small>{row.email || row.phone || "No contact details"}</small></td>
                     <td>{row.customerType || "—"}</td>
                     <td>{[row.city, row.pincode].filter(Boolean).join(" · ") || "—"}</td>
@@ -354,9 +531,17 @@ export default function Admin() {
                     </td>
                   </tr>
                 ))}
-                {visibleRows.length === 0 && <tr><td colSpan="7" className="admin-empty">No enquiries found in this section.</td></tr>}
+                {rows.length === 0 && <tr><td colSpan="8" className="admin-empty">No enquiries found in this section{hasFilters ? " for these filters" : ""}.</td></tr>}
               </tbody>
             </table>
+          </div>
+          <div className="admin-pagination">
+            <span>Showing {firstIndex}–{lastIndex} of {total}</span>
+            <div>
+              <button onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page <= 1} aria-label="Previous page"><ChevronLeft size={15} /></button>
+              <span>Page {page} of {pageCount}</span>
+              <button onClick={() => setPage((current) => Math.min(pageCount, current + 1))} disabled={page >= pageCount} aria-label="Next page"><ChevronRight size={15} /></button>
+            </div>
           </div>
         </section>
       </section>

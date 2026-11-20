@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { usePageMeta } from "../lib/seo";
+import { CITIES } from "../data/cities";
 
 const GROUPS = [
   ["Offerings", [
@@ -33,6 +34,7 @@ const GROUPS = [
     ["/blog", "Solar guides & articles"],
     ["/contact", "Contact & free consultation"],
   ]],
+  ["City solar guides", CITIES.map((city) => [`/service-areas/${city.slug}`, `Solar in ${city.name}`])],
   ["Legal", [
     ["/privacy", "Privacy Policy"],
     ["/terms", "Terms of Use"],
@@ -42,7 +44,7 @@ const GROUPS = [
 export default function Sitemap() {
   usePageMeta("Sitemap", "Every public page on the DSP Power Infra website — offerings, solar solutions, tools, company information, guides and legal pages.");
   return (
-    <main>
+    <>
       <section className="section sitemap-page">
         <span className="eyebrow">Site directory</span>
         <h1>Every page, one place.</h1>
@@ -58,6 +60,6 @@ export default function Sitemap() {
           ))}
         </div>
       </section>
-    </main>
+    </>
   );
 }

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Compass, Handshake, Ruler, ShieldCheck } from "lucide-react";
 import PageHero from "../components/PageHero";
 import { usePageMeta } from "../lib/seo";
+import Picture from "../components/Picture";
 
 const VALUES = [
   [Compass, "Guidance before sales", "We recommend what your site needs. If solar is not the right answer yet, we say that too."],
@@ -41,7 +42,7 @@ export default function About() {
             <p>That means our proposals sometimes say "smaller than you asked" or "not yet worth it." Customers stay because the numbers hold up year after year.</p>
             <Link className="button primary" to="/how-it-works">See the project journey <ArrowRight size={16} /></Link>
           </div>
-          <img src="/images/house-dusk.jpg" alt="A home at dusk, the kind of site we plan for" loading="lazy" />
+          <Picture src="/images/house-dusk.jpg" alt="A home at dusk, the kind of site we plan for" />
         </div>
       </section>
       <section className="banner">

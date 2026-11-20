@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight, ArrowUpRight, Building2, Check, ClipboardCheck, Compass, Factory, FileText,
@@ -6,11 +6,12 @@ import {
 } from "lucide-react";
 import LeadForm from "../components/LeadForm";
 import Faq from "../components/Faq";
-import QuoteModal from "../components/QuoteModal";
+const QuoteModal = lazy(() => import("../components/QuoteModal"));
 import { HOME_FAQS, CONTACT } from "../data/content";
 import { usePageMeta, useFaqSchema } from "../lib/seo";
 import { pct } from "../lib/format";
-import EmiCalculator from "../components/EmiCalculator";
+const EmiCalculator = lazy(() => import("../components/EmiCalculator"));
+import Picture from "../components/Picture";
 
 const segments = [
   ["Residential", "Homes", "A rooftop system designed around your energy use and property.", House, "/homes"],
@@ -88,9 +89,9 @@ export default function Home() {
   usePageMeta(null, "DSP Power Infra — solar EPC for homes, housing societies and businesses in Pune. Survey-first design, subsidy support, installation and maintenance.");
   useFaqSchema(HOME_FAQS);
   return (
-    <main>
+    <>
       <section className="hero photo-hero">
-        <img className="hero-photo" src="/images/panels-sunset.jpg" alt="Rooftop solar panels stretching toward a setting sun" />
+        <Picture className="hero-photo" src="/images/panels-sunset.jpg" alt="Rooftop solar panels stretching toward a setting sun" loading="eager" fetchPriority="high" sizes="100vw" />
         <div className="hero-scrim" />
         <div className="hero-copy">
           <span className="hero-badge"><Sparkles size={14} /> Solar EPC · Pune, Maharashtra</span>
@@ -126,7 +127,7 @@ export default function Home() {
             <article className="service" key={title}>
               <span className="service-icon"><Icon /></span>
               <small>{tag}</small><h3>{title}</h3><p>{copy}</p>
-              <Link to={url}>Learn more <ArrowUpRight size={15} /></Link>
+              <Link to={url}>Learn more about {title.toLowerCase()} <ArrowUpRight size={15} /></Link>
             </article>
           ))}
         </div>
@@ -184,7 +185,9 @@ export default function Home() {
           <div><span className="eyebrow">Solar tools</span><h2>Know your numbers.</h2></div>
           <p>Try a simple EMI estimate, or run the full savings calculator with subsidy and adjustable assumptions.</p>
         </div>
-        <EmiCalculator />
+        <Suspense fallback={<div className="emi-skeleton" aria-hidden="true" />}>
+          <EmiCalculator />
+        </Suspense>
         <div className="calc-cta">
           <Link className="button primary" to="/solar-calculator">Estimate solar savings <ArrowRight size={16} /></Link>
           <p>Enter your PIN code and monthly bill to see system size, subsidy, cost and payback — with every assumption visible.</p>
@@ -195,7 +198,7 @@ export default function Home() {
 
       <section className="visit-section">
         <div className="visit">
-          <img className="visit-img" src="/images/banner-b.jpg" alt="" loading="lazy" />
+          <Picture className="visit-img" src="/images/banner-b.jpg" alt="" sizes="(max-width: 900px) 100vw, 55vw" />
           <div className="visit-scrim" aria-hidden="true" />
           <div>
             <span className="eyebrow">Before you decide</span>
@@ -247,7 +250,11 @@ export default function Home() {
         </div>
         <LeadForm source="home" />
       </section>
-      <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />
-    </main>
+      {quoteOpen && (
+        <Suspense fallback={null}>
+          <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />
+        </Suspense>
+      )}
+    </>
   );
 }

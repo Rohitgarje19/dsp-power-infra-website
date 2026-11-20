@@ -5,6 +5,8 @@ const RESULTS_URL =
 
 async function resultStats(page) {
   await page.goto(RESULTS_URL);
+  // The results route is code-split, so wait for its chunk to render.
+  await expect(page.locator(".result-stats article strong")).toHaveCount(3);
   const stats = await page.locator(".result-stats article strong").allInnerTexts();
   const subsidy = await page.locator(".subsidy-amount").innerText();
   return { stats, subsidy };

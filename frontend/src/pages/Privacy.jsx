@@ -12,7 +12,7 @@ export default function Privacy() {
 
         <h2>What we collect</h2>
         <p>When you submit an enquiry through this website, we collect the details you provide: your name, phone number, email address (optional), customer type, city, PIN code, approximate monthly electricity bill and any message you write. We also record which page the enquiry came from and, if present in the link you followed, basic campaign tags (UTM source, medium and campaign) so we know which channel referred you.</p>
-        <p>We do not run third-party advertising trackers on this site. The only data we hold about you is what you choose to share with us.</p>
+        <p>We do not run third-party advertising trackers on this site. With your permission we use Google Analytics 4 to understand which pages are useful; it loads only after you accept analytics in the cookie banner. If you decline, no analytics script is loaded.</p>
 
         <h2>Why we collect it</h2>
         <ul>
@@ -39,6 +39,10 @@ export default function Privacy() {
 
         <h2>Calculator and estimates</h2>
         <p>The solar calculator runs entirely in your browser. Bill values and PIN codes you enter there are not sent to our servers unless you choose to submit an enquiry. Any figures shown are estimates based on stated assumptions, not offers or guarantees.</p>
+
+        <h2>Analytics and cookies</h2>
+        <p>When you accept analytics, we load Google Analytics 4 from Google. It sets first-party cookies (names beginning <code>_ga</code>) that help us see which pages visitors find useful and how they move between pages. We request IP anonymisation, do not enable advertising features, and do not use the data to build advertising profiles.</p>
+        <p>If you decline, analytics stays off and the site works exactly the same. Your choice is stored in your own browser (local storage key <code>dsp-analytics-consent</code>) and is not sent to us. You can change it at any time using the “Cookie settings” link in the footer, which reopens the banner.</p>
 
         <h2>Changes to this policy</h2>
         <p>If this policy changes, we will update this page and the date above. Questions are welcome at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.</p>

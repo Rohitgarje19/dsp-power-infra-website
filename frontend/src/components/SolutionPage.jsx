@@ -4,24 +4,26 @@ import PageHero from "./PageHero";
 import Faq from "./Faq";
 import LeadForm from "./LeadForm";
 import { usePageMeta } from "../lib/seo";
+import { SOLUTION_PAGES } from "../data/solutions";
 
 /** Rich, data-driven template for all six solution pages. */
 export default function SolutionPage({ data }) {
   const { pathname } = useLocation();
-  usePageMeta(data.title, data.lede);
+  const page = data || SOLUTION_PAGES[pathname];
+  usePageMeta(page.title, page.lede);
   const customerType = pathname === "/commercial" ? "Commercial" : pathname === "/housing-societies" ? "Housing Society" : "Residential";
 
   return (
     <>
-      <PageHero eyebrow={data.eyebrow} title={data.title} lede={data.lede} image={data.image} imageAlt={data.imageAlt} />
+      <PageHero eyebrow={page.eyebrow} title={page.title} lede={page.lede} image={page.image} imageAlt={page.imageAlt} />
 
       <section className="section">
         <div className="section-head">
           <div><span className="eyebrow">Why it works</span><h2>Built around your site,<br />not a sales package.</h2></div>
-          <p>{data.lede}</p>
+          <p>{page.lede}</p>
         </div>
         <div className="benefit-grid">
-          {data.benefits.map(([title, copy], i) => (
+          {page.benefits.map(([title, copy], i) => (
             <article key={title}>
               <span className="benefit-num">{String(i + 1).padStart(2, "0")}</span>
               <h3>{title}</h3>
@@ -37,7 +39,7 @@ export default function SolutionPage({ data }) {
           <p>Every step has a clear output you can review before the next one begins.</p>
         </div>
         <div className="steps-row">
-          {data.steps.map(([title, copy], i) => (
+          {page.steps.map(([title, copy], i) => (
             <article key={title}>
               <b>{i + 1}</b>
               <h3>{title}</h3>
@@ -47,22 +49,22 @@ export default function SolutionPage({ data }) {
         </div>
       </section>
 
-      {data.table && (
+      {page.table && (
         <section className="section">
           <div className="section-head">
-            <div><span className="eyebrow">Planning guide</span><h2>{data.table.title}</h2></div>
+            <div><span className="eyebrow">Planning guide</span><h2>{page.table.title}</h2></div>
           </div>
           <div className="spec-table-wrap">
             <table className="spec-table">
-              <thead><tr>{data.table.head.map((h) => <th key={h}>{h}</th>)}</tr></thead>
-              <tbody>{data.table.rows.map((row) => <tr key={row[0]}>{row.map((cell, j) => j === 0 ? <th key={j} scope="row">{cell}</th> : <td key={j}>{cell}</td>)}</tr>)}</tbody>
+              <thead><tr>{page.table.head.map((h) => <th key={h}>{h}</th>)}</tr></thead>
+              <tbody>{page.table.rows.map((row) => <tr key={row[0]}>{row.map((cell, j) => j === 0 ? <th key={j} scope="row">{cell}</th> : <td key={j}>{cell}</td>)}</tr>)}</tbody>
             </table>
           </div>
-          <p className="table-note">{data.table.note}</p>
+          <p className="table-note">{page.table.note}</p>
         </section>
       )}
 
-      <Faq items={data.faqs} title="Questions we hear on this page" />
+      <Faq items={page.faqs} title="Questions we hear on this page" />
 
       <section className="section contact solution-contact" id="enquire">
         <div>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
 import { CONTACT } from "../data/content";
+import { analyticsConfigured } from "../lib/analytics";
 
 export default function Footer() {
   return (
@@ -50,6 +51,9 @@ export default function Footer() {
         <span>© {new Date().getFullYear()} DSP Power Infra. Estimates are indicative, not offers.</span>
         <span className="footer-legal">
           <Link to="/privacy">Privacy Policy</Link>
+          {analyticsConfigured() && (
+            <button type="button" className="footer-cookie" onClick={() => window.dispatchEvent(new Event("dsp:open-consent"))}>Cookie settings</button>
+          )}
           <Link to="/terms">Terms of Use</Link>
           <Link to="/admin">Team sign in <ArrowUpRight size={13} /></Link>
         </span>

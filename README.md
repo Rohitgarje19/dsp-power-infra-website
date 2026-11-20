@@ -3,7 +3,7 @@
 Local workspace for the DSP Power Infra solar platform — an original, DSP-branded site inspired by the customer journeys of reference solar sites (e.g. SolarSquare), built and verified to run fully functional locally.
 
 ## Stack
-- React 19 + Vite 7 frontend (react-router, 27 public routes + admin desk)
+- React 19 + Vite 7 frontend (react-router, 27 public routes + 10 city landing pages + admin desk)
 - Java 21 + Spring Boot 4.1.2 REST API (feature-first packages)
 - MySQL 8.4 (Docker) with Flyway-managed schema
 - Private leads API protected with an ADMIN role (HTTP Basic)
@@ -27,18 +27,26 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 4. Visit http://127.0.0.1:5173. The Vite development server proxies `/api` requests to the backend on port 8081. The private team area is at http://127.0.0.1:5173/admin.
 
 ## Run the tests
-- Backend: `cd backend && mvn test` — 51 JUnit/MockMvc tests on H2 (lead API, validation, rate limiting, honeypot, admin workflows, CSV, cleanup job, notification fail-safe, security headers, PIN directory parsing/caching, Maharashtra serviceability, readiness, prod secret guard).
-- Frontend: `cd frontend && npm test` — 95 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability + PIN→city hints, API client/error mapping/retry policy, lead form incl. city autofill, quote modal + focus trap, header/mobile nav + Solutions accordion, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results + autofill, admin desk + detail-modal lifecycle).
+- Backend: `cd backend && mvn test` — 60 JUnit/MockMvc tests on H2 (lead API incl. filtered pagination, bulk actions and CSV filters, validation, rate limiting, admin login throttling, honeypot, cleanup job, email delivery over a real GreenMail SMTP server, notification fail-safe, security headers, PIN directory parsing/caching, Maharashtra serviceability, readiness, prod secret guard).
+- Frontend: `cd frontend && npm test` — 112 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability + PIN→city hints, API client/error mapping/retry policy, lead form incl. city autofill, quote modal + focus trap, header/mobile nav + Solutions accordion, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results + autofill, server-driven admin desk incl. filters/pagination/bulk actions/login throttling, city landing pages, blog + projects gallery, consent-aware analytics).
 - E2E: with MySQL, the backend and Vite running, `cd frontend && npm run test:e2e` — 6 Playwright specs (TC-E2E-01…06) covering the hero quote lead, the hero-estimate → calculator → results → calculator-sourced lead flow, shareable-results parity across contexts, the full admin lifecycle (note → resolve → restore → delete → restore → purge), a 390 px mobile pass without horizontal overflow, and an API-outage-then-clean-retry check. First run needs `npx playwright install chromium`. Admin credentials default to the local-dev values; override with `E2E_ADMIN_USER` / `E2E_ADMIN_PASSWORD`.
 
 ## Status — what is done ✅
 
+### Implementation completion round (2026-11-20)
+1. **Performance & Lighthouse** — self-hosted variable fonts (Archivo, DM Sans) with preload; WebP `<picture>` sets for every photo; route-level code splitting (home 101 KB gzip entry; admin 6.6 KB, solution template 6.9 KB, other pages 1–3 KB each); hero preload; home widget chunks deferred. Measured mobile Lighthouse on the built site (gzip like production): **home 94 / 100 / 100 / 100**, **calculator 93 / 100 / 100 / 100** (performance / accessibility / best-practices / SEO), CLS 0.
+2. **Lead desk scale-up** — server-side pagination (`page`, `size`), status/search/source/date filters, filtered CSV export, bulk resolve/restore/delete/purge (max 500 ids) with tab counts, and per-IP admin login throttling (429 + `Retry-After` after repeated failures). The desk now holds only the current page.
+3. **Email notifications** — verified end-to-end by `LeadEmailNotificationTests`, which delivers a real message to an embedded GreenMail SMTP server and asserts recipient, subject and body.
+4. **City landing pages** — ten honest, locally specific pages at `/service-areas/:slug` (Pune, Pimpri-Chinchwad, Mumbai, Thane, Navi Mumbai, Nashik, Nagpur, Chhatrapati Sambhajinagar, Kolhapur, Solapur), each with local constraints, FAQ schema, calculator/visit CTAs, enquiry form and nearby-city links; linked from Service Areas, the HTML sitemap and `sitemap.xml`.
+5. **Content depth** — six claim-safe articles (new: housing-society checklist, monsoon readiness) and a Projects gallery with representative-imagery labels, segment tags and an accessible filter.
+6. **Consent-aware analytics** — GA4 loads only when `VITE_GA_MEASUREMENT_ID` is set **and** the visitor accepts the cookie banner; router-driven page views, honour revocation, footer “Cookie settings”, privacy-policy section, CSP allow-list and `.env.example`. With no ID configured (the default) nothing loads.
+
 ### Public website (Phase 1 complete)
-- Routed pages: home, residential, commercial, housing societies, grid-connected, hybrid and off-grid solar, how-it-works, projects, about, blog + article pages, service areas, refer-a-friend, experience centre, webinars, partners, contact, privacy, terms, 404.
+- Routed pages: home, residential, commercial, housing societies, grid-connected, hybrid and off-grid solar, how-it-works, projects, about, blog + article pages, service areas + ten city guides, refer-a-friend, experience centre, webinars, partners, contact, privacy, terms, 404.
 - Solar calculator (`/solar-calculator`) with live preview and shareable results (`/solar-calculator/results`): system size, roof area, PM Surya Ghar subsidy (₹30k/kW first 2 kW + ₹18k third kW, capped ₹78k, residential only), net cost, payback and EMI — every assumption visible and adjustable, results labelled as planning estimates.
 - Calculator → results → prefilled contact enquiry flow; leads carry source page and UTM attribution.
 - Serviceability PIN check (all Maharashtra prefixes 400–445, excluding Goa's 403; other PINs accepted and flagged, never rejected).
-- SEO: per-route titles/descriptions, Open Graph, JSON-LD LocalBusiness + FAQPage (homepage), robots.txt, sitemap.xml, HTML sitemap page.
+- SEO: per-route titles/descriptions, Open Graph, JSON-LD LocalBusiness + FAQPage (homepage and city pages), robots.txt, sitemap.xml (including city guides), HTML sitemap page.
 
 ### SolarSquare parity round (2026-11-20)
 - Quick-quote modal on the hero, header and mobile-bar CTAs — full lead form in an accessible dialog (Escape/backdrop close, scroll lock, focus management); submits with `source=quick-quote`.
@@ -65,7 +73,7 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 
 ### Testing & security hardening round (2026-11-20)
 - Playwright E2E suite (`frontend/e2e`, `npm run test:e2e`) — TC-E2E-01…06 green against the local stack: hero quote-modal lead, hero-estimate → calculator → results → calculator-sourced lead, shared-results parity across browser contexts, admin note/resolve/restore/delete/purge lifecycle, 390 px mobile pass (no horizontal overflow), and API-outage error + exactly-one-lead retry. Each spec cleans up its lead through the admin API.
-- Security headers: the API sends `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` plus a deny-all CSP (`default-src 'none'; frame-ancestors 'none'; base-uri 'none'`), `Referrer-Policy: strict-origin-when-cross-origin`, a restrictive `Permissions-Policy`, and HSTS (1 year, includeSubDomains) on HTTPS requests only — covered by `SecurityHeadersTests` (3 MockMvc tests). Vite dev/preview serves a site CSP compatible with HMR and Google Fonts, with frame-ancestors/base-uri/form-action locked down.
+- Security headers: the API sends `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` plus a deny-all CSP (`default-src 'none'; frame-ancestors 'none'; base-uri 'none'`), `Referrer-Policy: strict-origin-when-cross-origin`, a restrictive `Permissions-Policy`, and HSTS (1 year, includeSubDomains) on HTTPS requests only — covered by `SecurityHeadersTests` (3 MockMvc tests). Vite dev/preview serves a site CSP compatible with HMR, self-hosted fonts and the consent-gated GA4 endpoints, with frame-ancestors/base-uri/form-action locked down.
 - E2E testing found and fixed a real admin bug: the "Saved" note confirmation was wiped immediately because refreshing the selected lead re-ran the reset effect.
 - Vitest scoped to `src/**` so it no longer collects the Playwright specs.
 
@@ -77,7 +85,7 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 
 ### Backend API
 - `POST /api/leads` (public, validated, rate-limited 5/min/IP, honeypot silently dropped), `GET /api/serviceability/{pincode}`, `GET /api/health` (liveness), `GET /api/ready` (DB readiness, 503 when down).
-- Admin: list, notes PATCH, resolve/restore/delete, permanent DELETE, `export.csv`.
+- Admin: filtered paginated list (`?status=&q=&source=&from=&to=&page=&size=`), notes PATCH, resolve/restore/delete, permanent DELETE, bulk actions, filtered `export.csv`; repeated Basic-auth failures are throttled per IP.
 - Typed error responses with request IDs; every log line carries the same `X-Request-Id`.
 - Optional fail-safe email notification on new leads (off by default).
 
@@ -92,22 +100,25 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 
 ## Status — what remains ⏳
 
-### Phase 2 — needs company data / integrations (not buildable without DSP input)
-- Verified pricing, tariff and generation assumptions (current calculator defaults are illustrative and must be reviewed before client use).
-- Real project photos/case studies, customer testimonials, certifications (only with permission and proof).
-- City/area landing pages across Maharashtra once location details are confirmed.
-- Richer blog/article content and solar guides.
-- Customer portal, live inverter/generation monitoring (requires a compatible monitoring integration — never fabricate data).
-- Advanced lead workflows (assignment, pipelines, WhatsApp/email automation).
-- Email notification delivery (wired, off by default — needs SMTP credentials).
-- Analytics/marketing pixels (needs DSP's own GA/measurement ID — nothing third-party is embedded by default).
+Order of work (decided 2026-11-20): implementation is now complete; production and deployment are the last phase. The six-item implementation backlog (performance, lead-desk scale-up, SMTP verification, city pages, content depth, analytics) shipped on 2026-11-20 — details above.
 
-### Deployment (deferred by decision — site runs fully locally first)
-- Production hosting, HTTPS, domain + absolute sitemap URLs.
-- Env-driven CORS origins for the production domain (currently dev origins only).
-- Production secrets + `SPRING_PROFILES_ACTIVE=prod`, DB backups, monitoring/alerting.
-- CI workflow runs both unit suites on push/PR; wiring the Playwright suite into CI waits on a MySQL service job (the specs need the backend).
-- Nice-to-haves: serving the production CSP/HSTS from nginx or the host (dev server and API already send headers).
+### Finishing touches that need DSP input (content, not build)
+- Review and confirm the calculator's default tariff, generation and cost assumptions (currently illustrative).
+- Real project photos, case studies, testimonials and certifications — publish only with permission and proof.
+- Confirm the WhatsApp number, business hours and experience-centre address.
+- SMTP credentials for go-live and a GA4 measurement ID if analytics is wanted (set `VITE_GA_MEASUREMENT_ID` at build time; see `frontend/.env.example`).
+
+### Deployment — next phase
+- Dockerfiles + full compose stack: nginx serving the built frontend and proxying `/api`, the Spring Boot jar, and MySQL; nginx config for SPA fallback, gzip, immutable asset caching and HTTPS redirect.
+- Domain, HTTPS (Let's Encrypt), absolute `sitemap.xml`/OG URLs, env-driven CORS origins for the production domain (currently dev origins only).
+- Production secrets + `SPRING_PROFILES_ACTIVE=prod`, MySQL volume + nightly backups, uptime monitoring/alerting.
+- Playwright in CI on top of the existing unit-suite workflow (needs a MySQL service job).
+- Serving production CSP/HSTS from nginx or the host (the API already sends them).
+
+### Post-launch product phase (needs business decisions or third-party integrations)
+- Customer portal and live inverter/generation monitoring (requires a real monitoring integration — never fabricate data).
+- Advanced lead workflows (team assignment, pipelines, WhatsApp/email automation).
+- City-page fleet beyond the launch ten, richer blog content, multi-language.
 
 ## Content rules (must always hold)
 Do not publish unverified pricing, subsidy amounts, service coverage, guarantees, certifications or testimonials. Representative imagery must be labelled as such. Estimates must show their assumptions and carry no savings or subsidy guarantee. Live generation data requires a real inverter/monitoring integration and must never be fabricated.

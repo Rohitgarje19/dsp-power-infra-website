@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-20):** Backend 51/51 JUnit tests pass (`mvn test`), frontend 95/95 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean. The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
+**Status snapshot (2026-11-20):** Backend 60/60 JUnit tests pass (`mvn test`), frontend 112/112 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
 
 ---
 
@@ -226,6 +226,54 @@ Home hero rebuilt to match the supplied reference: full-bleed sunset-over-panels
 | TC-HERO-07 ✅ | Hero sits under the header | negative margin-top equals header height (84 desktop / 72 ≤980) with matching padding-top; no content hidden behind the header |
 
 Browser smoke (same round, 754px viewport): at top the header is `.overlay` (transparent gradient, white brand/nav/menu, amber 999px CTA) and the hero starts at y=0 with the headline clear of the header; scrolling to 400px returns the solid white blurred header; opening the mobile menu forces the solid header + scroll lock and closing restores `.overlay`; hero copy, both pill CTAs and the caption fit inside the hero with no horizontal overflow; the sunset photo loads (naturalWidth 1640); the sun CTA opens the quote dialog with initial focus on Full name and Escape closes + restores scroll; `/homes` and `/solar-calculator` keep solid headers, serif page-hero and loaded band imagery with no overflow; console clean. Desktop-width pixel QA remains deferred (in-app browser viewport is locked to 754px and was hidden this round, so verification used computed styles + geometry rather than screenshots).
+
+---
+
+## Implementation backlog round (2026-11-20)
+
+### TC-ADMIN-08…11 — server-driven lead desk (`pages/Admin.jsx`, `Admin.test.jsx`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-ADMIN-08 ✅ | Server filters | source + date-range filters request `?source=&from=&to=` and reset to page 1 |
+| TC-ADMIN-09 ✅ | Pagination | "Showing X–Y of N" and Previous/Next request the right page/size |
+| TC-ADMIN-10 ✅ | Bulk actions | selecting a row and Resolve posts `{ ids: [7], action: "resolve" }` |
+| TC-ADMIN-11 ✅ | Login throttling | a 429 sign-in shows the retry-later message |
+
+### TC-CITY-01…04 — ten Maharashtra city guides (`pages/CitySolar.jsx`, `data/cities.js`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-CITY-01 ✅ | Data completeness | exactly 10 unique cities, each with 3 local notes, 3 FAQs and 3 valid neighbours |
+| TC-CITY-02 ✅ | City render | requested city shows its own H1, local context, FAQ heading and prefilled enquiry form heading |
+| TC-CITY-03 ✅ | Unknown slug | redirects to `/service-areas` instead of rendering broken content |
+| TC-CITY-04 ✅ | Directory links | the Service Areas page links every city guide |
+
+### TC-CONTENT-01…03 — blog + gallery (`data/blog.js`, `data/projects.js`, `pages/Projects.jsx`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-CONTENT-01 ✅ | Six articles | unique slugs, ≥4 sections each, valid dates, no positive guarantee claims |
+| TC-CONTENT-02 ✅ | Blog index | all six guides are linked |
+| TC-CONTENT-03 ✅ | Gallery filter | "representative imagery" label present; tag buttons filter the 6 labelled entries with `aria-pressed` |
+
+### TC-ANALYTICS-01…06 — consent-aware GA4 (`lib/analytics.js`, `components/CookieConsent.jsx`)
+| ID | Case | Expected |
+|---|---|---|
+| TC-ANALYTICS-01 ✅ | No ID | nothing loads, no dataLayer entries even after init/track |
+| TC-ANALYTICS-02 ✅ | Accept | loads gtag once with `send_page_view:false`, `anonymize_ip:true`; router page views queue with `page_path` |
+| TC-ANALYTICS-03 ✅ | Decline / revoke | decline loads nothing; revoking stops further page views |
+| TC-ANALYTICS-04 ✅ | Banner visibility | hidden without a measurement ID or when a choice is already stored |
+| TC-ANALYTICS-05 ✅ | Accept button | stores `granted`, closes the banner and loads GA4 |
+| TC-ANALYTICS-06 ✅ | Decline button | stores `denied`, closes the banner and loads nothing |
+
+### Backend additions
+| ID | Case | Expected |
+|---|---|---|
+| TC-LEAD-40…45 ✅ | Filtered list | status/search/source/date filters, pagination, 422 on bad status/date, newest-first ordering |
+| TC-LEAD-46…47 ✅ | Bulk actions | resolve/delete/purge update only matching ids; unknown action → 422; non-admin → 401 |
+| TC-LEAD-48 ✅ | CSV | export honours the active filters |
+| TC-AUTH-03…04 ✅ | Login throttle | blocked IP gets 429 even with the right password; success resets the counter |
+| TC-MAIL-02 ✅ | SMTP delivery | GreenMail receives the new-lead message with recipient, subject and body |
+
+Performance: built site measured under Lighthouse mobile (gzip like production) — home 94/100/100/100, calculator 93/100/100/100; LCP improved by self-hosted variable fonts, WebP picture sets and the hero preload.
 
 ---
 
