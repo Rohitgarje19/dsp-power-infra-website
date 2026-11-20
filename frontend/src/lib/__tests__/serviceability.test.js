@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isValidPincode, checkPincode, SERVICEABLE_PREFIXES } from "../serviceability";
+import { isValidPincode, checkPincode, cityForPincode, PIN_CITY_HINTS, SERVICEABLE_PREFIXES } from "../serviceability";
 
 // TC-SVC-* from docs/TEST_CASES.md
 describe("serviceability", () => {
@@ -29,5 +29,23 @@ describe("serviceability", () => {
 
   it("trims whitespace before validating", () => {
     expect(checkPincode(" 411046 ").serviceable).toBe(true);
+  });
+
+  it("suggests the city for confirmed serviceable PINs", () => {
+    expect(cityForPincode("411046")).toBe("Pune");
+    expect(cityForPincode("412033")).toBe("Pune");
+    expect(cityForPincode(" 411001 ")).toBe("Pune");
+  });
+
+  it("does not guess a city outside the confirmed region or for invalid PINs", () => {
+    expect(cityForPincode("400001")).toBeNull();
+    expect(cityForPincode("41104")).toBeNull();
+    expect(cityForPincode("")).toBeNull();
+  });
+
+  it("keeps every city hint inside the confirmed serviceable prefixes", () => {
+    for (const { prefix } of PIN_CITY_HINTS) {
+      expect(SERVICEABLE_PREFIXES).toContain(prefix);
+    }
   });
 });

@@ -28,7 +28,7 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 
 ## Run the tests
 - Backend: `cd backend && mvn test` — 41 JUnit/MockMvc tests on H2 (lead API, validation, rate limiting, honeypot, admin workflows, CSV, cleanup job, notification fail-safe, security headers, readiness, prod secret guard).
-- Frontend: `cd frontend && npm test` — 79 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability, API client/error mapping/retry policy, lead form, quote modal + focus trap, header/mobile nav + Solutions accordion, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results, admin desk + detail-modal lifecycle).
+- Frontend: `cd frontend && npm test` — 90 Vitest + Testing Library tests (solar math, subsidy slabs, serviceability + PIN→city hints, API client/error mapping/retry policy, lead form incl. city autofill, quote modal + focus trap, header/mobile nav + Solutions accordion, free-visit booking, FAQ depth, careers, HTML sitemap, calculator results + autofill, admin desk + detail-modal lifecycle).
 - E2E: with MySQL, the backend and Vite running, `cd frontend && npm run test:e2e` — 6 Playwright specs (TC-E2E-01…06) covering the hero quote lead, the hero-estimate → calculator → results → calculator-sourced lead flow, shareable-results parity across contexts, the full admin lifecycle (note → resolve → restore → delete → restore → purge), a 390 px mobile pass without horizontal overflow, and an API-outage-then-clean-retry check. First run needs `npx playwright install chromium`. Admin credentials default to the local-dev values; override with `E2E_ADMIN_USER` / `E2E_ADMIN_PASSWORD`.
 
 ## Status — what is done ✅
@@ -68,6 +68,9 @@ Local workspace for the DSP Power Infra solar platform — an original, DSP-bran
 - Security headers: the API sends `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` plus a deny-all CSP (`default-src 'none'; frame-ancestors 'none'; base-uri 'none'`), `Referrer-Policy: strict-origin-when-cross-origin`, a restrictive `Permissions-Policy`, and HSTS (1 year, includeSubDomains) on HTTPS requests only — covered by `SecurityHeadersTests` (3 MockMvc tests). Vite dev/preview serves a site CSP compatible with HMR and Google Fonts, with frame-ancestors/base-uri/form-action locked down.
 - E2E testing found and fixed a real admin bug: the "Saved" note confirmation was wiped immediately because refreshing the selected lead re-ran the reset effect.
 - Vitest scoped to `src/**` so it no longer collects the Playwright specs.
+
+### Form UX round (2026-11-20)
+- PIN → City autofill: entering a confirmed serviceable PIN (411/412…) fills the City field on the enquiry form (quick-quote modal, contact, book-visit, calculator-sourced lead) and on the solar calculator, including shared `?pincode=` links. A city the visitor types is never overwritten, and outside the confirmed region the field stays empty. Hints live in `frontend/src/lib/serviceability.js` (`PIN_CITY_HINTS`) so they can only name prefixes already confirmed as serviceable.
 
 ### Lead desk (`/admin`)
 - Active / resolved / deleted tabs, search, lead detail modal, internal notes, resolve / restore / soft-delete / permanent delete, CSV export, 15-day auto-delete of soft-deleted leads.

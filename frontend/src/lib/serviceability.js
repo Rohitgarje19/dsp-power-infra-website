@@ -5,6 +5,20 @@
 export const SERVICEABLE_PREFIXES = ["411", "412"]; // Pune region
 export const SERVICEABLE_LABEL = "Pune region";
 
+// City hints for PIN -> City autofill. Only confirmed serviceable prefixes are
+// listed — never guess a city outside the region. Visitors can always edit it.
+export const PIN_CITY_HINTS = [
+  { prefix: "411", city: "Pune" },
+  { prefix: "412", city: "Pune" },
+];
+
+export function cityForPincode(pin) {
+  const p = String(pin || "").trim();
+  if (!isValidPincode(p)) return null;
+  const hint = PIN_CITY_HINTS.find((entry) => p.startsWith(entry.prefix));
+  return hint ? hint.city : null;
+}
+
 export function isValidPincode(pin) {
   return /^[1-9][0-9]{5}$/.test(String(pin || "").trim());
 }

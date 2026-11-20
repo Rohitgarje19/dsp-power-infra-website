@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, Check, MapPin } from "lucide-react";
 import { postLead, getErrorMessage, fieldErrors } from "../lib/api";
 import { readUtm } from "../lib/seo";
-import { checkPincode } from "../lib/serviceability";
+import { checkPincode, cityForPincode } from "../lib/serviceability";
 
 const BILL_OPTIONS = [
   ["", "Choose range"],
@@ -19,8 +19,24 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
   const [error, setError] = useState("");
   const [fields, setFields] = useState({});
   const [pin, setPin] = useState(defaults.pincode || "");
+  const [city, setCity] = useState(defaults.city || "");
+  // True while the city value came from PIN autofill; manual typing clears it
+  // so we never overwrite a city the visitor chose.
+  const cityAutoFilled = useRef(false);
+  const cityManual = useRef(false);
 
   const pinInfo = pin.length === 6 ? checkPincode(pin) : null;
+
+  useEffect(() => {
+    const hint = cityForPincode(pin);
+    if (hint && !cityManual.current && (!city.trim() || cityAutoFilled.current)) {
+      cityAutoFilled.current = true;
+      setCity(hint);
+    } else if (!hint && cityAutoFilled.current) {
+      cityAutoFilled.current = false;
+      setCity("");
+    }
+  }, [pin, city]);
 
   async function submit(e) {
     e.preventDefault();
@@ -47,6 +63,9 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
       });
       form.reset();
       setPin("");
+      setCity(defaults.city || "");
+      cityAutoFilled.current = false;
+      cityManual.current = false;
       setStatus("done");
     } catch (err) {
       setFields(fieldErrors(err));
@@ -93,7 +112,18 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
           </select>
         </label>
         <label>City
-          <input required name="city" placeholder="Pune" maxLength={100} defaultValue={defaults.city || ""} />
+          <input
+            required
+            name="city"
+            placeholder="Pune"
+            maxLength={100}
+            value={city}
+            onChange={(e) => {
+              cityAutoFilled.current = false;
+              cityManual.current = true;
+              setCity(e.target.value);
+            }}
+          />
           {fields.city && <small className="field-error">{fields.city}</small>}
         </label>
         <label>PIN code

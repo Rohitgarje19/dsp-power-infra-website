@@ -64,6 +64,47 @@ describe("LeadForm", () => {
     expect(screen.getByText(/haven't confirmed service/i)).toBeInTheDocument();
   });
 
+  it("TC-FORM-11: a serviceable PIN autofills the city", async () => {
+    const user = userEvent.setup();
+    setup();
+    await user.type(screen.getByLabelText(/pin code/i), "411046");
+    expect(screen.getByLabelText(/^city/i)).toHaveValue("Pune");
+  });
+
+  it("TC-FORM-12: a non-serviceable PIN does not autofill the city", async () => {
+    const user = userEvent.setup();
+    setup();
+    await user.type(screen.getByLabelText(/pin code/i), "400001");
+    expect(screen.getByLabelText(/^city/i)).toHaveValue("");
+  });
+
+  it("TC-FORM-13: a manually typed city is never overwritten by the PIN hint", async () => {
+    const user = userEvent.setup();
+    setup();
+    const city = screen.getByLabelText(/^city/i);
+    await user.type(city, "Pimpri");
+    await user.type(screen.getByLabelText(/pin code/i), "411046");
+    expect(city).toHaveValue("Pimpri");
+    // Clearing it and trying again must also respect the visitor's choice.
+    await user.clear(city);
+    await user.clear(screen.getByLabelText(/pin code/i));
+    await user.type(screen.getByLabelText(/pin code/i), "412033");
+    expect(city).toHaveValue("");
+  });
+
+  it("submits the autofilled city with the lead", async () => {
+    postLead.mockResolvedValue({ id: 2 });
+    const user = userEvent.setup();
+    setup();
+    await user.type(screen.getByLabelText(/full name/i), "Asha Kulkarni");
+    await user.type(screen.getByLabelText(/^phone/i), "9876543210");
+    await user.type(screen.getByLabelText(/pin code/i), "411046");
+    await user.click(screen.getByRole("checkbox"));
+    await user.click(screen.getByRole("button", { name: /request a consultation/i }));
+    await waitFor(() => expect(screen.getByText(/thanks, we have your enquiry/i)).toBeInTheDocument());
+    expect(postLead.mock.calls[0][0]).toMatchObject({ city: "Pune", pincode: "411046" });
+  });
+
   it("TC-FORM-03: 422 shows field errors and keeps entered data", async () => {
     postLead.mockRejectedValue(new ApiError(422, { errors: [{ field: "phone", message: "Phone must be 10–20 digits." }] }));
     const user = userEvent.setup();
