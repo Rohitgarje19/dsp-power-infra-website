@@ -78,7 +78,7 @@ export default function Calculator() {
               </select>
             </label>
             <div className="rate-badge">
-              <small>DSP {customerType.toLowerCase()} rate</small>
+              <small>DSP {customerType.toLowerCase()} rate · turnkey, incl. GST</small>
               <strong>{inr(sheetRate?.perKw ?? live.costPerKw)}<span> /kW</span></strong>
             </div>
             <label className="bill-control">Average monthly electricity bill <strong>{inr(bill)}</strong>
@@ -92,14 +92,15 @@ export default function Calculator() {
                 <label>Solar output (kWh/kW/month)<input type="number" min="20" max="250" step="5" value={yieldRate} onChange={(e) => setYieldRate(e.target.value)} /></label>
                 <label>System cost (₹/kW)<input type="number" min="10000" max="200000" step="1000" value={cost} onChange={(e) => setCost(e.target.value)} /><small>From the DSP rate sheet; editable for planning.</small></label>
                 <label>Roof area (sq ft/kW)<input type="number" min="20" max="200" step="5" value={area} onChange={(e) => setArea(e.target.value)} /></label>
-                <label>Installation height (m)<input type="number" min="0" max="120" step="1" value={height} onChange={(e) => setHeight(e.target.value)} /><small>Rates include up to 20 m; ₹1,000 per extra metre.</small></label>
+                <label>Installation height (m)<input type="number" min="0" max="120" step="1" value={height} onChange={(e) => setHeight(e.target.value)} /><small>Measured from ground level. Rates include up to 20 m; ₹1,000 per extra metre.</small></label>
                 {rateAdjusted && (
                   <button type="button" className="rate-reset" onClick={resetRate}>Reset to DSP rate ({inr(sheetRate.perKw)}/kW)</button>
                 )}
+                <p className="rate-explainer">Rates are full turnkey — supply, installation, wiring, commissioning and DISCOM liaison — and include GST. Commercial and industrial rooftops use Non-DCR modules, which is why their rate is lower; DCR modules are reserved for subsidy-eligible work.</p>
               </div>
             </details>
             <button className="button primary submit">Calculate my estimate <ArrowRight size={17} /></button>
-            <p className="estimate-note">Planning estimate at DSP's current rate sheet — not a quote, savings guarantee, subsidy decision or service availability confirmation.</p>
+            <p className="estimate-note">Planning estimate at DSP's current rate sheet — not a quote, savings guarantee, subsidy decision or service availability confirmation. Rates are turnkey and include GST, with no separate transport charge.</p>
           </div>
         </div>
         <aside className="savings-preview">
@@ -108,8 +109,8 @@ export default function Calculator() {
           <div className="preview-stat"><small>System size</small><strong>{live.kw.toFixed(1)} <span>kW</span></strong></div>
           <div className="preview-stat"><small>Roof area needed</small><strong>{Math.round(live.roof)} <span>sq. ft.</span></strong></div>
           <div className="preview-stat"><small>Estimated monthly use</small><strong>{Math.round(live.usage)} <span>kWh</span></strong></div>
-          <div className="preview-stat"><small>Indicative turnkey cost</small><strong>{inr(live.cost)}</strong>{live.heightSurcharge > 0 && <small className="surcharge-note">includes {inr(live.heightSurcharge)} height charge</small>}</div>
-          <p>Updates as you change your bill or assumptions. A site visit is needed to confirm what fits your roof.</p>
+          <div className="preview-stat"><small>Indicative turnkey cost</small>{live.needsProposal ? <strong>Site-specific</strong> : <strong>{inr(live.cost)}</strong>}{!live.needsProposal && live.heightSurcharge > 0 && <small className="surcharge-note">includes {inr(live.heightSurcharge)} height charge</small>}</div>
+          <p>{live.needsProposal ? "This system is above 200 kW, so DSP prices it in a site-specific proposal after a site review. Your size, usage and roof area above are still planning estimates." : "Updates as you change your bill or assumptions. A site visit is needed to confirm what fits your roof."}</p>
         </aside>
       </form>
       <section className="calculator-how">

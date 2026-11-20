@@ -5,7 +5,7 @@ Tooling: Backend → JUnit 5 + Spring Boot Test + MockMvc + H2 (MySQL mode) · F
 
 Status legend: ☐ not written · ◐ written, failing · ✅ passing
 
-**Status snapshot (2026-11-21):** Backend 91/91 JUnit tests pass (`mvn test`), frontend 142/142 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
+**Status snapshot (2026-11-21):** Backend 91/91 JUnit tests pass (`mvn test`), frontend 147/147 Vitest tests pass (`npm test`), Playwright E2E 6/6 specs pass (`npm run test:e2e`), production build clean, mobile Lighthouse home 94/100/100/100 and calculator 93/100/100/100 (performance/accessibility/best-practices/SEO). The Day 1–4 tables below are the original planning catalogue; implemented test IDs live in `backend/src/test`, `frontend/src/**/__tests__` and `frontend/e2e` (some IDs evolved during implementation — the test files are the source of truth). Day 3 (Playwright E2E) is now implemented for TC-E2E-01…06 on the public site + admin desk; TC-E2E-07 and Day 4 (deployment) remain open.
 
 ---
 
@@ -23,16 +23,18 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 | TC-CALC-07 ☐ | EMI formula | ₹250000, 10%, 60 mo | ₹5,312/mo (±1), total ≈ ₹3,18,708 |
 | TC-CALC-08 ☐ | EMI zero interest | ₹120000, 0%, 60 mo | ₹2,000/mo exactly |
 
-### TC-RATE — DSP rate card (`data/rates.js`) — synced 2026-11-20
+### TC-RATE — DSP rate card (`data/rates.js`) — customer-confirmed 2026-11-21
 | ID | Case | Input | Expected |
 |---|---|---|---|
 | TC-RATE-01 ☐ | Sheet formulas | 3 kW res, 10 kW com, 200 kW ind | ₹2,10,000, ₹3,50,000, ₹64,00,000 |
 | TC-RATE-02 ☐ | Fractional capacity | 2.5 kW | priced at the same per-kW rate (₹1,75,000 res) |
-| TC-RATE-03 ☐ | Capacity bounds | 0.5 / 0 / -5 / 250 kW | billable 1 / 1 / 1 / 200 kW |
-| TC-RATE-04 ☐ | Height allowance | 18, 20, 24, 22.5 m | ₹0, ₹0, ₹4,000, ₹2,500 surcharge |
+| TC-RATE-03 ☐ | Capacity bounds | 0.5 / 0 / -5 / 250 kW | billable 1 / 1 / 1 inside the ladder; 250 kW flagged for a proposal |
+| TC-RATE-04 ☐ | Height allowance | 18, 20, 24, 22.5 m | ₹0, ₹0, ₹4,000, ₹2,500 surcharge (height from ground level) |
 | TC-RATE-05 ☐ | Subsidy eligibility | Residential vs Commercial/Industrial | eligible vs not eligible |
 | TC-RATE-06 ☐ | Unknown type | Housing Society | unsupported (custom proposal), no invented rate |
 | TC-RATE-07 ☐ | Corrupt sheet cells | 1, 21, 41, 200 kW | formula values ₹70,000 / ₹14,70,000 / ₹28,70,000 / ₹1,40,00,000 |
+| TC-RATE-08 ☐ | Above the ladder | 200.5 / 250 kW | `needsProposal` true, no calculated price; UI says "Site-specific" and the contact link omits `estimateCost` |
+| TC-RATE-09 ☐ | Confirmed commercial terms | rate card + calculator copy | GST included, full turnkey, no transport charge, 20 m from ground level, DCR residential / Non-DCR commercial & industrial |
 
 ### TC-IMPACT — PM Surya Ghar track record (`data/impact.js`, `components/TrackRecord.jsx`) — added 2026-11-21
 
@@ -46,10 +48,11 @@ Status legend: ☐ not written · ◐ written, failing · ✅ passing
 |---|---|---|---|
 | TC-SUB-01 ☐ | 1 kW residential | 1 kW | ₹30,000 |
 | TC-SUB-02 ☐ | 2 kW residential | 2 kW | ₹60,000 |
-| TC-SUB-03 ☐ | 3 kW residential | 3 kW | ₹78,000 (cap) |
-| TC-SUB-04 ☐ | Above cap | 5 kW, 10 kW | ₹78,000 (cap) |
-| TC-SUB-05 ☐ | Non-residential | commercial/society segment | ₹0 + "not eligible" note shown |
+| TC-SUB-03 ☐ | Part third-kW slab | 2.5 kW | ₹69,000 |
+| TC-SUB-04 ☐ | Above cap | 3 kW, 5 kW, 10 kW | ₹78,000 (cap) |
+| TC-SUB-05 ☐ | Non-residential | commercial/industrial | ₹0 + "not eligible" note shown |
 | TC-SUB-06 ☐ | Results page integration | 2.5 kW at ₹70k/kW | gross ₹1,75,000; subsidy ₹69,000; net ₹1,06,000; payback on net; disclaimer visible |
+| TC-SUB-07 ☐ | Society common areas | 2.5 kW / 10 kW | ₹45,000 / ₹1,80,000 at ₹18,000/kW (separate group-housing route) |
 
 ### TC-SVC — serviceability
 | ID | Case | Input | Expected |

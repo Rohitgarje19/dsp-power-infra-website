@@ -26,7 +26,11 @@ export default function SubsidyGuide() {
           <article><small>Third kW</small><strong>₹18,000<span>/kW</span></strong><p>Added on top of the first slab</p></article>
           <article className="cap"><small>Maximum</small><strong>₹78,000</strong><p>3 kW and above all reach the cap</p></article>
         </div>
-        <p className="table-note">Commercial, industrial and typically off-grid systems are not eligible. Housing societies follow a separate group-housing scheme with different per-kW amounts.</p>
+        <div className="society-band">
+          <div><small>Housing society common area</small><strong>₹18,000<span>/kW</span></strong></div>
+          <p>Separate group-housing route, confirmed by DSP. Individual flats are not eligible; eligibility is checked for the specific society before we quote.</p>
+        </div>
+        <p className="table-note">Commercial, industrial and typically off-grid systems are not eligible. Residential systems above 3 kW stay capped at ₹78,000.</p>
       </section>
       <section className="section steps-band">
         <div className="section-head">

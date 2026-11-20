@@ -24,7 +24,7 @@ export const CITIES = [
     faqs: [
       { q: "Do you cover all of Pune?", a: "We serve Pune city and surrounding areas. Share your PIN code and we will confirm scheduling for your address; the survey visit is the final confirmation." },
       { q: "Can a housing society go solar?", a: "Yes. Society common-area loads and eligible residential rooftops can be planned together. Approvals differ from an individual home, and we walk the committee through them." },
-      { q: "How does the subsidy apply?", a: "PM Surya Ghar applies to eligible residential systems under current rules; society projects follow a separate scheme. We check your category before quoting so the numbers are not inflated by an assumed subsidy." },
+      { q: "How does the subsidy apply?", a: "PM Surya Ghar applies to eligible residential systems under current rules; society common areas follow a separate group-housing route at ₹18,000/kW. We check your category before quoting so the numbers are not inflated by an assumed subsidy." },
     ],
     nearby: ["pimpri-chinchwad", "kolhapur", "mumbai"],
   },

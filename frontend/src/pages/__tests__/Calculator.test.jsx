@@ -39,6 +39,14 @@ describe("Calculator connection pricing", () => {
     await user.type(cost, "65000");
     expect(screen.getByRole("button", { name: /reset to dsp rate/i })).toBeInTheDocument();
   });
+
+  it("shows a site-specific proposal preview above 200 kW", () => {
+    // 50,000 bill @ ₹1/kWh = 50,000 kWh → 417.0 kW at the default yield
+    renderAt("?billValue=50000&tariff=1");
+    expect(screen.getAllByText(/417\.0/).length).toBeGreaterThan(0);
+    expect(screen.getByText("Site-specific")).toBeInTheDocument();
+    expect(screen.getByText(/above 200 kW, so DSP prices it in a site-specific proposal/i)).toBeInTheDocument();
+  });
 });
 
 // TC-CALC: PIN -> City autofill on the planning tool.

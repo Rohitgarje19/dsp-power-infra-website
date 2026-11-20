@@ -60,7 +60,7 @@ export default function Contact() {
           <div className="contact-row"><Mail /><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></div>
           <div className="contact-row"><MapPin /><span>{CONTACT.city}</span></div>
           <div className="contact-row"><Clock /><span>Mon–Sat, 10:00–19:00 IST</span></div>
-          <p className="availability">Based in Pune. Share your PIN code and we'll confirm service availability for your location.</p>
+          <p className="availability">Based in Pune. Share your PIN code and we'll confirm service availability for your location — there is no separate transport charge.</p>
           {fromCalculator && <p className="pin-note ok"><ArrowUpRight size={15} /> Your calculator estimate is attached to this enquiry.</p>}
         </div>
         <LeadForm source={fromCalculator ? "calculator" : "contact"} defaults={defaults} heading={fromCalculator ? "Get a proposal for your estimate." : "Start with a conversation."} />

@@ -100,7 +100,7 @@ export const SOLUTION_PAGES = {
         ["Corridor & garden lighting", "Evening/night", "Via net metering credit"],
         ["Clubhouse / gym AC", "Day & evening", "Good daytime overlap"],
       ],
-      note: "Society subsidy rules differ from individual homes (a separate per-kW scheme exists for group housing). We verify current eligibility before promising any amount.",
+      note: "Society common areas are supported at ₹18,000/kW under the group-housing route, separate from the residential slabs. We verify current eligibility before promising any amount.",
     },
     faqs: [
       { q: "Who owns the system?", a: "The society owns it; the proposal documents ownership, maintenance responsibility and how savings flow into society accounts." },

@@ -95,7 +95,7 @@ export const HOME_FAQS = [
 ];
 
 export const SUBSIDY_STEPS = [
-  ["Check eligibility", "You need a residential connection, ownership or rights over the roof, and a system within scheme limits. Group housing societies have a separate scheme."],
+  ["Check eligibility", "You need a residential connection, ownership or rights over the roof, and a system within scheme limits. Group housing societies follow a separate route for common areas at ₹18,000/kW."],
   ["Register on the portal", "Create an account at pmsuryaghar.gov.in with your electricity consumer number and mobile. Apply for rooftop solar and wait for feasibility approval."],
   ["Install with a registered vendor", "Installation must be by a registered vendor with approved equipment (ALMM-listed modules). DSP handles design and installation to scheme requirements."],
   ["Apply for net metering", "After installation, apply for net metering through the portal; the DISCOM inspects and installs the bi-directional meter."],
@@ -103,8 +103,9 @@ export const SUBSIDY_STEPS = [
 ];
 
 export const SUBSIDY_FAQS = [
-  { q: "How much subsidy will I get?", a: "For eligible residential systems: ₹30,000/kW for the first 2 kW plus ₹18,000 for the third kW, capped at ₹78,000. A 1 kW system gets ₹30,000; 2 kW gets ₹60,000; 3 kW or more gets ₹78,000." },
-  { q: "Who is not eligible?", a: "Commercial and industrial installations, and typically off-grid systems. Housing societies follow a separate group-housing scheme with different per-kW amounts." },
+  { q: "How much subsidy will I get?", a: "For eligible residential systems: ₹30,000/kW for the first 2 kW plus ₹18,000 for the third kW, capped at ₹78,000. A 1 kW system gets ₹30,000; 2 kW gets ₹60,000; 3 kW gets ₹78,000, and the amount stays at ₹78,000 however much larger the system is." },
+  { q: "Who is not eligible?", a: "Commercial and industrial installations, and typically off-grid systems. Individual flats in housing societies are not covered; society common areas use a separate route." },
+  { q: "What about housing societies?", a: "Society common-area systems are supported under the group-housing route at ₹18,000/kW, separate from the residential slabs. We confirm eligibility for the specific society before quoting." },
   { q: "How long does the subsidy take?", a: "It depends on portal feasibility approval, DISCOM inspection and verification — commonly several weeks after commissioning. We track the steps with you but cannot control government timelines." },
   { q: "Do rules change?", a: "Yes. Amounts, equipment lists and processes are revised periodically. Always verify on the official portal before deciding — our figures are a planning guide, not a guarantee." },
 ];

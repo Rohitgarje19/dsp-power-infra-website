@@ -22,6 +22,7 @@ describe("Results page", () => {
     expect(screen.getByText("₹1,06,000")).toBeInTheDocument(); // net
     expect(screen.getByText(/About 3\.7 years/)).toBeInTheDocument(); // 106000/28800
     expect(screen.getByText(/Pune · 411046/)).toBeInTheDocument();
+    expect(screen.getAllByText(/include GST/i).length).toBeGreaterThan(0);
   });
 
   it("carries the estimate into the contact CTA link", () => {
@@ -54,5 +55,15 @@ describe("Results page", () => {
     renderAt("");
     expect(screen.getByText(/your location/)).toBeInTheDocument();
     expect(screen.getAllByText(/kW/).length).toBeGreaterThan(0);
+  });
+
+  it("switches to a site-specific proposal above 200 kW", () => {
+    renderAt("?billValue=50000&tariff=1&pincode=411046&city=Pune");
+    expect(screen.getAllByText(/417\.0 kW/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Site-specific").length).toBeGreaterThan(0);
+    expect(screen.getByText(/above DSP's 200 kW rate ladder/i)).toBeInTheDocument();
+    expect(screen.queryByText(/About \d+\.\d years/)).not.toBeInTheDocument();
+    const cta = screen.getByRole("link", { name: /discuss this estimate/i });
+    expect(cta.getAttribute("href")).not.toContain("estimateCost");
   });
 });

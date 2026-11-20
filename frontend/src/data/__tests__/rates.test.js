@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   RATE_CARD, CONNECTION_TYPES, normalizeConnectionType, rateFor,
-  billableKw, heightSurcharge, quoteFor,
+  billableKw, heightSurcharge, needsProposal, quoteFor,
 } from "../rates";
 
 // Rates synced from "DATA RATE PER KW" (see rates.js header for sheet caveats).
@@ -17,11 +17,24 @@ describe("DSP rate card", () => {
     expect(quoteFor({ kw: 2.5, connectionType: "Commercial" }).baseCost).toBe(87500);
   });
 
-  it("floors capacity at 1 kW and ceilings at 200 kW", () => {
+  it("floors capacity at 1 kW inside the ladder", () => {
     expect(billableKw(0.5)).toBe(1);
     expect(billableKw(0)).toBe(1);
     expect(billableKw(-5)).toBe(1);
     expect(billableKw(250)).toBe(200);
+  });
+
+  it("routes systems above 200 kW to a site-specific proposal", () => {
+    expect(needsProposal(200)).toBe(false);
+    expect(needsProposal(200.5)).toBe(true);
+    expect(quoteFor({ kw: 200 }).needsProposal).toBe(false);
+    expect(quoteFor({ kw: 250 })).toMatchObject({
+      supported: true,
+      needsProposal: true,
+      billableKw: 250,
+      baseCost: 0,
+      total: 0,
+    });
   });
 
   it("adds a flat ₹1,000/m surcharge only above 20 m", () => {
@@ -52,10 +65,16 @@ describe("DSP rate card", () => {
     expect(quoteFor({ kw: 200 }).total).toBe(14000000);
   });
 
-  it("exposes the three sheet connection types", () => {
+  it("exposes the three sheet connection types and confirmed terms", () => {
     expect(CONNECTION_TYPES).toEqual(["Residential", "Commercial", "Industrial"]);
     expect(RATE_CARD.minKw).toBe(1);
     expect(RATE_CARD.maxKw).toBe(200);
     expect(RATE_CARD.heightIncludedM).toBe(20);
+    expect(RATE_CARD.heightMeasuredFrom).toBe("ground level");
+    expect(RATE_CARD.gstIncluded).toBe(true);
+    expect(RATE_CARD.turnkey).toBe(true);
+    expect(RATE_CARD.connections.Residential.panel).toBe("DCR");
+    expect(RATE_CARD.connections.Commercial.panel).toBe("Non-DCR");
+    expect(RATE_CARD.connections.Industrial.panel).toBe("Non-DCR");
   });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { SUBSIDY, subsidyFor, isSubsidyEligible, afterSubsidy } from "../subsidy";
+import { SUBSIDY, subsidyFor, societySubsidyFor, isSubsidyEligible, afterSubsidy } from "../subsidy";
 
 // TC-SUB-* from docs/TEST_CASES.md
 describe("PM Surya Ghar subsidy", () => {
@@ -47,5 +47,13 @@ describe("PM Surya Ghar subsidy", () => {
   it("TC-SUB-08: net cost never goes below zero; zero offset → payback 0", () => {
     expect(afterSubsidy(50000, 2, 28800).net).toBe(0);
     expect(afterSubsidy(180000, 3, 0).payback).toBe(0);
+  });
+
+  it("TC-SUB-09: society common areas use the ₹18,000/kW route", () => {
+    expect(SUBSIDY.societyPerKw).toBe(18000);
+    expect(societySubsidyFor(10)).toBe(180000);
+    expect(societySubsidyFor(2.5)).toBe(45000);
+    expect(societySubsidyFor(0)).toBe(0);
+    expect(societySubsidyFor("junk")).toBe(0);
   });
 });

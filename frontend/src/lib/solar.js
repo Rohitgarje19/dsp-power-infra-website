@@ -78,19 +78,21 @@ export function estimate({ bill, tariff, yieldPerKw, costPerKw, areaPerKw, conne
   const generation = monthlyGeneration(kw, y);
   const offset = billOffset(b, generation, t);
   const quote = quoteFor({ kw, connectionType, heightM, ratePerKw: c });
-  const cost = quote.total;
+  const proposal = Boolean(quote.needsProposal);
+  const cost = proposal ? 0 : quote.total;
   const yearly = offset * 12;
   return {
     bill: b, tariff: t, yieldPerKw: y, costPerKw: c, areaPerKw: area,
     connectionType: quote.connectionType,
     rateSupported: Boolean(sheet),
+    needsProposal: proposal,
     heightM: Math.max(0, num(heightM)),
     billableKw: quote.billableKw,
     baseCost: quote.baseCost,
     heightSurcharge: quote.heightSurcharge,
     usage, kw, generation, offset, yearly, cost,
     roof: roofAreaSqFt(kw, area),
-    payback: simplePaybackYears(cost, yearly),
+    payback: proposal ? 0 : simplePaybackYears(cost, yearly),
   };
 }
 

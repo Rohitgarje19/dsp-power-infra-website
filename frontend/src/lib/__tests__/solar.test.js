@@ -69,6 +69,17 @@ describe("solar math", () => {
     expect(e.cost).toBe(179000);
   });
 
+  it("TC-RATE: flags systems above 200 kW for a site-specific proposal", () => {
+    const e = estimate({ bill: 50000, tariff: 1 });
+    expect(e.kw).toBeGreaterThan(200);
+    expect(e.needsProposal).toBe(true);
+    expect(e.cost).toBe(0);
+    expect(e.payback).toBe(0);
+    const normal = estimate({ bill: 2400 });
+    expect(normal.needsProposal).toBe(false);
+    expect(normal.cost).toBe(175000);
+  });
+
   it("clamps out-of-range assumptions to safe bounds", () => {
     const e = estimate({ bill: 2400, tariff: 0, yieldPerKw: 5, costPerKw: 1, areaPerKw: 1 });
     expect(e.tariff).toBe(1);

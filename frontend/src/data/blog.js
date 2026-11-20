@@ -25,7 +25,7 @@ export const BLOG_ARTICLES = [
     image: "/images/banner-b.jpg",
     body: [
       ["The numbers", "Eligible residential rooftops receive ₹30,000 per kW for the first 2 kW and ₹18,000 for the next 1 kW — a maximum of ₹78,000. So 1 kW → ₹30,000, 2 kW → ₹60,000, 3 kW and above → ₹78,000."],
-      ["Who qualifies", "Households with a grid connection and roof rights, installing through a registered vendor with approved (ALMM-listed) modules. Commercial and industrial roofs do not qualify; societies have a separate group-housing scheme."],
+      ["Who qualifies", "Households with a grid connection and roof rights, installing through a registered vendor with approved (ALMM-listed) modules. Commercial and industrial roofs do not qualify; society common areas use a separate group-housing route at ₹18,000/kW."],
       ["The process", "Register on pmsuryaghar.gov.in → feasibility approval → installation by a registered vendor → net-metering application and DISCOM inspection → subsidy claim with bank details. The credit lands directly in your account after verification."],
       ["Where people get stuck", "Mismatched consumer numbers, incomplete documents, unregistered vendors and non-approved modules are the common rejection reasons. Using one accountable EPC team removes most of them."],
       ["Keep expectations honest", "Timelines depend on the DISCOM and portal verification — often weeks. Rules and amounts are revised periodically, so verify on the official portal before you commit. Anyone promising a guaranteed date or amount is selling, not informing."],
