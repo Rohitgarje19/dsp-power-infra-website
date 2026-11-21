@@ -2,7 +2,7 @@ import { usePageMeta } from "../lib/seo";
 import { CONTACT } from "../data/content";
 
 export default function Privacy() {
-  usePageMeta("Privacy policy", "How DSP Power Infra collects, uses and protects the information you share through this website.");
+  usePageMeta("Privacy policy", "How DSP Power Infra collects, uses, stores and protects the information you share through this website and our enquiry forms.");
   return (
     <section className="section legal">
       <div className="legal-inner">

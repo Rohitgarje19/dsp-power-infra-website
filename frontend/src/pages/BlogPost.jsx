@@ -9,7 +9,7 @@ import Faq from "../components/Faq";
 export default function BlogPost() {
   const { slug } = useParams();
   const article = BLOG_ARTICLES.find((a) => a.slug === slug);
-  usePageMeta(article?.seoTitle || article?.title || "Guide", article?.excerpt, { image: article?.image, type: "article" });
+  usePageMeta(article?.seoTitle || article?.title || "Guide", article?.description || article?.excerpt, { image: article?.image, type: "article" });
   useArticleSchema(article);
   useFaqSchema(article?.faqs);
   if (!article) return <NotFound />;

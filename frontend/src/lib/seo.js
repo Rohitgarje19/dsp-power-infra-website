@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { ogImageMeta } from "./og-images";
 
 const BASE_TITLE = "DSP Power Infra";
 const BASE_HOME_TITLE = "Rooftop solar plants in Pune | DSP Power Infra";
@@ -65,6 +66,10 @@ function upsertMeta(attr, key, content) {
   tag.setAttribute("content", content);
 }
 
+function removeMeta(attr, key) {
+  document.head.querySelector(`meta[${attr}="${key}"]`)?.remove();
+}
+
 function upsertLink(rel, href) {
   let tag = document.head.querySelector(`link[rel="${rel}"]`);
   if (!tag) {
@@ -80,8 +85,10 @@ export function usePageMeta(title, description, options = {}) {
   const { image = DEFAULT_IMAGE, noindex = false, type = "website" } = options;
   const composed = composeTitle(title);
   const desc = description || DEFAULT_DESCRIPTION;
+  const imageAlt = options.imageAlt || `${composed.replace(/\s*\|\s*DSP Power Infra\s*$/, "")} — DSP Power Infra`;
+  const imageDimensions = ogImageMeta(image);
 
-  recordMeta({ title: composed, description: desc, image, type, noindex });
+  recordMeta({ title: composed, description: desc, image, imageAlt, type, noindex });
 
   useEffect(() => {
     document.title = composed;
@@ -98,9 +105,20 @@ export function usePageMeta(title, description, options = {}) {
     upsertMeta("property", "og:url", canonical);
     upsertMeta("property", "og:type", type);
     upsertMeta("property", "og:image", absoluteUrl(image));
+    upsertMeta("property", "og:image:alt", imageAlt);
+    const dimensionTags = [
+      ["og:image:width", imageDimensions?.width],
+      ["og:image:height", imageDimensions?.height],
+      ["og:image:type", imageDimensions?.type],
+    ];
+    dimensionTags.forEach(([key, value]) => {
+      if (value) upsertMeta("property", key, String(value));
+      else removeMeta("property", key);
+    });
     upsertMeta("name", "twitter:title", composed);
     upsertMeta("name", "twitter:description", desc);
     upsertMeta("name", "twitter:image", absoluteUrl(image));
+    upsertMeta("name", "twitter:image:alt", imageAlt);
 
     let robots = document.head.querySelector('meta[name="robots"]');
     if (noindex) {
@@ -113,7 +131,7 @@ export function usePageMeta(title, description, options = {}) {
     } else if (robots) {
       robots.remove();
     }
-  }, [composed, desc, image, type, noindex]);
+  }, [composed, desc, image, imageAlt, imageDimensions, type, noindex]);
 }
 
 /** Inject FAQPage JSON-LD for a page's FAQ items; removed on unmount. */
@@ -176,8 +194,9 @@ export function useArticleSchema(article) {
     author: { "@type": "Organization", name: BASE_TITLE, url: `${SITE_URL}/about` },
     publisher: {
       "@type": "Organization",
+      "@id": `${SITE_URL}/#business`,
       name: BASE_TITLE,
-      logo: { "@type": "ImageObject", url: `${SITE_URL}/icon-512.png` },
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/icon-512.png`, width: 512, height: 512 },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(pathname) },
   } : null);
@@ -195,6 +214,7 @@ export function useServiceSchema(page) {
     url: absoluteUrl(pathname),
     provider: {
       "@type": "LocalBusiness",
+      "@id": `${SITE_URL}/#business`,
       name: BASE_TITLE,
       url: `${SITE_URL}/`,
       telephone: "+919146467074",

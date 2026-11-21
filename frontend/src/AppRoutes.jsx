@@ -78,8 +78,9 @@ function BreadcrumbSchema() {
 export function PublicLayout() {
   return (
     <>
+      <a className="skip-link" href="#main">Skip to content</a>
       <Header />
-      <main>
+      <main id="main" tabIndex={-1}>
         {/* Keeps the header/footer usable if a single page fails to render. */}
         <ErrorBoundary>
           <Outlet />

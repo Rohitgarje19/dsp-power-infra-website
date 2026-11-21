@@ -7,6 +7,7 @@ import { mkdir, readFile, writeFile, access } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { allRoutes, SITE_URL } from "./seo-routes.mjs";
+import { ogImageMeta } from "../src/lib/og-images.js";
 
 const root = path.resolve(import.meta.dirname, "..");
 const distDir = path.join(root, "dist");
@@ -34,7 +35,7 @@ function stripRouteTags(html) {
     .replace(/<meta name="description"[^>]*>/gi, "")
     .replace(/<meta name="robots"[^>]*>/gi, "")
     .replace(/<link rel="canonical"[^>]*>/gi, "")
-    .replace(/<meta (?:property|name)="(?:og:(?:title|description|url|type|image)|twitter:(?:title|description|image))"[^>]*>/gi, "");
+    .replace(/<meta (?:property|name)="(?:og:(?:title|description|url|type|image|image:alt|image:width|image:height|image:type)|twitter:(?:title|description|image|image:alt))"[^>]*>/gi, "");
 }
 
 function breadcrumbFor(routePath, title) {
@@ -72,6 +73,8 @@ function headBlock(routePath, meta, schemas, { noindex = false } = {}) {
     ? imagePath
     : `${SITE_URL}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
   const type = meta.type || "website";
+  const imageAlt = meta.imageAlt || `${title.replace(/\s*\|\s*DSP Power Infra\s*$/, "")} — DSP Power Infra`;
+  const dimensions = ogImageMeta(imagePath);
 
   const blocks = [
     `<title>${esc(title)}</title>`,
@@ -84,10 +87,19 @@ function headBlock(routePath, meta, schemas, { noindex = false } = {}) {
     `<meta property="og:url" content="${esc(url)}"/>`,
     `<meta property="og:type" content="${esc(type)}"/>`,
     `<meta property="og:image" content="${esc(image)}"/>`,
+    `<meta property="og:image:alt" content="${esc(imageAlt)}"/>`,
     `<meta name="twitter:title" content="${esc(title)}"/>`,
     `<meta name="twitter:description" content="${esc(description)}"/>`,
     `<meta name="twitter:image" content="${esc(image)}"/>`,
+    `<meta name="twitter:image:alt" content="${esc(imageAlt)}"/>`,
   );
+  if (dimensions) {
+    blocks.push(
+      `<meta property="og:image:width" content="${dimensions.width}"/>`,
+      `<meta property="og:image:height" content="${dimensions.height}"/>`,
+      `<meta property="og:image:type" content="${esc(dimensions.type)}"/>`,
+    );
+  }
   if (noindex || meta.noindex) blocks.push('<meta name="robots" content="noindex, nofollow"/>');
 
   const attrsFor = (kind) => (kind === "faq" ? ' data-faq-schema="true"' : ` data-seo="${kind}"`);
@@ -187,17 +199,53 @@ async function main() {
   ].join("\n");
   await writeFile(path.join(distDir, "sitemap.xml"), sitemap, "utf8");
 
+  const AI_CRAWLERS = [
+    "GPTBot",
+    "OAI-SearchBot",
+    "ChatGPT-User",
+    "ClaudeBot",
+    "Google-Extended",
+    "PerplexityBot",
+    "CCBot",
+  ];
   const robots = [
     "User-agent: *",
     "Allow: /",
     "Disallow: /admin",
     "Disallow: /solar-calculator/results",
     "Disallow: /_shell.html",
+    ...AI_CRAWLERS.flatMap((agent) => [
+      "",
+      `User-agent: ${agent}`,
+      "Allow: /",
+      "Disallow: /admin",
+      "Disallow: /solar-calculator/results",
+      "Disallow: /_shell.html",
+    ]),
     "",
     `Sitemap: ${SITE_URL}/sitemap.xml`,
     "",
   ].join("\n");
   await writeFile(path.join(distDir, "robots.txt"), robots, "utf8");
+
+  const llms = [
+    "# DSP Power Infra",
+    "",
+    "> Solar EPC company based in Pune, Maharashtra, India. Survey-first rooftop solar design, supply, installation and maintenance for homes, housing societies and businesses, with PM Surya Ghar subsidy guidance.",
+    "",
+    "## Public pages",
+    ...routes.map((route) => {
+      const label = route.path === "/" ? "Home" : route.path.split("/").filter(Boolean).join(" / ");
+      return `- [${label}](${canonicalFor(route.path)})`;
+    }),
+    "",
+    "## Contact",
+    "- Phone: +91 91464 67074",
+    "- Email: dsp.powerinfra@gmail.com",
+    `- Website: ${SITE_URL}/`,
+    "",
+  ].join("\n");
+  await writeFile(path.join(distDir, "llms.txt"), llms, "utf8");
 
   console.log(`Prerendered ${written.length} routes + 404.html + _shell.html`);
   console.log(`Sitemap: ${routes.length} URLs · robots points at ${SITE_URL}/sitemap.xml`);

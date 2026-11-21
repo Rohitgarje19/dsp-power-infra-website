@@ -4,7 +4,6 @@ import App from "./App.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import "./styles.css";
 import "./theme.css";
-import "./dark.css";
 
 const container = document.getElementById("root");
 const tree = (

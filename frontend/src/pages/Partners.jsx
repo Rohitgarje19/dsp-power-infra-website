@@ -11,7 +11,7 @@ const PARTNERS = [
 ];
 
 export default function Partners() {
-  usePageMeta("Solar partners", "Installers, suppliers, channel partners and referral partners: explore collaboration with DSP Power Infra.");
+  usePageMeta("Solar partners", "Installers, suppliers, channel partners and referral partners: explore how collaboration with DSP Power Infra can fit your business.");
   return (
     <>
       <PageHero

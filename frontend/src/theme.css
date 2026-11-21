@@ -64,6 +64,9 @@ h1 em,h2 em{color:var(--accent);background:none}
 .button.sun:hover{background:var(--btn-hover)}
 .button.pill{border-radius:10px}
 .actions{gap:12px;margin-top:28px}
+.skip-link{position:fixed;top:-100px;left:16px;z-index:500;display:inline-block;background:var(--ink);color:#fff;padding:12px 18px;border-radius:0 0 10px 10px;font-weight:600;text-decoration:none;transition:top .2s ease}
+.skip-link:focus{top:0;color:#fff;outline:2px solid var(--accent);outline-offset:2px}
+main:focus{outline:none}
 
 /* ---------- Header ---------- */
 .site-header{background:var(--header-bg);border-bottom:1px solid var(--hairline);color:var(--ink);backdrop-filter:none;box-shadow:none}
@@ -88,10 +91,6 @@ nav>a.active{color:var(--ink);background:var(--surface-alt);font-weight:600}
 .dd-menu b{color:var(--ink);font-size:14px;font-weight:600}
 .dd-menu small{color:var(--muted)}
 .menu{color:var(--ink)}
-.theme-toggle{margin-left:8px;padding:8px;width:38px;height:38px;justify-content:center;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft)}
-.theme-toggle:hover{background:var(--surface-alt);color:var(--ink)}
-.theme-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.theme-toggle-label{display:none}
 
 /* ---------- Photo hero (home) ---------- */
 .hero.photo-hero{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(360px,.78fr);align-items:center;gap:56px;margin-top:calc(-1 * var(--header-h));padding:calc(var(--header-h) + 52px) var(--pad) 60px;min-height:660px;background:var(--night)}
@@ -237,7 +236,7 @@ nav>a.active{color:var(--ink);background:var(--surface-alt);font-weight:600}
 .fields input,.fields select,.fields textarea,.quick-form input:not([type=range]),.savings-inputs input:not([type=range]),.savings-inputs select,.assumption-fields input,.svc-input input,.admin-notes textarea{background:var(--input-bg);border:1px solid #e3e9f1;border-radius:10px;color:var(--ink)}
 .fields input:focus,.fields select:focus,.fields textarea:focus,.quick-form input:focus,.savings-inputs input:focus,.savings-inputs select:focus,.assumption-fields input:focus,.svc-input input:focus,.admin-notes textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
 .fields label,.quick-form label,.calc-fields>label,.savings-inputs>label,.assumption-fields label,.admin-notes label,.svc-input{color:#5b6478}
-input[type=range]{background:linear-gradient(90deg,var(--accent) var(--pct,50%),#e9e3d4 var(--pct,50%))}
+input[type=range]{height:24px;min-height:24px;padding:0;background:linear-gradient(90deg,var(--accent) var(--pct,50%),#e9e3d4 var(--pct,50%)) center/100% 8px no-repeat}
 input[type=range]::-webkit-slider-thumb{border-color:var(--accent);background:#fff;box-shadow:0 1px 5px rgba(29,95,209,.3)}
 input[type=range]::-moz-range-thumb{border-color:var(--accent);background:#fff}
 .form-card{background:var(--surface);border:1px solid var(--card-border);border-radius:16px;box-shadow:0 20px 50px rgba(16,36,62,.06)}
@@ -253,6 +252,8 @@ input[type=range]::-moz-range-thumb{border-color:var(--accent);background:#fff}
 .error{background:#fdf1ee;color:#a03a2a;border-left-color:#c05242}
 .consent a{color:var(--accent)}
 .field-error{color:#a03a2a}
+.fields .field-error{display:block;margin-top:6px}
+.label-optional{margin-left:4px;font-weight:400;color:var(--muted)}
 
 /* ---------- Visit band ---------- */
 .visit-section{padding:0 var(--pad) 88px}
@@ -656,8 +657,6 @@ body:has(.consult-bar) .wa-float{bottom:96px}
   .dd-menu a{padding:10px 12px}
   .dd-menu a:hover{background:var(--surface-alt)}
   .nav-cta{margin:12px 0 0;justify-content:center;color:#fff!important;background:var(--ink)!important;border-color:var(--ink)!important}
-  .theme-toggle{width:100%;height:44px;margin:8px 0 0;justify-content:flex-start;padding:12px 14px;gap:9px}
-  .theme-toggle-label{display:inline;font-size:14px;font-weight:500}
   .hero.photo-hero{grid-template-columns:1fr;gap:28px;margin-top:calc(-1 * var(--header-h));padding:calc(var(--header-h) + 44px) var(--pad) 48px;min-height:auto}
   .hero-scrim{background:linear-gradient(180deg,rgba(8,18,34,.86),rgba(8,18,34,.7) 45%,rgba(8,18,34,.88))}
   .hero-panel{justify-self:stretch;max-width:none;grid-column:1;grid-row:auto}
@@ -936,7 +935,7 @@ h1,h2{font-family:var(--display),sans-serif;font-weight:700;letter-spacing:-.028
 .trust-num{position:absolute;left:12px;bottom:12px;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:rgba(251,248,240,.95);color:var(--ink);font:600 12px var(--display),sans-serif;letter-spacing:.4px;box-shadow:0 4px 14px rgba(8,18,34,.22)}
 .trust-card h3{font-family:var(--display),sans-serif;font-size:16.5px;font-weight:600;letter-spacing:-.01em;line-height:1.35;margin:0 0 7px;color:var(--ink)}
 .trust-card p{font-size:14px;line-height:1.68;color:var(--muted);margin:0}
-.image-note{margin:28px 0 0;font-size:11.5px;letter-spacing:.2px;color:#7d8da3}
+.image-note{margin:28px 0 0;font-size:11.5px;letter-spacing:.2px;color:var(--muted)}
 
 /* ---------- Standards: the dark forest band ---------- */
 .standards{position:relative;overflow:hidden;background:var(--forest);color:#e9eefa;padding:92px var(--pad)}
@@ -958,7 +957,7 @@ h1,h2{font-family:var(--display),sans-serif;font-weight:700;letter-spacing:-.028
 .standards-card>div{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:14px 0;border-top:1px solid rgba(233,240,252,.12)}
 .standards-card b{flex:none;font-family:var(--display),sans-serif;font-size:13.5px;font-weight:600;color:#f5f8ff}
 .standards-card>div>span{font-size:12.5px;line-height:1.55;color:rgba(226,234,248,.72);text-align:right;text-wrap:balance}
-.standards-card p{margin:18px 0 0;font-size:12px;line-height:1.6;color:rgba(226,234,248,.48)}
+.standards-card p{margin:18px 0 0;font-size:12px;line-height:1.6;color:rgba(226,234,248,.7)}
 
 /* ---------- Banner: cool paper, cobalt CTA ---------- */
 .banner{background:linear-gradient(112deg,#eaf1fd,#dce8fb);border-top:1px solid #c9d9f2;border-bottom:1px solid #c9d9f2}
@@ -1036,6 +1035,4 @@ h1,h2{font-family:var(--display),sans-serif;font-weight:700;letter-spacing:-.028
   .dd-menu{position:static;width:auto;grid-template-columns:1fr;border:0;box-shadow:none;padding:2px 0 6px}
   .dd-menu small{display:none}
   .nav-cta{margin:12px 0 0;justify-content:center;color:#fff!important;background:var(--accent)!important;border-color:var(--accent)!important}
-  .theme-toggle{width:100%;height:44px;margin:8px 0 0;justify-content:flex-start;padding:12px 14px;gap:9px}
-  .theme-toggle-label{display:inline;font-size:14px;font-weight:500}
 }
