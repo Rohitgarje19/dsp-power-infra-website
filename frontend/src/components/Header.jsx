@@ -36,7 +36,7 @@ export default function Header() {
     <header className={"site-header" + (overlay ? " overlay" : "") + (scrolled ? " scrolled" : "")}>
       <Link className="brand" to="/" aria-label="DSP Power Infra Solar EPC Solutions — home">
         <img src="/dsp-logo.jpg" alt="" />
-        <span>DSP <b>POWER INFRA</b>{" "}<small>SOLAR EPC SOLUTIONS</small></span>
+        <span><b>DSP POWER INFRA</b><small>SOLAR EPC SOLUTIONS</small></span>
       </Link>
       <button className="menu" onClick={() => { setOpen(!open); setSolutionsOpen(false); }} aria-label="Toggle menu" aria-expanded={open}>
         {open ? <X /> : <Menu />}
@@ -75,7 +75,7 @@ export default function Header() {
           className="nav-cta nav-quote"
           onClick={() => { setOpen(false); setQuoteOpen(true); }}
         >
-          Get a free consultation <ArrowUpRight size={15} />
+          Get a Free Consultation <ArrowUpRight size={15} />
         </button>
       </nav>
       <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />

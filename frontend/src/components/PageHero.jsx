@@ -21,7 +21,7 @@ export default function PageHero({ eyebrow, title, lede, image, imageAlt, action
         <p className="lede light">{lede}</p>
         {actions === undefined ? (
           <div className="actions">
-            <Link className="button gold pill" to="/contact">Talk to our team <ArrowRight size={16} /></Link>
+            <Link className="button gold pill" to="/contact">Get a Free Consultation <ArrowRight size={16} /></Link>
             <Link className="button ghost-light pill" to="/how-it-works">How it works</Link>
           </div>
         ) : actions}

@@ -13,8 +13,6 @@ import { pct } from "../lib/format";
 import { useCityAutofill } from "../lib/useCityAutofill";
 const EmiCalculator = lazy(() => import("../components/EmiCalculator"));
 import Picture from "../components/Picture";
-import TrackRecord from "../components/TrackRecord";
-import { PM_SURYA_GHAR } from "../data/impact";
 
 const segments = [
   ["Residential", "Homes", "A rooftop system planned around your energy use, roof and, where eligible, PM Surya Ghar assistance.", House, "/homes", "homes"],
@@ -106,17 +104,11 @@ export default function Home() {
           <h1>Power your home<br />with <em>the sun.</em></h1>
           <p className="lede light">Cleaner energy, lower bills, and a system planned around your roof — by one accountable team.</p>
           <div className="actions">
-            <button type="button" className="button sun pill" onClick={() => setQuoteOpen(true)}>Get a free solar consultation <ArrowRight size={17} /></button>
+            <button type="button" className="button sun pill" onClick={() => setQuoteOpen(true)}>Get a Free Consultation <ArrowRight size={17} /></button>
             <Link className="button ghost-light pill" to="/solar-calculator">Calculate your savings</Link>
           </div>
           <p className="hero-meta"><span>Pune-based team</span><span>Survey-first design</span><span>Subsidy support</span></p>
         </div>
-        <aside className="hero-proof" aria-label="Scheme track record">
-          <span className="hp-eyebrow">PM Surya Ghar</span>
-          <strong>{PM_SURYA_GHAR.installationsCompleted.toLocaleString("en-IN")}</strong>
-          <span className="hp-label">installations completed</span>
-          <small>Scheme work only · as of {PM_SURYA_GHAR.asOf}</small>
-        </aside>
       </section>
 
       <section className="proof" aria-label="What DSP Power Infra provides">
@@ -139,7 +131,7 @@ export default function Home() {
             <HeroEstimate />
             <div className="hero-stats">
               <article><strong>Pune</strong><span>Based in Maharashtra</span></article>
-              <article><strong>{PM_SURYA_GHAR.installationsCompleted.toLocaleString("en-IN")}</strong><span>PM Surya Ghar installations</span></article>
+              <article><strong>Subsidy</strong><span>Eligibility checked first</span></article>
               <article><strong>1 team</strong><span>Enquiry to switch-on</span></article>
             </div>
           </div>
@@ -181,8 +173,6 @@ export default function Home() {
         </div>
         <p className="image-note">Representative imagery. Every installation is planned to the site.</p>
       </section>
-
-      <TrackRecord />
 
       <section className="standards" id="about">
         <div className="standards-inner">
@@ -279,19 +269,19 @@ export default function Home() {
 
       <section className="banner">
         <div><span className="eyebrow">Your next step</span><h2>Start with your roof.<br /><em>We'll help with the rest.</em></h2></div>
-        <a className="button sun" href="#contact">Talk to our team <ArrowRight size={16} /></a>
+        <a className="button sun" href="#contact">Get a Free Consultation <ArrowRight size={16} /></a>
       </section>
 
       <section className="section contact" id="contact">
         <div>
-          <span className="eyebrow">Tell us what you need</span>
-          <h2>Let's explore what solar can <em>do for you.</em></h2>
-          <p>Share a few details and our team will learn about your site and answer your questions.</p>
+          <span className="eyebrow">LET'S TALK SOLAR</span>
+          <h2>Start with a <em>conversation.</em></h2>
+          <p>Tell us about your project and our team will follow up.</p>
           <div className="contact-row"><Phone /><a href={CONTACT.phoneHref}>{CONTACT.phone}</a></div>
           <div className="contact-row"><ArrowUpRight /><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></div>
           <p className="availability">Based in Pune. Share your PIN code and we'll confirm service availability for your location.</p>
         </div>
-        <LeadForm source="home" />
+        <LeadForm source="home" showHead={false} />
       </section>
       {quoteOpen && (
         <Suspense fallback={null}>

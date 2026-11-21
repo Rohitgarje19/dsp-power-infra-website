@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Compass, Handshake, Ruler, ShieldCheck } from "lucide-react";
 import PageHero from "../components/PageHero";
-import TrackRecord from "../components/TrackRecord";
 import { usePageMeta } from "../lib/seo";
 import Picture from "../components/Picture";
 
@@ -34,7 +33,6 @@ export default function About() {
           ))}
         </div>
       </section>
-      <TrackRecord />
       <section className="section steps-band">
         <div className="about-story">
           <div>
@@ -49,7 +47,7 @@ export default function About() {
       </section>
       <section className="banner">
         <div><span className="eyebrow">Work with us</span><h2>Start with a conversation.</h2></div>
-        <Link className="button light" to="/contact">Talk to the team <ArrowRight size={16} /></Link>
+        <Link className="button light" to="/contact">Get a Free Consultation <ArrowRight size={16} /></Link>
       </section>
     </>
   );

@@ -124,7 +124,7 @@ export default function Calculator() {
         </div>
       </section>
       <div className="consult-bar">
-        <p>Have questions about your estimate? Talk to our team.</p>
+        <p>Have questions about your estimate? Get a free consultation.</p>
         <a className="button primary" href="/contact">Request a consultation <ArrowRight size={16} /></a>
       </div>
     </div>

@@ -14,7 +14,7 @@ const BILL_OPTIONS = [
   ["10000", "Above ₹8,000"],
 ];
 
-export default function LeadForm({ source = "website", defaults = {}, heading = "Start with a conversation.", eyebrow = "LET'S TALK SOLAR", intro = "Tell us about your project and our team will follow up." }) {
+export default function LeadForm({ source = "website", defaults = {}, heading = "Start with a conversation.", eyebrow = "LET'S TALK SOLAR", intro = "Tell us about your project and our team will follow up.", showHead = true }) {
   const { pathname } = useLocation();
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
@@ -73,9 +73,13 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
 
   return (
     <form className="form-card" onSubmit={submit} noValidate={false}>
-      <span className="eyebrow">{eyebrow}</span>
-      <h3>{heading}</h3>
-      <p>{intro}</p>
+      {showHead && (
+        <>
+          <span className="eyebrow">{eyebrow}</span>
+          <h3>{heading}</h3>
+          <p>{intro}</p>
+        </>
+      )}
       <div className="fields">
         <label>Full name
           <input required name="fullName" placeholder="Your name" minLength={2} maxLength={100} defaultValue={defaults.fullName || ""} />
