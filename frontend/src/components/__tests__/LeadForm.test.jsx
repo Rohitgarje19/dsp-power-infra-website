@@ -147,6 +147,20 @@ describe("LeadForm", () => {
     expect(screen.queryByText(/thanks, we have your enquiry/i)).not.toBeInTheDocument();
   });
 
+  it("TC-FORM-16: a rejected field is linked to its message and receives focus", async () => {
+    postLead.mockRejectedValue(new ApiError(422, { errors: [{ field: "phone", message: "Phone must be 10–20 digits." }] }));
+    const user = userEvent.setup();
+    setup();
+    await fillValid(user);
+    await user.click(screen.getByRole("button", { name: /request a consultation/i }));
+    const phone = screen.getByLabelText(/^phone/i);
+    await waitFor(() => expect(phone).toHaveAttribute("aria-invalid", "true"));
+    const describedBy = phone.getAttribute("aria-describedby");
+    expect(describedBy).toBeTruthy();
+    expect(document.getElementById(describedBy)).toHaveTextContent("Phone must be 10–20 digits.");
+    expect(phone).toHaveFocus();
+  });
+
   it("TC-FORM-04: network failure tells the user the enquiry was NOT saved", async () => {
     postLead.mockRejectedValue(new TypeError("Failed to fetch"));
     const user = userEvent.setup();

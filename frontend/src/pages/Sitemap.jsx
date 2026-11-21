@@ -42,7 +42,7 @@ const GROUPS = [
 ];
 
 export default function Sitemap() {
-  usePageMeta("Sitemap", "Every public page on the DSP Power Infra website — offerings, solar solutions, tools, company information, guides and legal pages.");
+  usePageMeta("Website sitemap", "Every public page on the DSP Power Infra website — offerings, solar solutions, tools, company information, guides and legal pages.");
   return (
     <>
       <section className="section sitemap-page">

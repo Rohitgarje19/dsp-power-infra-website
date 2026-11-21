@@ -12,7 +12,7 @@ const WORK_AREAS = [
 ];
 
 export default function Careers() {
-  usePageMeta("Careers", "Careers at DSP Power Infra, a Pune-based solar EPC company. Design, installation, service and customer guidance roles open as projects grow — send us your CV.");
+  usePageMeta("Solar careers in Pune", "Careers at DSP Power Infra, a Pune-based solar EPC company. Design, installation, service and customer guidance roles open as projects grow — send us your CV.");
   const mailto = `mailto:${CONTACT.email}?subject=${encodeURIComponent("Careers at DSP Power Infra")}`;
   return (
     <>

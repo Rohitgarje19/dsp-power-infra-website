@@ -51,6 +51,11 @@ describe("usePageMeta", () => {
     expect(document.querySelector('meta[property="og:url"]').content).toBe(`${SITE_URL}/`);
     expect(document.querySelector('meta[property="og:title"]').content).toBe("Solar guides | DSP Power Infra");
     expect(document.querySelector('meta[name="twitter:image"]').content).toMatch(/^https:\/\//);
+    expect(document.querySelector('meta[property="og:image:width"]').content).toBe("1600");
+    expect(document.querySelector('meta[property="og:image:height"]').content).toBe("914");
+    expect(document.querySelector('meta[property="og:image:type"]').content).toBe("image/jpeg");
+    expect(document.querySelector('meta[property="og:image:alt"]').content).toMatch(/Solar guides/);
+    expect(document.querySelector('meta[name="twitter:image:alt"]').content).toMatch(/Solar guides/);
     expect(document.querySelector('meta[name="robots"]')).toBeNull();
   });
 

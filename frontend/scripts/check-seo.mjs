@@ -28,9 +28,11 @@ for (const route of routes) {
   const h1Count = (html.match(/<h1[\s>]/g) || []).length;
 
   if (!title || title.length > 60) errors.push(`${route.path}: title length ${title.length}`);
+  if (title.length < 25) errors.push(`${route.path}: title is too short (${title.length})`);
   if (title.includes("undefined")) errors.push(`${route.path}: title contains undefined`);
   if (title.split("DSP Power Infra").length > 2) errors.push(`${route.path}: brand repeated in title`);
   if (!description || description.length > 160) errors.push(`${route.path}: description length ${description.length}`);
+  if (description.length < 120) errors.push(`${route.path}: description is too short (${description.length})`);
   if (description.includes("undefined")) errors.push(`${route.path}: description contains undefined`);
   if (seenTitles.has(title)) errors.push(`${route.path}: title duplicates ${seenTitles.get(title)}`);
   else seenTitles.set(title, route.path);
@@ -41,6 +43,16 @@ for (const route of routes) {
   }
   if (h1Count !== 1) errors.push(`${route.path}: ${h1Count} H1 headings`);
   if (/<meta name="robots"/i.test(html)) errors.push(`${route.path}: unexpected robots meta`);
+
+  const ogImage = (html.match(/<meta property="og:image" content="([^"]*)"/) || [])[1] || "";
+  const ogImageAlt = (html.match(/<meta property="og:image:alt" content="([^"]*)"/) || [])[1] || "";
+  const ogImageWidth = (html.match(/<meta property="og:image:width" content="(\d+)"/) || [])[1] || "";
+  const ogImageHeight = (html.match(/<meta property="og:image:height" content="(\d+)"/) || [])[1] || "";
+  const twitterImageAlt = (html.match(/<meta name="twitter:image:alt" content="([^"]*)"/) || [])[1] || "";
+  if (!ogImage.startsWith("https://")) errors.push(`${route.path}: og:image is not absolute`);
+  if (!ogImageAlt) errors.push(`${route.path}: og:image:alt missing`);
+  if (!ogImageWidth || !ogImageHeight) errors.push(`${route.path}: og:image dimensions missing`);
+  if (!twitterImageAlt) errors.push(`${route.path}: twitter:image:alt missing`);
 
   const jsonLd = [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
   const types = new Set();
@@ -107,6 +119,15 @@ if (!fs.existsSync(robotsFile)) {
   errors.push("robots.txt missing");
 } else if (!read(robotsFile).includes(`Sitemap: ${SITE_URL}/sitemap.xml`)) {
   errors.push("robots.txt has no absolute sitemap line");
+}
+
+const llmsFile = path.join(distDir, "llms.txt");
+if (!fs.existsSync(llmsFile)) {
+  errors.push("llms.txt missing");
+} else {
+  const llms = read(llmsFile);
+  if (!llms.includes(SITE_URL)) errors.push("llms.txt has no absolute site URL");
+  if (!llms.includes("/solar-calculator")) errors.push("llms.txt is missing key pages");
 }
 
 if (errors.length) {

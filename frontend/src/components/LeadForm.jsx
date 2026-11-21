@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, Check, MapPin } from "lucide-react";
 import { postLead, getErrorMessage, fieldErrors } from "../lib/api";
@@ -23,6 +23,10 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
   const { city, onCityChange, resetCity, suggestion } = useCityAutofill(pin, defaults.city || "");
 
   const pinInfo = pin.length === 6 ? checkPincode(pin) : null;
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const fieldId = (name) => `${uid}-${name}`;
+  const errorId = (name) => `${uid}-${name}-error`;
+  const cityDescribedBy = [fields.city ? errorId("city") : null, suggestion ? `${uid}-city-hint` : null].filter(Boolean).join(" ") || undefined;
 
   async function submit(e) {
     e.preventDefault();
@@ -52,9 +56,14 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
       resetCity();
       setStatus("done");
     } catch (err) {
-      setFields(fieldErrors(err));
+      const nextFields = fieldErrors(err);
+      setFields(nextFields);
       setError(getErrorMessage(err));
       setStatus("error");
+      // Move focus to the first rejected field so keyboard and screen-reader
+      // users land on the error instead of hunting for it.
+      const first = ["fullName", "phone", "email", "city", "pincode"].find((name) => nextFields[name]);
+      if (first) form.elements.namedItem(first)?.focus();
     }
   }
 
@@ -81,17 +90,17 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
         </>
       )}
       <div className="fields">
-        <label>Full name
-          <input required name="fullName" placeholder="Your name" minLength={2} maxLength={100} defaultValue={defaults.fullName || ""} />
-          {fields.fullName && <small className="field-error">{fields.fullName}</small>}
+        <label htmlFor={fieldId("fullName")}>Full name
+          <input id={fieldId("fullName")} required name="fullName" autoComplete="name" placeholder="Your name" minLength={2} maxLength={100} defaultValue={defaults.fullName || ""} aria-invalid={fields.fullName ? "true" : undefined} aria-describedby={fields.fullName ? errorId("fullName") : undefined} />
+          {fields.fullName && <small id={errorId("fullName")} className="field-error">{fields.fullName}</small>}
         </label>
-        <label>Phone
-          <input required name="phone" pattern="[0-9+\(\)\- ]{10,20}" placeholder="+91 98765 43210" defaultValue={defaults.phone || ""} />
-          {fields.phone && <small className="field-error">{fields.phone}</small>}
+        <label htmlFor={fieldId("phone")}>Phone
+          <input id={fieldId("phone")} required name="phone" type="tel" inputMode="tel" autoComplete="tel" pattern="[0-9+\(\)\- ]{10,20}" placeholder="+91 98765 43210" defaultValue={defaults.phone || ""} aria-invalid={fields.phone ? "true" : undefined} aria-describedby={fields.phone ? errorId("phone") : undefined} />
+          {fields.phone && <small id={errorId("phone")} className="field-error">{fields.phone}</small>}
         </label>
-        <label>Email
-          <input name="email" type="email" placeholder="Optional" maxLength={160} defaultValue={defaults.email || ""} />
-          {fields.email && <small className="field-error">{fields.email}</small>}
+        <label htmlFor={fieldId("email")}>Email <span className="label-optional">(optional)</span>
+          <input id={fieldId("email")} name="email" type="email" autoComplete="email" placeholder="you@example.com" maxLength={160} defaultValue={defaults.email || ""} aria-invalid={fields.email ? "true" : undefined} aria-describedby={fields.email ? errorId("email") : undefined} />
+          {fields.email && <small id={errorId("email")} className="field-error">{fields.email}</small>}
         </label>
         <label>Project type
           <select name="customerType" defaultValue={defaults.customerType || "Residential"}>
@@ -99,29 +108,33 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
             <option>Housing Society</option><option>Solar Products</option><option>Partnership</option>
           </select>
         </label>
-        <label>City
+        <label htmlFor={fieldId("city")}>City
           <input
+            id={fieldId("city")}
             required
             name="city"
+            autoComplete="address-level2"
             placeholder="Auto-fills from PIN"
             maxLength={100}
             value={city}
             onChange={(e) => onCityChange(e.target.value)}
+            aria-invalid={fields.city ? "true" : undefined}
+            aria-describedby={cityDescribedBy}
           />
-          {fields.city && <small className="field-error">{fields.city}</small>}
-          {suggestion && <small className="field-hint">Filled from PIN {pin} — edit if it's different.</small>}
+          {fields.city && <small id={errorId("city")} className="field-error">{fields.city}</small>}
+          {suggestion && <small id={`${uid}-city-hint`} className="field-hint">Filled from PIN {pin} — edit if it's different.</small>}
         </label>
-        <label>PIN code
-          <input required name="pincode" pattern="[0-9]{6}" inputMode="numeric" placeholder="6-digit PIN" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))} />
-          {fields.pincode && <small className="field-error">{fields.pincode}</small>}
+        <label htmlFor={fieldId("pincode")}>PIN code
+          <input id={fieldId("pincode")} required name="pincode" autoComplete="postal-code" pattern="[0-9]{6}" inputMode="numeric" placeholder="6-digit PIN" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))} aria-invalid={fields.pincode ? "true" : undefined} aria-describedby={fields.pincode ? errorId("pincode") : undefined} />
+          {fields.pincode && <small id={errorId("pincode")} className="field-error">{fields.pincode}</small>}
         </label>
-        <label className="wide">Monthly bill
-          <select name="monthlyBill" defaultValue={defaults.monthlyBill || ""}>
+        <label className="wide" htmlFor={fieldId("monthlyBill")}>Monthly bill <span className="label-optional">(optional)</span>
+          <select id={fieldId("monthlyBill")} name="monthlyBill" defaultValue={defaults.monthlyBill || ""}>
             {BILL_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
         </label>
-        <label className="wide">Project details
-          <textarea name="message" rows={3} maxLength={1200} placeholder="Anything else we should know?" defaultValue={defaults.message || ""} />
+        <label className="wide" htmlFor={fieldId("message")}>Project details <span className="label-optional">(optional)</span>
+          <textarea id={fieldId("message")} name="message" rows={3} maxLength={1200} placeholder="Anything else we should know?" defaultValue={defaults.message || ""} />
         </label>
       </div>
       {pinInfo?.valid && (
@@ -136,7 +149,7 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
         <span>I agree to the <Link to="/terms">Terms of Use</Link> and <Link to="/privacy">Privacy Policy</Link>, and allow DSP Power Infra to contact me about this enquiry.</span>
       </label>
       {status === "error" && <p className="error" role="alert">{error}</p>}
-      <button className="button primary submit" disabled={status === "sending"}>
+      <button type="submit" className="button primary submit" disabled={status === "sending"}>
         {status === "sending" ? "Sending..." : "Request a consultation"} <ArrowRight size={17} />
       </button>
       <small className="privacy">Your details are used only to respond to this request.</small>

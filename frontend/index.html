@@ -3,17 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<meta name="theme-color" content="#f7f9fc" media="(prefers-color-scheme: light)"/>
-<meta name="theme-color" content="#0a1322" media="(prefers-color-scheme: dark)"/>
-<script>
-  // Apply the saved/system theme before first paint to avoid a flash.
-  try {
-    var t = localStorage.getItem("dsp-theme");
-    if (t !== "dark" && t !== "light") t = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    document.documentElement.dataset.theme = t;
-    document.documentElement.style.colorScheme = t;
-  } catch (e) {}
-</script>
+<meta name="theme-color" content="#f7f9fc"/>
+<meta name="color-scheme" content="light"/>
 <meta name="description" content="DSP Power Infra — solar EPC for homes, housing societies and businesses in Pune. Survey-first design, PM Surya Ghar subsidy support, installation and maintenance."/>
 <title>Rooftop solar plants in Pune | DSP Power Infra</title>
 <link rel="canonical" href="https://dsppowerinfra.com/"/>
@@ -41,7 +32,7 @@
   "telephone": "+919146467074",
   "email": "dsp.powerinfra@gmail.com",
   "image": "https://dsppowerinfra.com/images/hero-family.jpg",
-  "logo": "https://dsppowerinfra.com/icon-512.png",
+  "logo": { "@type": "ImageObject", "url": "https://dsppowerinfra.com/icon-512.png", "width": 512, "height": 512 },
   "address": { "@type": "PostalAddress", "addressLocality": "Pune", "addressRegion": "Maharashtra", "addressCountry": "IN" },
   "areaServed": [
     { "@type": "City", "name": "Pune" },
@@ -50,6 +41,18 @@
   "priceRange": "₹₹",
   "currenciesAccepted": "INR",
   "knowsAbout": ["Rooftop solar", "Solar EPC", "PM Surya Ghar subsidy", "Net metering"]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://dsppowerinfra.com/#website",
+  "url": "https://dsppowerinfra.com/",
+  "name": "DSP Power Infra",
+  "description": "Solar EPC company in Pune for rooftop solar design, installation, subsidy guidance and maintenance.",
+  "inLanguage": "en-IN",
+  "publisher": { "@id": "https://dsppowerinfra.com/#business" }
 }
 </script>
 </head>

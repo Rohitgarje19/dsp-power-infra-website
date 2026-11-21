@@ -2,7 +2,7 @@ import { usePageMeta } from "../lib/seo";
 import { CONTACT } from "../data/content";
 
 export default function Terms() {
-  usePageMeta("Terms of use", "The terms that apply when you use the DSP Power Infra website, calculators and enquiry services.");
+  usePageMeta("Terms of use", "The terms that apply when you use the DSP Power Infra website, solar calculators, enquiry forms and consultation services.");
   return (
     <section className="section legal">
       <div className="legal-inner">

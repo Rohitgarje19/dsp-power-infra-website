@@ -12,7 +12,7 @@ const COVERS = [
 ];
 
 export default function ExperienceCentre() {
-  usePageMeta("Visit & consultation", "Book a consultation with DSP Power Infra: see components, discuss your roof and clear every doubt before you decide.");
+  usePageMeta("Visit & consultation", "Book a consultation with DSP Power Infra: see the components, discuss your roof and clear every doubt before you decide on rooftop solar.");
   return (
     <>
       <PageHero

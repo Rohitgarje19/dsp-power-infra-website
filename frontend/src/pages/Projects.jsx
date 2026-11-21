@@ -7,7 +7,7 @@ import { usePageMeta } from "../lib/seo";
 import Picture from "../components/Picture";
 
 export default function Projects() {
-  usePageMeta("Solar projects & capability", "DSP Power Infra project gallery and capability overview. Customer project stories are published only with permission.");
+  usePageMeta("Solar projects & capability", "DSP Power Infra project gallery and capability overview across homes, societies and businesses. Customer project stories are published only with permission.");
   const [filter, setFilter] = useState("All");
   const shown = filter === "All" ? PROJECT_GALLERY : PROJECT_GALLERY.filter((p) => p.tag === filter);
   return (

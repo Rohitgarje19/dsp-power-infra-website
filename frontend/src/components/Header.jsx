@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { ArrowUpRight, Building2, ChevronDown, House, Layers, Menu, Moon, Sun, Users, X, Zap } from "lucide-react";
+import { ArrowUpRight, Building2, ChevronDown, House, Layers, Menu, Sun, Users, X, Zap } from "lucide-react";
 import { NAV_SOLUTIONS } from "../data/content";
-import { applyTheme, currentTheme } from "../lib/theme";
 import QuoteModal from "./QuoteModal";
 
 const ICONS = { "/homes": House, "/housing-societies": Users, "/commercial": Building2, "/on-grid-solar": Zap, "/hybrid-solar": Layers, "/off-grid-solar": Sun };
@@ -12,17 +11,8 @@ export default function Header() {
   const [solutionsOpen, setSolutionsOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  // Start deterministic so server HTML and the first client render match;
-  // the stored/system theme is applied right after hydration.
-  const [theme, setTheme] = useState("light");
   const { pathname } = useLocation();
-
-  useEffect(() => { setTheme(currentTheme()); }, []);
   const overlay = pathname === "/" && !scrolled && !open;
-
-  function toggleTheme() {
-    setTheme(applyTheme(theme === "dark" ? "light" : "dark"));
-  }
 
   useEffect(() => { setOpen(false); setSolutionsOpen(false); }, [pathname]);
   useEffect(() => {
@@ -64,16 +54,6 @@ export default function Header() {
         <NavLink to="/how-it-works">How it works</NavLink>
         <NavLink to="/solar-calculator">Solar calculator</NavLink>
         <NavLink to="/blog">Guides</NavLink>
-        <button
-          type="button"
-          className="theme-toggle"
-          onClick={toggleTheme}
-          aria-pressed={theme === "dark"}
-          aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-        >
-          {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-          <span className="theme-toggle-label">{theme === "dark" ? "Light mode" : "Dark mode"}</span>
-        </button>
         <button
           type="button"
           className="nav-cta nav-quote"
