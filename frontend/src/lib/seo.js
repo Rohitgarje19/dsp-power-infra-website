@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 const BASE_TITLE = "DSP Power Infra";
-const BASE_HOME_TITLE = `${BASE_TITLE} | Solar EPC, Pune`;
+const BASE_HOME_TITLE = "Rooftop solar plants in Pune | DSP Power Infra";
 export const SITE_URL = (import.meta.env.VITE_SITE_URL || "https://dsppowerinfra.com").replace(/\/+$/, "");
 export const DEFAULT_DESCRIPTION =
   "DSP Power Infra — solar EPC for homes, housing societies and businesses in Pune. Survey-first design, PM Surya Ghar subsidy support, installation and maintenance.";

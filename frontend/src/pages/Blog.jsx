@@ -5,7 +5,7 @@ import { usePageMeta } from "../lib/seo";
 import Picture from "../components/Picture";
 
 export default function Blog() {
-  usePageMeta("Solar guides", "Practical, honest guides on sizing rooftop solar, the PM Surya Ghar subsidy, system types and maintenance — from the DSP team.");
+  usePageMeta("Solar plant guides & planning", "Practical, honest guides on sizing rooftop solar, the PM Surya Ghar subsidy, system types and maintenance — from the DSP team.");
   return (
     <>
       <section className="page-hero compact">

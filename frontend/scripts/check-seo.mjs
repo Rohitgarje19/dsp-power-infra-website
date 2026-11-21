@@ -12,6 +12,8 @@ const fileFor = (routePath) =>
   routePath === "/" ? path.join(distDir, "index.html") : path.join(distDir, routePath.slice(1), "index.html");
 
 const routes = allRoutes();
+const seenTitles = new Map();
+const seenDescriptions = new Map();
 for (const route of routes) {
   const file = fileFor(route.path);
   if (!fs.existsSync(file)) {
@@ -30,6 +32,10 @@ for (const route of routes) {
   if (title.split("DSP Power Infra").length > 2) errors.push(`${route.path}: brand repeated in title`);
   if (!description || description.length > 160) errors.push(`${route.path}: description length ${description.length}`);
   if (description.includes("undefined")) errors.push(`${route.path}: description contains undefined`);
+  if (seenTitles.has(title)) errors.push(`${route.path}: title duplicates ${seenTitles.get(title)}`);
+  else seenTitles.set(title, route.path);
+  if (seenDescriptions.has(description)) errors.push(`${route.path}: description duplicates ${seenDescriptions.get(description)}`);
+  else seenDescriptions.set(description, route.path);
   if (canonicals.length !== 1 || canonicals[0] !== expectedCanonical) {
     errors.push(`${route.path}: canonical ${JSON.stringify(canonicals)} expected ${expectedCanonical}`);
   }
@@ -108,4 +114,4 @@ if (errors.length) {
   for (const error of errors) console.error(` - ${error}`);
   process.exit(1);
 }
-console.log(`SEO check passed: ${routes.length} routes, absolute canonicals, schema and sitemap present.`);
+console.log(`SEO check passed: ${routes.length} routes, unique titles/descriptions, absolute canonicals, schema and sitemap present.`);

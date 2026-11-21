@@ -15,7 +15,7 @@ export default function CitySolar() {
 }
 
 function CityContent({ city }) {
-  usePageMeta(`${city.name} solar`, city.lede, { image: city.image });
+  usePageMeta(`${city.name} rooftop solar plants`, city.lede, { image: city.image });
   useFaqSchema(city.faqs);
 
   return (

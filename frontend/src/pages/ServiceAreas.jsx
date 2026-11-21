@@ -7,7 +7,7 @@ import { usePageMeta } from "../lib/seo";
 import { CITIES } from "../data/cities";
 
 export default function ServiceAreas() {
-  usePageMeta("Service areas", "DSP Power Infra covers Maharashtra. Check your PIN code against our service region — other states confirmed case by case.");
+  usePageMeta("Solar service areas in Maharashtra", "DSP Power Infra covers Maharashtra. Check your PIN code against our service region — other states confirmed case by case.");
   const [pin, setPin] = useState("");
   const [result, setResult] = useState(null);
   const [city, setCity] = useState("");

@@ -114,6 +114,7 @@ export const SOLUTION_PAGES = {
   "/on-grid-solar": {
     eyebrow: "Grid-connected systems",
     title: "On-grid solar, explained clearly.",
+    seoTitle: "On-grid rooftop solar systems | DSP Power Infra",
     lede: "The most common, cost-effective setup: panels feed your loads first, surplus exports to the grid via net metering, and the grid fills gaps. No batteries needed.",
     image: "/images/panels-sunset.jpg",
     imageAlt: "Grid-connected rooftop panels in evening light",
@@ -150,6 +151,7 @@ export const SOLUTION_PAGES = {
   "/hybrid-solar": {
     eyebrow: "Solar with storage options",
     title: "Hybrid solar for flexible power planning.",
+    seoTitle: "Hybrid solar with storage | DSP Power Infra",
     lede: "Solar plus grid plus battery: save on bills like on-grid and keep essential loads running through outages. Storage sized to real backup needs — not oversold.",
     image: "/images/house-dusk.jpg",
     imageAlt: "Home at dusk with solar and storage potential",

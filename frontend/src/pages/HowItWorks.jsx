@@ -13,7 +13,7 @@ const STEPS = [
 ];
 
 export default function HowItWorks() {
-  usePageMeta("How it works", "The DSP solar project journey: enquiry, survey, written proposal, approvals, installation and long-term support.");
+  usePageMeta("How solar installation works", "The DSP solar project journey: enquiry, survey, written proposal, approvals, installation and long-term support.");
   return (
     <>
       <PageHero

@@ -12,7 +12,7 @@ const VALUES = [
 ];
 
 export default function About() {
-  usePageMeta("About DSP Power Infra", "DSP Power Infra is a Pune-based solar EPC company: survey-first design, honest proposals, one accountable team from enquiry to maintenance.");
+  usePageMeta("About our Pune solar team", "DSP Power Infra is a Pune-based solar EPC company: survey-first design, honest proposals, one accountable team from enquiry to maintenance.");
   return (
     <>
       <PageHero

@@ -32,7 +32,8 @@ describe("seo helpers", () => {
   });
 
   it("keeps composed titles within the 60 character budget", () => {
-    expect(composeTitle(null)).toBe("DSP Power Infra | Solar EPC, Pune");
+    expect(composeTitle(null)).toBe("Rooftop solar plants in Pune | DSP Power Infra");
+    expect(composeTitle(null).length).toBeLessThanOrEqual(60);
     expect(composeTitle("About")).toBe("About | DSP Power Infra");
     expect(composeTitle("About DSP Power Infra")).toBe("About DSP Power Infra");
     const long = "A very long guide title that already exceeds the search result budget";

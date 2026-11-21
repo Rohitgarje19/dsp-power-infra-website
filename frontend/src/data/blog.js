@@ -29,7 +29,7 @@ export const BLOG_ARTICLES = [
   {
     slug: "pm-surya-ghar-subsidy-explained",
     title: "PM Surya Ghar subsidy, explained without the hype",
-    seoTitle: "PM Surya Ghar subsidy guide | DSP Power Infra",
+    seoTitle: "PM Surya Ghar subsidy explained | DSP Power Infra",
     excerpt: "What the scheme pays, who qualifies, and the five steps between your roof and the bank credit.",
     date: "2026-11-04",
     readMins: 8,
