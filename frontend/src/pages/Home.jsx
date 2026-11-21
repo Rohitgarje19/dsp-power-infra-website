@@ -1,8 +1,8 @@
 import { lazy, Suspense, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  ArrowRight, ArrowUpRight, Building2, Check, ClipboardCheck, Compass, Factory, FileText,
-  House, Layers, LifeBuoy, MapPin, Phone, Ruler, ShieldCheck, Sparkles, Sun, Trees, Users, Wrench, Zap,
+  ArrowRight, ArrowUpRight, Building2, Check, Factory, House, Layers, MapPin, Phone,
+  ShieldCheck, Sparkles, Sun, Users,
 } from "lucide-react";
 import LeadForm from "../components/LeadForm";
 import Faq from "../components/Faq";
@@ -16,17 +16,31 @@ import TrackRecord from "../components/TrackRecord";
 import { PM_SURYA_GHAR } from "../data/impact";
 
 const segments = [
-  ["Residential", "Homes", "A rooftop system designed around your energy use and property.", House, "/homes", "homes"],
-  ["Shared spaces", "Housing societies", "Solar planning for common-area loads and suitable residential rooftops.", Users, "/housing-societies", "housing societies"],
-  ["Commercial", "Business", "Engineering and installation shaped for offices, shops and warehouses.", Building2, "/commercial", "businesses"],
-  ["Industrial", "Solar EPC", "Planning and delivery for larger energy needs.", Factory, "/commercial", "solar EPC"],
+  ["Residential", "Homes", "A rooftop system planned around your energy use, roof and, where eligible, PM Surya Ghar assistance.", House, "/homes", "homes"],
+  ["Shared spaces", "Housing societies", "Common-area solar with load planning and a proposal built for committee review.", Users, "/housing-societies", "housing societies"],
+  ["Commercial", "Businesses", "Rooftop solar for offices, shops and warehouses, engineered around your working hours.", Building2, "/commercial", "businesses"],
+  ["Industrial", "Industrial EPC", "Larger rooftop projects with design, procurement and installation handled end to end.", Factory, "/commercial", "industrial EPC"],
 ];
 
-const whyItems = [
-  [Compass, "Guidance first", "Recommendations based on your needs, with products and costs explained clearly."],
-  [Wrench, "One team, start to finish", "Design, supply and installation brought together so you are not juggling vendors."],
-  [Ruler, "Planned for your site", "Your roof, shade and energy use shape the system rather than a one-size template."],
-  [LifeBuoy, "Support through the project", "A team to guide you and keep you informed from enquiry through installation."],
+const proofItems = [
+  [Sun, "Design, supply, installation"],
+  [Building2, "Homes to industrial"],
+  [MapPin, "Pune-based team"],
+  [ShieldCheck, "Support after switch-on"],
+];
+
+const trustItems = [
+  ["01", "A survey, not a sales call", "Roof condition, shade, structure and meter connection are checked before we recommend a size.", "/images/trust-survey.jpg"],
+  ["02", "One team through the project", "Design, supply and installation are coordinated by the same team instead of separate vendors.", "/images/trust-install.jpg"],
+  ["03", "Mounting planned for monsoon", "Rails, clamps, drainage and cable routing are detailed for Indian weather and your roof type.", "/images/trust-mounting.jpg"],
+  ["04", "Reachable after switch-on", "Cleaning guidance, performance questions and service requests stay with a team you can call.", "/images/trust-service.jpg"],
+];
+
+const checks = [
+  ["01", "Roof condition and usable area", "What the structure can carry, where the array fits and how access will work."],
+  ["02", "Shade and generation", "How trees, water tanks and neighbouring buildings affect the output we can promise."],
+  ["03", "Structure and cable route", "Rails, clamps, drainage and a tidy cable path planned for your roof."],
+  ["04", "Subsidy and paperwork", "Eligibility, the PM Surya Ghar route and what you need to submit, explained up front."],
 ];
 
 const journey = [
@@ -81,25 +95,30 @@ export default function Home() {
   return (
     <>
       <section className="hero photo-hero">
-        <Picture className="hero-photo" src="/images/sunrise-roof.jpg" alt="Rooftop solar panels on a family home at sunrise" loading="eager" fetchPriority="high" sizes="100vw" />
+        <Picture className="hero-photo" src="/images/hero-family.jpg" alt="An Indian family on the terrace of their home with rooftop solar panels at golden hour" loading="eager" fetchPriority="high" sizes="100vw" />
         <div className="hero-scrim" />
         <div className="hero-copy">
           <span className="hero-kicker">Solar EPC · Pune, Maharashtra</span>
           <h1>Power your home<br />with <em>the sun.</em></h1>
-          <p className="lede light">Cleaner energy. Lower bills. A more independent home — planned around your roof by one accountable team.</p>
+          <p className="lede light">Cleaner energy, lower bills, and a system planned around your roof — by one accountable team.</p>
           <div className="actions">
-            <button type="button" className="button light pill" onClick={() => setQuoteOpen(true)}>Get a free solar consultation <ArrowRight size={17} /></button>
+            <button type="button" className="button sun pill" onClick={() => setQuoteOpen(true)}>Get a free solar consultation <ArrowRight size={17} /></button>
             <Link className="button ghost-light pill" to="/solar-calculator">Calculate your savings</Link>
           </div>
           <p className="hero-meta"><span>Pune-based team</span><span>Survey-first design</span><span>Subsidy support</span></p>
         </div>
+        <aside className="hero-proof" aria-label="Scheme track record">
+          <span className="hp-eyebrow">PM Surya Ghar</span>
+          <strong>{PM_SURYA_GHAR.installationsCompleted.toLocaleString("en-IN")}</strong>
+          <span className="hp-label">installations completed</span>
+          <small>Scheme work only · as of {PM_SURYA_GHAR.asOf}</small>
+        </aside>
       </section>
 
-      <section className="proof">
-        <span><i><Sun /></i> Solar products & EPC</span>
-        <span><i><Building2 /></i> Residential to industrial</span>
-        <span><i><Trees /></i> Design · supply · installation</span>
-        <span><i><ShieldCheck /></i> Support through the project</span>
+      <section className="proof" aria-label="What DSP Power Infra provides">
+        {proofItems.map(([Icon, label]) => (
+          <span key={label}><i><Icon /></i> {label}</span>
+        ))}
       </section>
 
       <section className="calc-band" id="estimate">
@@ -125,49 +144,63 @@ export default function Home() {
 
       <section className="section" id="solutions">
         <div className="section-head">
-          <div><span className="eyebrow">What we do</span><h2>Solar for every kind of site.</h2></div>
-          <p>We bring products, engineering and installation together, then shape the system around the people and place using it.</p>
+          <div><span className="eyebrow">What we do</span><h2>Solar for every kind of roof.</h2></div>
+          <p>Products, engineering and installation brought together, then shaped around the people and place using them.</p>
         </div>
         <div className="service-grid">
           {segments.map(([tag, title, copy, Icon, url, label]) => (
             <article className="service" key={title}>
               <span className="service-icon"><Icon /></span>
               <small>{tag}</small><h3>{title}</h3><p>{copy}</p>
-              <Link to={url}>Learn more about {label} <ArrowUpRight size={15} /></Link>
+              <Link to={url} aria-label={`Learn more about ${label}`}>Explore {label} <ArrowUpRight size={15} /></Link>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="section why-section">
+      <section className="section trust-section" id="why">
         <div className="section-head">
-          <div><span className="eyebrow">Why DSP Power Infra</span><h2>Why customers choose us</h2></div>
-          <p>Going solar is a long-term decision. We make the process easier to understand and keep you informed.</p>
+          <div><span className="eyebrow">Built right, before it is switched on</span><h2>What a proper solar project looks like.</h2></div>
+          <p>Going solar is a long-term decision. These are the parts we refuse to skip.</p>
         </div>
-        <div className="why-grid">
-          {whyItems.map(([Icon, title, copy]) => (
-            <article key={title}><div className="why-art"><Icon /></div><h3>{title}</h3><p>{copy}</p></article>
+        <div className="trust-grid">
+          {trustItems.map(([n, title, copy, img]) => (
+            <article className="trust-card" key={title}>
+              <div className="trust-photo">
+                <Picture src={img} alt={title} widths={[640, 1024]} sizes="(max-width: 760px) 100vw, (max-width: 1080px) 50vw, 25vw" />
+                <span className="trust-num">{n}</span>
+              </div>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
           ))}
         </div>
+        <p className="image-note">Representative imagery. Every installation is planned to the site.</p>
       </section>
 
       <TrackRecord />
 
-      <section className="approach-section" id="about">
-        <div className="approach">
-          <div>
-            <span className="eyebrow">The DSP approach</span>
-            <h2>Good decisions come from <em>good guidance.</em></h2>
-            <p>We give you a clear view of your options and keep you informed from enquiry through installation.</p>
-            <Link className="button primary" to="/how-it-works">See how it works <ArrowRight size={16} /></Link>
+      <section className="standards" id="about">
+        <div className="standards-inner">
+          <div className="standards-copy">
+            <span className="eyebrow">Before we quote</span>
+            <h2>Four checks that shape an honest proposal.</h2>
+            <p>A solar system is only as good as the survey behind it. We inspect first, then put the numbers in writing.</p>
+            <ul className="standards-list">
+              {checks.map(([n, title, copy]) => (
+                <li key={n}><span>{n}</span><div><b>{title}</b><small>{copy}</small></div></li>
+              ))}
+            </ul>
+            <Link className="button light" to="/how-it-works">See how it works <ArrowRight size={16} /></Link>
           </div>
-          <div className="approach-points">
-            <div><i><ClipboardCheck /></i><b>Recommendations based on your needs</b></div>
-            <div><i><FileText /></i><b>Product and cost details explained clearly</b></div>
-            <div><i><Users /></i><b>A team to guide your project</b></div>
-            <div><i><Layers /></i><b>Assumptions shown, never hidden</b></div>
-          </div>
-          <div className="shield"><ShieldCheck /></div>
+          <aside className="standards-card">
+            <span className="sc-eyebrow">In your written proposal</span>
+            <div><b>System size</b><span>kW, module count and layout</span></div>
+            <div><b>Generation estimate</b><span>Units per month, with the basis stated</span></div>
+            <div><b>Cost and subsidy position</b><span>Turnkey cost and what you may be eligible for</span></div>
+            <div><b>Assumptions</b><span>Tariff, usage and roof conditions, never hidden</span></div>
+            <p>Every number traces back to a stated assumption.</p>
+          </aside>
         </div>
       </section>
 
@@ -242,7 +275,7 @@ export default function Home() {
 
       <section className="banner">
         <div><span className="eyebrow">Your next step</span><h2>Start with your roof.<br /><em>We'll help with the rest.</em></h2></div>
-        <a className="button light" href="#contact">Talk to our team <ArrowRight size={16} /></a>
+        <a className="button sun" href="#contact">Talk to our team <ArrowRight size={16} /></a>
       </section>
 
       <section className="section contact" id="contact">

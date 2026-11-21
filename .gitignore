@@ -12,3 +12,5 @@ Thumbs.db
 *.log
 playwright-report/
 test-results/
+
+vibe_images/

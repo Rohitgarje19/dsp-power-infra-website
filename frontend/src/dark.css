@@ -1,25 +1,26 @@
 /* ============================================================
-   DARK THEME — deep-navy counterpart of the light design system.
+   DARK THEME — forest-black counterpart of the editorial system.
    Loaded after theme.css. Opt-in via <html data-theme="dark">.
-   Photo heroes, the visit band and the footer stay dark.
+   Photo heroes, the standards band and the footer stay dark.
    ============================================================ */
 
 :root[data-theme="dark"]{
-  --navy:#eef2ff;--navy-deep:#0a0f22;--navy-soft:#16203c;
-  --accent:#6fd8a9;--accent-strong:#8ce7bd;--accent-soft:#123b2d;
-  --g:#6fd8a9;--g-dark:#080d1c;--g-mid:#5cc397;
-  --gold:#6fd8a9;--gold-deep:#7fe0b5;--gold-soft:#123b2d;--sun:#6fd8a9;
-  --champagne:#6fd8a9;--champagne-2:#8ce7bd;--bronze:#6fd8a9;
-  --mint:#0e1f2c;--sage:#101830;
-  --ink:#eef2ff;--ink-soft:#dbe3ff;--muted:#a6b0ca;--line:#243052;
-  --night:#080d1c;--night-2:#0b1226;--cream:#0b1124;--cream-2:#111a33;--paper:#141d3a;
-  --surface:#141d3a;--surface-alt:#101830;--surface-tint:#101830;--surface-mint:#0e1f2c;
-  --header-bg:#0d1528;--footer-bg:#080d1c;--card-border:#243052;--input-bg:#0f1830;
-  --btn:#3350dc;--btn-hover:#2943c2;
+  --navy:#edf3ea;--navy-deep:#0a1410;--navy-soft:#1a2b22;
+  --accent:#5ed49b;--accent-strong:#7ce3af;--accent-soft:#123326;
+  --g:#5ed49b;--g-dark:#08120d;--g-mid:#4fc08b;
+  --gold:#e8b45c;--gold-deep:#f0c165;--gold-soft:#2b2414;--sun:#f0c165;
+  --champagne:#e8b45c;--champagne-2:#f0c165;--bronze:#e8b45c;
+  --mint:#0f231a;--sage:#101a15;
+  --ink:#eef3ea;--ink-soft:#d5e0d5;--muted:#a3b0a5;--line:#26372d;
+  --night:#080f0b;--night-2:#0f1a14;--cream:#0d1712;--cream-2:#101a15;--paper:#131f18;
+  --surface:#131f18;--surface-alt:#101a15;--surface-tint:#101a15;--surface-mint:#0f231a;
+  --header-bg:#0f1a14;--footer-bg:#080f0b;--card-border:#26372d;--input-bg:#101a15;
+  --btn:#e8a63c;--btn-hover:#f2b957;
   --shadow:0 20px 50px rgba(0,0,0,.45);
   --shadow-sm:0 6px 20px rgba(0,0,0,.35);
   --shadow-md:0 18px 44px rgba(0,0,0,.4);
-  --ring:rgba(111,216,169,.2);
+  --ring:rgba(232,166,60,.24);
+  --paper:#101a15;--hairline:#26372d;--forest:#0a1a13;--forest-2:#0f2a20;
   color-scheme:dark;
 }
 
@@ -30,36 +31,36 @@
 :root[data-theme="dark"] .site-header.overlay:not(.scrolled){background:var(--header-bg);border-bottom-color:var(--line);box-shadow:none}
 :root[data-theme="dark"] .site-header.scrolled{box-shadow:0 6px 22px rgba(0,0,0,.4)}
 :root[data-theme="dark"] nav>a,
-:root[data-theme="dark"] .dd-btn{color:#c3cce6}
+:root[data-theme="dark"] .dd-btn{color:#c2cdc3}
 :root[data-theme="dark"] nav>a.active{color:var(--ink)}
 :root[data-theme="dark"] .nav-cta,
 :root[data-theme="dark"] .nav-quote{background:transparent!important;border-color:rgba(255,255,255,.42)!important;color:#fff!important}
 :root[data-theme="dark"] .nav-cta:hover,
-:root[data-theme="dark"] .nav-quote:hover{background:#fff!important;color:#182150!important}
-:root[data-theme="dark"] .theme-toggle{color:#c3cce6}
+:root[data-theme="dark"] .nav-quote:hover{background:#fff!important;color:#14251f!important}
+:root[data-theme="dark"] .theme-toggle{color:#c2cdc3}
 :root[data-theme="dark"] .theme-toggle:hover{color:var(--ink);background:var(--surface-alt)}
 :root[data-theme="dark"] .dd-menu{box-shadow:0 24px 60px rgba(0,0,0,.5)}
 
 /* ---------- Hero panel + inputs ---------- */
 :root[data-theme="dark"] .hero-panel{box-shadow:0 30px 80px rgba(0,0,0,.5)}
 :root[data-theme="dark"] .hs-pin input{border-color:var(--line);background:var(--surface);color:var(--ink)}
-:root[data-theme="dark"] .hs-pin input::placeholder{color:#7f8bab}
-:root[data-theme="dark"] .hs-bill input{background:linear-gradient(90deg,var(--accent) var(--pct,50%),#26324f var(--pct,50%))}
-:root[data-theme="dark"] .hs-bill input::-webkit-slider-thumb{background:#0f1830;border-color:var(--accent)}
-:root[data-theme="dark"] .hs-bill input::-moz-range-thumb{background:#0f1830;border-color:var(--accent)}
+:root[data-theme="dark"] .hs-pin input::placeholder{color:#7f8d81}
+:root[data-theme="dark"] .hs-bill input{background:linear-gradient(90deg,var(--accent) var(--pct,50%),#2a3a30 var(--pct,50%))}
+:root[data-theme="dark"] .hs-bill input::-webkit-slider-thumb{background:#101a15;border-color:var(--accent)}
+:root[data-theme="dark"] .hs-bill input::-moz-range-thumb{background:#101a15;border-color:var(--accent)}
 
 /* ---------- Sections and cards ---------- */
-:root[data-theme="dark"] .proof span{color:#c3cce6}
-:root[data-theme="dark"] .service:hover{border-color:#33456e}
+:root[data-theme="dark"] .proof span{color:#c2cdc3}
+:root[data-theme="dark"] .service:hover{border-color:#33463a}
 :root[data-theme="dark"] .why-section,
 :root[data-theme="dark"] .tools{background:var(--surface-tint)}
 :root[data-theme="dark"] .track-record{background:linear-gradient(180deg,#0d1c22,#0b181f);border-color:#1d3a31}
-:root[data-theme="dark"] .track-record p{color:#b6c3d6}
+:root[data-theme="dark"] .track-record p{color:#b3bfb3}
 :root[data-theme="dark"] .track-record-grid article{background:var(--surface);border-color:#1d3a31}
 :root[data-theme="dark"] .track-record-grid span{color:var(--muted)}
 :root[data-theme="dark"] .approach-points div{border-color:var(--line)}
-:root[data-theme="dark"] .tl-step:not(:last-child):before{border-left-color:#33456e}
-:root[data-theme="dark"] .process-card{background:linear-gradient(150deg,#12203a,#0f2430 60%,#0e2a22)}
+:root[data-theme="dark"] .tl-step:not(:last-child):before{border-left-color:#33463a}
+:root[data-theme="dark"] .process-card{background:linear-gradient(150deg,#12241c,#152318 60%,#0e2a22)}
 :root[data-theme="dark"] .ring{border-color:rgba(255,255,255,.1)}
 :root[data-theme="dark"] .process-card:hover .ring{border-color:rgba(255,255,255,.22)}
 :root[data-theme="dark"] .pc-glow{background:radial-gradient(280px circle at var(--gx) var(--gy),rgba(111,216,169,.12),transparent 70%)}
@@ -98,17 +99,17 @@
 :root[data-theme="dark"] .preview-stat{background:var(--surface);border-color:#1d4a3a}
 :root[data-theme="dark"] .result-card,
 :root[data-theme="dark"] .assumptions{border-color:var(--line)}
-:root[data-theme="dark"] .energy-bars i{background:#26324f}
+:root[data-theme="dark"] .energy-bars i{background:#2a3a30}
 :root[data-theme="dark"] .post-cta,
 :root[data-theme="dark"] .city-cta,
 :root[data-theme="dark"] .society-band,
 :root[data-theme="dark"] .subsidy-slabs .cap{border-color:#1d4a3a}
 :root[data-theme="dark"] .post-body p,
 :root[data-theme="dark"] .legal-inner p,
-:root[data-theme="dark"] .legal-inner li{color:#b6c3d6}
+:root[data-theme="dark"] .legal-inner li{color:#b3bfb3}
 :root[data-theme="dark"] .route-hero{background:linear-gradient(180deg,var(--surface-tint),var(--cream))}
-:root[data-theme="dark"] .route-art{background:linear-gradient(145deg,#13203a,#0f2430 60%,#0e2a22)}
-:root[data-theme="dark"] .journey-head b{color:#26324f}
+:root[data-theme="dark"] .route-art{background:linear-gradient(145deg,#132a20,#0f2430 60%,#0e2a22)}
+:root[data-theme="dark"] .journey-head b{color:#2a3a30}
 :root[data-theme="dark"] .assumption-editor,
 :root[data-theme="dark"] .assumption-chips span,
 :root[data-theme="dark"] .subsidy-note,
@@ -121,7 +122,7 @@
 :root[data-theme="dark"] footer{background:var(--footer-bg)}
 :root[data-theme="dark"] .wa-float{background:#0a6b48;color:#fff}
 :root[data-theme="dark"] .wa-float:hover{background:#0b7d52}
-:root[data-theme="dark"] .mobile-cta{background:#080d1c}
+:root[data-theme="dark"] .mobile-cta{background:#080f0b}
 
 /* ---------- Admin ---------- */
 :root[data-theme="dark"] .admin-tabs{border-bottom-color:var(--line)}
@@ -164,4 +165,39 @@
 :root[data-theme="dark"] #solutions .service+.service{border-color:var(--line)}
 :root[data-theme="dark"] .faq-item{border-bottom-color:var(--line)}
 :root[data-theme="dark"] .faq-item.open{background:transparent;border-color:transparent;border-bottom-color:var(--line);box-shadow:none}
-:root[data-theme="dark"] .faq-chev{color:#7f8bab}
+:root[data-theme="dark"] .faq-chev{color:#7f8d81}
+
+/* ---------- Warm editorial redesign counterparts ---------- */
+:root[data-theme="dark"] .hero.photo-hero{background:var(--cream)}
+:root[data-theme="dark"] .photo-hero .hero-photo{border-left-color:var(--line)}
+:root[data-theme="dark"] .hero-kicker{color:var(--gold-deep)}
+:root[data-theme="dark"] .photo-hero h1 em{color:var(--accent)}
+:root[data-theme="dark"] .photo-hero .button.ghost-light{border-color:rgba(238,243,234,.55);color:var(--ink)}
+:root[data-theme="dark"] .photo-hero .button.ghost-light:hover{background:var(--ink);color:#0d1712;border-color:var(--ink)}
+:root[data-theme="dark"] .hero-proof{background:rgba(9,22,16,.95);border-color:rgba(232,180,92,.26);box-shadow:0 24px 60px rgba(0,0,0,.5)}
+:root[data-theme="dark"] .hp-eyebrow{color:#9ad6b4}
+:root[data-theme="dark"] .hero-proof small{color:rgba(246,241,228,.55)}
+:root[data-theme="dark"] .proof{background:var(--paper);border-bottom-color:var(--line)}
+:root[data-theme="dark"] .proof i{background:var(--gold-soft);color:var(--gold-deep)}
+:root[data-theme="dark"] #solutions .service:hover{background:rgba(255,255,255,.03)}
+:root[data-theme="dark"] .trust-section{background:var(--surface-tint)}
+:root[data-theme="dark"] .trust-photo{background:var(--surface-alt)}
+:root[data-theme="dark"] .trust-num{background:rgba(10,20,15,.9);color:var(--ink)}
+:root[data-theme="dark"] .image-note{color:#8b978c}
+:root[data-theme="dark"] .track-record{background:linear-gradient(180deg,#0f1c15,#0c1711);border-color:var(--line)}
+:root[data-theme="dark"] .track-record p{color:var(--muted)}
+:root[data-theme="dark"] .track-record-grid article{border-color:#26372d}
+:root[data-theme="dark"] .standards{background:var(--forest)}
+:root[data-theme="dark"] .banner{background:linear-gradient(112deg,#211b0e,#2a2213);border-color:#3a2f18}
+:root[data-theme="dark"] .banner .eyebrow{color:var(--gold-deep)}
+:root[data-theme="dark"] .banner h2{color:var(--ink)}
+:root[data-theme="dark"] .banner h2 em{color:var(--accent)}
+:root[data-theme="dark"] .banner .button.sun{background:var(--gold-deep);color:#1d1607}
+:root[data-theme="dark"] .area-chips span{background:var(--surface);border-color:var(--line)}
+:root[data-theme="dark"] .contact-row svg{background:var(--gold-soft);color:var(--gold-deep)}
+:root[data-theme="dark"] .availability{border-left-color:var(--gold)}
+:root[data-theme="dark"] .button.primary,
+:root[data-theme="dark"] .button.sun,
+:root[data-theme="dark"] .hs-submit,
+:root[data-theme="dark"] .visit .button{color:#1b1407}
+:root[data-theme="dark"] .form-card{background:var(--surface);border-color:var(--card-border)}
