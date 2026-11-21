@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { usePageMeta } from "../lib/seo";
 
 export default function NotFound() {
-  usePageMeta("Page not found", "The page you were looking for doesn't exist on the DSP Power Infra website.");
+  usePageMeta("Page not found", "The page you were looking for doesn't exist on the DSP Power Infra website.", { noindex: true });
   return (
     <section className="section notfound">
       <span className="eyebrow">404</span>

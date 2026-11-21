@@ -3,14 +3,16 @@ import { ArrowRight, Check } from "lucide-react";
 import PageHero from "./PageHero";
 import Faq from "./Faq";
 import LeadForm from "./LeadForm";
-import { usePageMeta } from "../lib/seo";
+import { useFaqSchema, usePageMeta, useServiceSchema } from "../lib/seo";
 import { SOLUTION_PAGES } from "../data/solutions";
 
 /** Rich, data-driven template for all six solution pages. */
 export default function SolutionPage({ data }) {
   const { pathname } = useLocation();
   const page = data || SOLUTION_PAGES[pathname];
-  usePageMeta(page.title, page.lede);
+  usePageMeta(page.seoTitle || page.title, page.lede, { image: page.image });
+  useServiceSchema(page);
+  useFaqSchema(page.faqs);
   const customerType = pathname === "/commercial" ? "Commercial" : pathname === "/housing-societies" ? "Housing Society" : "Residential";
 
   return (

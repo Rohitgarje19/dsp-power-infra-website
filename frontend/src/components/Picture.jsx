@@ -1,4 +1,3 @@
-import React from "react";
 
 /**
  * Responsive photo with WebP sources generated from the JPEG originals.

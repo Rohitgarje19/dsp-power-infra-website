@@ -15,7 +15,7 @@ export default function CitySolar() {
 }
 
 function CityContent({ city }) {
-  usePageMeta(`${city.name} solar`, city.lede);
+  usePageMeta(`${city.name} solar`, city.lede, { image: city.image });
   useFaqSchema(city.faqs);
 
   return (
@@ -34,6 +34,7 @@ function CityContent({ city }) {
           <p>{city.intro[0]}</p>
         </div>
         <p className="city-intro">{city.intro[1]}</p>
+        {city.detail && <p className="city-intro">{city.detail}</p>}
         <p className="city-pin"><MapPin size={15} /> {city.pinNote}. <Link to="/service-areas">Check your PIN code</Link> to confirm scheduling.</p>
         <div className="benefit-grid">
           {city.local.map(([title, copy], i) => (

@@ -7,7 +7,7 @@ import { usePageMeta } from "../lib/seo";
 import Picture from "../components/Picture";
 
 export default function Results() {
-  usePageMeta("Your solar estimate", "Your indicative rooftop solar estimate: system size, DSP rate, subsidy position, cost, bill offset and payback — with all assumptions shown.");
+  usePageMeta("Your solar estimate", "Your indicative rooftop solar estimate: system size, DSP rate, subsidy position, cost, bill offset and payback — with all assumptions shown.", { noindex: true });
   const [q] = useSearchParams();
   const requestedType = q.get("customerType") || "Residential";
   const customerType = normalizeConnectionType(requestedType) || requestedType;

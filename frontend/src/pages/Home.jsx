@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight, ArrowUpRight, Building2, Check, Factory, House, Layers, MapPin, Phone,
@@ -6,12 +6,12 @@ import {
 } from "lucide-react";
 import LeadForm from "../components/LeadForm";
 import Faq from "../components/Faq";
-const QuoteModal = lazy(() => import("../components/QuoteModal"));
+import QuoteModal from "../components/QuoteModal";
 import { HOME_FAQS, CONTACT } from "../data/content";
 import { usePageMeta, useFaqSchema } from "../lib/seo";
 import { pct } from "../lib/format";
 import { useCityAutofill } from "../lib/useCityAutofill";
-const EmiCalculator = lazy(() => import("../components/EmiCalculator"));
+import EmiCalculator from "../components/EmiCalculator";
 import Picture from "../components/Picture";
 
 const segments = [
@@ -220,9 +220,7 @@ export default function Home() {
           <div><span className="eyebrow">Solar tools</span><h2>Know your numbers.</h2></div>
           <p>Try a simple EMI estimate, or run the full savings calculator with subsidy and adjustable assumptions.</p>
         </div>
-        <Suspense fallback={<div className="emi-skeleton" aria-hidden="true" />}>
-          <EmiCalculator />
-        </Suspense>
+        <EmiCalculator />
         <div className="calc-cta">
           <Link className="button primary" to="/solar-calculator">Estimate solar savings <ArrowRight size={16} /></Link>
           <p>Enter your PIN code and monthly bill to see system size, subsidy, cost and payback — with every assumption visible.</p>
@@ -283,11 +281,7 @@ export default function Home() {
         </div>
         <LeadForm source="home" showHead={false} />
       </section>
-      {quoteOpen && (
-        <Suspense fallback={null}>
-          <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />
-        </Suspense>
-      )}
+      {quoteOpen && <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />}
     </>
   );
 }

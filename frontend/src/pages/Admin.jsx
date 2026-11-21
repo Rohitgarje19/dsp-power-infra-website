@@ -72,7 +72,7 @@ function notificationStatus(settings) {
 }
 
 export default function Admin() {
-  usePageMeta("Enquiry dashboard", "Private enquiry management desk for the DSP Power Infra team.");
+  usePageMeta("Enquiry dashboard", "Private enquiry management desk for the DSP Power Infra team.", { noindex: true });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

@@ -5,6 +5,7 @@ export const SOLUTION_PAGES = {
   "/homes": {
     eyebrow: "Residential rooftop solar",
     title: "Solar for your home, planned around your life.",
+    seoTitle: "Rooftop solar plant for homes | DSP Power Infra",
     lede: "Your roof, your bill and your routine decide the right system. We survey first, explain every option, and handle installation and subsidy paperwork end to end.",
     image: "/images/banner-a.jpg",
     imageAlt: "Rooftop solar panels at sunset",
@@ -41,6 +42,7 @@ export const SOLUTION_PAGES = {
   "/commercial": {
     eyebrow: "Commercial & industrial solar EPC",
     title: "A practical solar plan for your business.",
+    seoTitle: "Commercial rooftop solar plant | DSP Power Infra",
     lede: "Offices, shops, warehouses and factories run on daytime loads — exactly when solar generates. We engineer systems around your demand profile, roof and budget.",
     image: "/images/banner-b.jpg",
     imageAlt: "Solar array on a large rooftop",
@@ -76,6 +78,7 @@ export const SOLUTION_PAGES = {
   "/housing-societies": {
     eyebrow: "Apartments & housing societies",
     title: "Solar planning for shared spaces.",
+    seoTitle: "Society rooftop solar plant | DSP Power Infra",
     lede: "Common-area loads — lifts, pumps, corridor lighting, clubhouses — run all day. Solar on society rooftops can cut the maintenance bill every member pays.",
     image: "/images/banner-c.jpg",
     imageAlt: "Residential buildings with rooftop solar potential",
@@ -111,7 +114,7 @@ export const SOLUTION_PAGES = {
   "/on-grid-solar": {
     eyebrow: "Grid-connected systems",
     title: "On-grid solar, explained clearly.",
-    lede: "The most common and cost-effective setup: panels feed your loads first, surplus exports to the grid under net metering, and the grid fills any gap. No batteries needed.",
+    lede: "The most common, cost-effective setup: panels feed your loads first, surplus exports to the grid via net metering, and the grid fills gaps. No batteries needed.",
     image: "/images/panels-sunset.jpg",
     imageAlt: "Grid-connected rooftop panels in evening light",
     benefits: [
@@ -147,7 +150,7 @@ export const SOLUTION_PAGES = {
   "/hybrid-solar": {
     eyebrow: "Solar with storage options",
     title: "Hybrid solar for flexible power planning.",
-    lede: "Solar plus grid plus battery: save on bills like on-grid, and keep essential loads running through outages. Storage is sized to your real backup needs — not oversold.",
+    lede: "Solar plus grid plus battery: save on bills like on-grid and keep essential loads running through outages. Storage sized to real backup needs — not oversold.",
     image: "/images/house-dusk.jpg",
     imageAlt: "Home at dusk with solar and storage potential",
     benefits: [
@@ -182,7 +185,8 @@ export const SOLUTION_PAGES = {
   "/off-grid-solar": {
     eyebrow: "Independent power systems",
     title: "Off-grid solar designed around actual loads.",
-    lede: "For sites without a utility connection — farmhouses, remote facilities, telecom and rural projects. Every watt must be earned and stored, so load discipline comes first.",
+    seoTitle: "Off-grid solar plant systems | DSP Power Infra",
+    lede: "For sites without a utility connection — farmhouses, remote facilities, telecom and rural sites. Load discipline is designed in from day one.",
     image: "/images/sunrise-roof.jpg",
     imageAlt: "Sunrise over an independent rooftop installation",
     benefits: [

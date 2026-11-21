@@ -5,9 +5,11 @@ import { analyticsConfigured, getConsent, setConsent } from "../lib/analytics";
 
 /** Bottom consent prompt shown only when a GA4 measurement ID is configured. */
 export default function CookieConsent() {
-  const [open, setOpen] = useState(() => analyticsConfigured() && !getConsent());
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    // Resolve after hydration so the prerendered markup stays deterministic.
+    if (analyticsConfigured() && !getConsent()) setOpen(true);
     function reopen() { if (analyticsConfigured()) setOpen(true); }
     window.addEventListener("dsp:open-consent", reopen);
     return () => window.removeEventListener("dsp:open-consent", reopen);

@@ -13,6 +13,7 @@ export function analyticsConfigured() {
 }
 
 export function getConsent() {
+  if (typeof window === "undefined") return null;
   try {
     const value = window.localStorage.getItem(CONSENT_KEY);
     return value === "granted" || value === "denied" ? value : null;

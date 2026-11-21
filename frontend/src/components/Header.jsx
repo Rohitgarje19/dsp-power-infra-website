@@ -12,8 +12,12 @@ export default function Header() {
   const [solutionsOpen, setSolutionsOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [theme, setTheme] = useState(currentTheme);
+  // Start deterministic so server HTML and the first client render match;
+  // the stored/system theme is applied right after hydration.
+  const [theme, setTheme] = useState("light");
   const { pathname } = useLocation();
+
+  useEffect(() => { setTheme(currentTheme()); }, []);
   const overlay = pathname === "/" && !scrolled && !open;
 
   function toggleTheme() {

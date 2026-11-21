@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<meta name="theme-color" content="#100d09"/>
+<meta name="theme-color" content="#f7f9fc" media="(prefers-color-scheme: light)"/>
+<meta name="theme-color" content="#0a1322" media="(prefers-color-scheme: dark)"/>
 <script>
   // Apply the saved/system theme before first paint to avoid a flash.
   try {
@@ -15,30 +16,40 @@
 </script>
 <meta name="description" content="DSP Power Infra — solar EPC for homes, housing societies and businesses in Pune. Survey-first design, PM Surya Ghar subsidy support, installation and maintenance."/>
 <title>DSP Power Infra | Solar EPC, Pune</title>
-<link rel="icon" href="/dsp-logo.jpg"/>
-<meta property="og:type" content="website"/>
+<link rel="canonical" href="https://dsppowerinfra.com/"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
 <meta property="og:site_name" content="DSP Power Infra"/>
-<meta property="og:title" content="DSP Power Infra | Solar EPC, Pune"/>
-<meta property="og:description" content="Solar planned around your roof: free consultation, site survey, honest estimates, subsidy support and one accountable team from enquiry to switch-on."/>
-<meta property="og:image" content="/images/hero.jpg"/>
+<meta property="og:type" content="website"/>
+<meta property="og:locale" content="en_IN"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <link rel="preload" as="font" type="font/woff2" href="/fonts/DMSans-var.woff2" crossorigin/>
-<link rel="preload" as="font" type="font/woff2" href="/fonts/Archivo-var.woff2" crossorigin/>
+<link rel="preload" as="font" type="font/woff2" href="/fonts/Poppins-600.woff2" crossorigin/>
+<link rel="preload" as="font" type="font/woff2" href="/fonts/Poppins-700.woff2" crossorigin/>
 <link rel="preload" as="image" type="image/webp" fetchpriority="high"
-      imagesrcset="/images/panels-sunset-640.webp 640w, /images/panels-sunset-1200.webp 1200w, /images/panels-sunset.webp 1600w"
+      imagesrcset="/images/hero-family-640.webp 640w, /images/hero-family-1200.webp 1200w, /images/hero-family.webp 1600w"
       imagesizes="100vw"/>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
+  "@id": "https://dsppowerinfra.com/#business",
   "name": "DSP Power Infra",
+  "url": "https://dsppowerinfra.com/",
   "description": "Solar EPC company offering rooftop solar design, supply, installation and maintenance for homes, housing societies and businesses.",
   "telephone": "+919146467074",
   "email": "dsp.powerinfra@gmail.com",
-  "image": "/images/hero.jpg",
+  "image": "https://dsppowerinfra.com/images/hero-family.jpg",
+  "logo": "https://dsppowerinfra.com/icon-512.png",
   "address": { "@type": "PostalAddress", "addressLocality": "Pune", "addressRegion": "Maharashtra", "addressCountry": "IN" },
-  "areaServed": "Pune region, Maharashtra",
-  "priceRange": "₹₹"
+  "areaServed": [
+    { "@type": "City", "name": "Pune" },
+    { "@type": "State", "name": "Maharashtra" }
+  ],
+  "priceRange": "₹₹",
+  "currenciesAccepted": "INR",
+  "knowsAbout": ["Rooftop solar", "Solar EPC", "PM Surya Ghar subsidy", "Net metering"]
 }
 </script>
 </head>

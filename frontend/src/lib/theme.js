@@ -12,11 +12,12 @@ export function getStoredTheme() {
 export function preferredTheme() {
   const stored = getStoredTheme();
   if (stored) return stored;
-  const media = typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const media = typeof window !== "undefined" && typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
   return media?.matches ? "dark" : "light";
 }
 
 export function currentTheme() {
+  if (typeof document === "undefined") return "light";
   return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
 }
 

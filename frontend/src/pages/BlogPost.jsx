@@ -1,14 +1,17 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { BLOG_ARTICLES } from "../data/blog";
-import { usePageMeta } from "../lib/seo";
+import { useArticleSchema, useFaqSchema, usePageMeta } from "../lib/seo";
 import NotFound from "./NotFound";
 import Picture from "../components/Picture";
+import Faq from "../components/Faq";
 
 export default function BlogPost() {
   const { slug } = useParams();
   const article = BLOG_ARTICLES.find((a) => a.slug === slug);
-  usePageMeta(article?.title || "Guide", article?.excerpt);
+  usePageMeta(article?.seoTitle || article?.title || "Guide", article?.excerpt, { image: article?.image, type: "article" });
+  useArticleSchema(article);
+  useFaqSchema(article?.faqs);
   if (!article) return <NotFound />;
   const others = BLOG_ARTICLES.filter((a) => a.slug !== slug).slice(0, 2);
   return (
@@ -20,7 +23,7 @@ export default function BlogPost() {
           <Link className="back-link light" to="/blog"><ArrowLeft size={15} /> All guides</Link>
           <h1>{article.title}</h1>
           <p className="lede light">{article.excerpt}</p>
-          <small className="post-meta">{new Date(article.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })} · <Clock size={13} /> {article.readMins} min read · DSP team</small>
+          <small className="post-meta">{new Date(article.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })} · <Clock size={13} /> {article.readMins} min read · <Link to="/about">DSP Power Infra team</Link></small>
         </div>
       </section>
       <article className="section post-body">
@@ -35,6 +38,7 @@ export default function BlogPost() {
           <Link className="button primary" to="/solar-calculator">Calculate my estimate <ArrowRight size={16} /></Link>
         </div>
       </article>
+      {article.faqs && <Faq items={article.faqs} title="Common questions about this guide" />}
       <section className="section more-posts">
         <span className="eyebrow">Keep reading</span>
         <div className="blog-grid two">

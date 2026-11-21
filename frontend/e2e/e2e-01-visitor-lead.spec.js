@@ -5,7 +5,8 @@ test("TC-E2E-01: visitor opens the hero quote modal and submits a lead", async (
   const name = uniqueName("E2E Home");
 
   await page.goto("/");
-  await page.getByRole("button", { name: /Get a free solar consultation/i }).click();
+  // The header carries the same CTA label; scope to the hero.
+  await page.getByRole("main").getByRole("button", { name: /Get a Free Consultation/i }).click();
 
   const dialog = page.getByRole("dialog", { name: "Get a free solar quote" });
   await expect(dialog).toBeVisible();

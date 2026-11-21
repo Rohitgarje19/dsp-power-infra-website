@@ -9,13 +9,14 @@ export const CITIES = [
     region: "Pune district",
     pinNote: "PIN codes commonly beginning 411 and 412",
     title: "Rooftop solar in Pune, planned around your building.",
-    lede: "From old wada roofs to new society terraces, Pune roofs differ street by street. We survey first, then design around shade, structure and the way your building actually uses power.",
+    lede: "From old wada roofs to new society terraces, Pune roofs differ street by street. We survey first, designing around shade, structure and how buildings use power.",
     image: "/images/house-dusk.jpg",
     imageAlt: "A Pune home at dusk with rooftop solar potential",
     intro: [
       "Pune is our home base, so survey visits are easier to schedule and our team stays close through installation and service.",
       "The city mixes bungalows, low-rise apartments and large housing societies. Each has different approval steps and mounting options, and each needs a plan for monsoon drainage and the shadows cast by water tanks, lift rooms and neighbouring buildings.",
     ],
+    detail: "Our Pune surveys are usually booked within days of an enquiry, which keeps the gap between discussion and a site-accurate proposal short. On older properties the survey checks roof condition and waterproofing before any layout is drawn; on society terraces it records the resolution and signing route as well as the usable area. If you are still comparing options, the PM Surya Ghar guide explains what the subsidy does and does not cover.",
     local: [
       ["Society approvals", "Common-area systems usually need a managing-committee resolution and clarity on who signs. We help document the proposal so members can decide without guesswork."],
       ["Mixed roof types", "RCC terraces, sloping tile roofs and sheet roofs each need different mounting. The survey records what the structure can safely carry before any layout is drawn."],
@@ -34,13 +35,14 @@ export const CITIES = [
     region: "Pune Metropolitan Region",
     pinNote: "PIN codes commonly beginning 411 and 412",
     title: "Solar for homes and industry in Pimpri-Chinchwad.",
-    lede: "PCMC combines township living with one of Maharashtra's densest industrial belts. The right solar plan depends on whether the roof carries a home, a society or a factory load.",
+    lede: "PCMC combines township living with a dense industrial belt. The right solar plan depends on whether the roof carries a home, a society or a factory load.",
     image: "/images/banner-b.jpg",
     imageAlt: "Large roof area suited to industrial and township solar planning",
     intro: [
       "The twin city's MIDC units, warehouses and newer residential towers have very different electricity profiles. A system sized for a factory's daytime load is not the same as one sized for a society's shared facilities.",
       "We start from the connection and the bill, then look at the roof. That order keeps the proposal tied to real consumption instead of a generic package size.",
     ],
+    detail: "Industrial enquiries here usually begin with a sanctioned load and a recent bill, because a factory's daytime profile changes the right answer. For township rooftops the process is closer to a Pune society project: committee approval, shared metering and a maintenance plan. The survey notes CT metering, transformer capacity and roof access where they apply, so the proposal reflects the site rather than a catalogue size.",
     local: [
       ["Industrial load profile", "Factories and warehouses often run heavy daytime loads, when solar produces most. We model the load curve before sizing so generation is used on site rather than exported at a poor rate."],
       ["Township terraces", "Newer societies have clean, open terraces, but lift rooms, staircases and adjacent towers create shade patterns. We map them during the survey."],
@@ -59,13 +61,14 @@ export const CITIES = [
     region: "Mumbai Metropolitan Region",
     pinNote: "PIN codes commonly beginning 400",
     title: "Rooftop solar for Mumbai buildings and societies.",
-    lede: "In Mumbai the roof is shared, the air is salty and every square foot counts. We plan systems for common-area loads and eligible terraces with those constraints in view.",
+    lede: "In Mumbai the roof is shared, the air salty and every square foot counts. We plan for common-area loads and eligible terraces with those constraints in view.",
     image: "/images/panels-sunset.jpg",
     imageAlt: "Solar panels against a city sunset skyline reference",
     intro: [
       "Most Mumbai buildings do not have a private rooftop. The practical starting point is usually the shared load: lifts, water pumps, staircase and lobby lighting. That keeps the system tied to a steady demand the whole building benefits from.",
       "The coastal environment also shapes the specification. Salt-laden air attacks fasteners, frames and exposed cable, so corrosion resistance and inspection access are design decisions, not afterthoughts.",
     ],
+    detail: "In practice, a Mumbai proposal is often a shared-asset proposal: the committee needs to see which loads the system serves, how the generation is measured and who maintains it. The survey records terrace access, parapet height and the routes water takes during monsoon. Because lift and pump loads vary through the day, we review a full year of the common meter before recommending a size.",
     local: [
       ["Common-area focus", "Sizing around lifts, pumps and lobby lighting gives the building a direct return. It also avoids disputes about which flat owns the generation."],
       ["Coastal corrosion", "We specify corrosion-resistant mounting and fasteners and plan inspection points, because a marine atmosphere punishes anything left unchecked."],
@@ -84,13 +87,14 @@ export const CITIES = [
     region: "Thane district",
     pinNote: "PIN codes commonly beginning 400 and 401",
     title: "Solar planning for Thane homes and housing societies.",
-    lede: "Thane's skyline is changing fast, with new towers beside older low-rise neighbourhoods. Solar here is mostly about shared terraces, tower shadows and committee decisions.",
+    lede: "Thane's skyline is changing fast, new towers beside older low-rise areas. Solar here is mostly shared terraces, tower shadows and committee decisions.",
     image: "/images/sunrise-roof.jpg",
     imageAlt: "Rooftop solar array at sunrise, representative of Thane planning",
     intro: [
       "Growth along the Ghodbunder corridor and around the lakes has produced very different building types. New towers offer open terraces; older buildings offer smaller, more cluttered roofs. Both can work, but not with the same layout.",
       "Shadow mapping matters more here than in low-rise cities. A neighbouring tower can cut a terrace's usable hours even when the roof itself looks empty.",
     ],
+    detail: "For Thane societies, the useful first step is a shared-meter review plus a shadow map of the terrace through the day. That combination decides whether a system is worth pursuing before anyone discusses panel counts. Older low-rise buildings are assessed on structure, waterproofing and access. We also check how monsoon water leaves the roof, since drainage problems surface quickly on a mounted array.",
     local: [
       ["Tower shadows", "We map shade across seasons before fixing panel positions, rather than assuming an open terrace stays open through the day."],
       ["Society-scale systems", "Common-area loads in large societies can justify a bigger system. We size to actual shared consumption and explain what happens to any surplus."],
@@ -116,6 +120,7 @@ export const CITIES = [
       "Planned sectors and CIDCO nodes generally offer more regular building footprints than older city areas. That regularity helps with layout, but parapets, water tanks and staircases still decide how much of a terrace is usable.",
       "Many buildings here are newer, which opens the option of coordinating solar with electrical rooms and cable routes instead of retrofitting around them.",
     ],
+    detail: "Regular building footprints make layout planning easier, but parapets, water tanks and staircase headrooms still decide the usable area. For commercial buildings in the nodes, we start with a daytime load study and the sanctioned load, then check roof access for installation and maintenance. In newer buildings, early coordination with the electrical room can avoid re-routing cables later, so it is worth raising solar before fit-out is complete.",
     local: [
       ["Terrace space", "We survey for parapets, tanks and staircases that cut usable area, then place the array where shade is lowest through the day."],
       ["New-building coordination", "In newer buildings, early planning can align solar with electrical rooms and cable routes rather than working around them later."],
@@ -141,6 +146,7 @@ export const CITIES = [
       "The district's economy spans vineyards, farms, city homes and growing industry. A farm pump, a bungalow and a small workshop each have different running hours, starting currents and backup expectations.",
       "We start with how the load behaves. That is especially important on farm sites, where an oversized system can sit idle and an undersized one will not carry the pump.",
     ],
+    detail: "A Nashik farm enquiry usually needs three facts before a useful discussion: pump rating, running hours and whether a grid connection exists. From there, on-grid, hybrid and off-grid options can be compared honestly, including the cost of storage where backup is required. For city homes and bungalows the process is simpler, but tree shade and roof condition still need a survey before sizing is final.",
     local: [
       ["Farm and bungalow loads", "Irrigation pumps and farmhouse loads have their own patterns. We size around actual running hours and starting currents, not a generic package."],
       ["Summer heat and storms", "Nashik summers are hot and storms can bring hail. Mounting, cable protection and panel placement are planned for both."],
@@ -166,6 +172,7 @@ export const CITIES = [
       "Vidarbha's summer heat drives air-conditioning and cooling demand for months. Solar generates most when that demand peaks, so the match between generation and use can be strong.",
       "Dust is the counterweight. Dry, dusty months settle a film on the glass, and generation drops until it is cleaned. A workable cleaning routine belongs in the proposal from day one.",
     ],
+    detail: "Because cooling dominates the summer bill, an annual average can understate what solar offsets in the months that matter most. We look at seasonal units and propose a size that follows the peak without ignoring the rest of the year. Dust management is agreed in writing — who cleans, how often and with what — so the generation figure in the proposal stays achievable through the dry season.",
     local: [
       ["Cooling-led consumption", "Air conditioning dominates summer bills. We size against your seasonal usage rather than an annual average that hides the peak months."],
       ["Dust management", "We propose a cleaning rhythm and show what it protects, so output assumptions stay realistic through the dry season."],
@@ -191,6 +198,7 @@ export const CITIES = [
       "The region's sunshine is dependable and the heat is severe. For a bungalow, institution or small industrial unit, that combination rewards a well-ventilated, correctly oriented array.",
       "Water is the practical constraint. Planning cleaning around scarce supply is part of designing a system that stays productive, not just one that looks good on handover day.",
     ],
+    detail: "On a bungalow or institutional roof here, we plan clearance under the array to help heat escape and map shade from tanks, parapets and trees. Where the roof is older, condition and structural capacity are checked before any mounting is proposed. The maintenance note in the proposal names a cleaning interval that respects local water availability, so the plan is followed rather than abandoned after the first dry spell.",
     local: [
       ["Water-wise cleaning", "Where water is scarce, dry or low-water cleaning methods and realistic intervals matter more than a wash schedule copied from a wetter city."],
       ["Heat and shade", "We plan clearance under panels and cable routing to manage heat, and map shade from water tanks, parapets and trees."],
@@ -216,6 +224,7 @@ export const CITIES = [
       "The district's heavy monsoon shapes every outdoor installation. Systems work here, but they need clearances, sealed junctions and cable routes chosen with standing water in mind.",
       "Bungalows and housing societies are both common. Bungalows need a structure check; societies need approvals. The survey covers whichever applies to your site.",
     ],
+    detail: "Rainfall here is heavy enough that installation timing matters as much as design. We avoid leaving open work exposed to a forecast storm and plan cable routes, junction boxes and mounting clearances around standing water. An annual inspection that checks seals, fasteners and drainage is part of the maintenance guidance, because water — not heat — is the main long-term threat to a Kolhapur rooftop system.",
     local: [
       ["Monsoon engineering", "We raise mounting clearances, route cables away from pooling water and place junction boxes where the rainy months cannot reach them."],
       ["Corrosion checks", "Wet conditions accelerate corrosion on fasteners and frames. Annual inspection is built into our maintenance guidance."],
@@ -241,6 +250,7 @@ export const CITIES = [
       "Textile units, workshops and shops often run daytime loads that solar can offset directly. Homes face a different pattern, dominated by summer cooling and household appliances.",
       "Dust and heat are constants. Panels need ventilation and a cleaning plan that survives a dry season without depending on a plentiful water supply.",
     ],
+    detail: "For textile and workshop roofs we review the daytime load pattern, sanctioned load and roof structure before sizing; a steady daytime demand usually suits solar well. Home systems follow the bill-first method. In both cases the cleaning plan is written around local water availability, and the layout leaves space for ventilation so high summer temperatures do not erode the yield estimate.",
     local: [
       ["Textile and commercial loads", "Power looms, processing units and shops have steady daytime demand. We review the load pattern before sizing."],
       ["Dust and high temperatures", "Frequent dust makes cleaning matter; high temperatures make ventilation matter. Both are designed in from the start."],
