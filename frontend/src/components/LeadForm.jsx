@@ -20,7 +20,7 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
   const [error, setError] = useState("");
   const [fields, setFields] = useState({});
   const [pin, setPin] = useState(defaults.pincode || "");
-  const { city, onCityChange, resetCity } = useCityAutofill(pin, defaults.city || "");
+  const { city, onCityChange, resetCity, suggestion } = useCityAutofill(pin, defaults.city || "");
 
   const pinInfo = pin.length === 6 ? checkPincode(pin) : null;
 
@@ -99,12 +99,13 @@ export default function LeadForm({ source = "website", defaults = {}, heading = 
           <input
             required
             name="city"
-            placeholder="Pune"
+            placeholder="Auto-fills from PIN"
             maxLength={100}
             value={city}
             onChange={(e) => onCityChange(e.target.value)}
           />
           {fields.city && <small className="field-error">{fields.city}</small>}
+          {suggestion && <small className="field-hint">Filled from PIN {pin} — edit if it's different.</small>}
         </label>
         <label>PIN code
           <input required name="pincode" pattern="[0-9]{6}" inputMode="numeric" placeholder="6-digit PIN" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))} />

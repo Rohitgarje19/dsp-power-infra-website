@@ -5,9 +5,12 @@ import { cityForPincode, resolveCity } from "./serviceability";
 // - fills from the confirmed-region hint immediately, then refines with the
 //   backend's India Post lookup for any Indian PIN;
 // - never overwrites a city the visitor typed;
-// - clears an auto-filled city when the PIN stops being a full 6 digits.
+// - clears an auto-filled city when the PIN stops being a full 6 digits;
+// - returns `suggestion` (the city the PIN resolved to) only while that city
+//   was actually auto-filled, so forms can say where the value came from.
 export function useCityAutofill(pin, initialCity = "") {
   const [city, setCity] = useState(initialCity);
+  const [suggestion, setSuggestion] = useState("");
   const cityRef = useRef(initialCity);
   const autoFilled = useRef(false);
   const manual = useRef(false);
@@ -26,9 +29,14 @@ export function useCityAutofill(pin, initialCity = "") {
           autoFilled.current = true;
           cityRef.current = hint;
           setCity(hint);
+          setSuggestion(hint);
+          return;
         }
+        // The visitor's own city wins; don't advertise a suggestion we skipped.
+        setSuggestion("");
         return;
       }
+      setSuggestion("");
       if (autoFilled.current && !manual.current) {
         autoFilled.current = false;
         cityRef.current = "";
@@ -55,6 +63,7 @@ export function useCityAutofill(pin, initialCity = "") {
     manual.current = true;
     cityRef.current = value;
     setCity(value);
+    setSuggestion("");
   }
 
   function resetCity() {
@@ -62,7 +71,8 @@ export function useCityAutofill(pin, initialCity = "") {
     manual.current = false;
     cityRef.current = initial.current;
     setCity(initial.current);
+    setSuggestion("");
   }
 
-  return { city, onCityChange, resetCity };
+  return { city, onCityChange, resetCity, suggestion };
 }

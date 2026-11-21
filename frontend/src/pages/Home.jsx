@@ -10,6 +10,7 @@ const QuoteModal = lazy(() => import("../components/QuoteModal"));
 import { HOME_FAQS, CONTACT } from "../data/content";
 import { usePageMeta, useFaqSchema } from "../lib/seo";
 import { pct } from "../lib/format";
+import { useCityAutofill } from "../lib/useCityAutofill";
 const EmiCalculator = lazy(() => import("../components/EmiCalculator"));
 import Picture from "../components/Picture";
 import TrackRecord from "../components/TrackRecord";
@@ -53,9 +54,11 @@ const journey = [
 function HeroEstimate() {
   const [pin, setPin] = useState("");
   const [bill, setBill] = useState(3000);
+  const { city } = useCityAutofill(pin);
   function go(e) {
     e.preventDefault();
     const p = new URLSearchParams({ pincode: pin, billValue: bill });
+    if (city) p.set("city", city);
     window.location.href = "/solar-calculator?" + p.toString();
   }
   return (
@@ -64,6 +67,7 @@ function HeroEstimate() {
       <label className="hs-pin">
         <span>Your PIN code</span>
         <input required pattern="[0-9]{6}" inputMode="numeric" placeholder="e.g. 411046" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))} aria-label="Your PIN code" />
+        {city && <small className="hs-city">{city}</small>}
       </label>
       <span className="hs-divider" aria-hidden="true" />
       <label className="hs-bill">

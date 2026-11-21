@@ -14,7 +14,7 @@ export default function Calculator() {
   const [q] = useSearchParams();
   const navigate = useNavigate();
   const [pin, setPin] = useState(q.get("pincode") || "");
-  const { city, onCityChange } = useCityAutofill(pin, q.get("city") || "");
+  const { city, onCityChange, suggestion } = useCityAutofill(pin, q.get("city") || "");
   const initialType = normalizeConnectionType(q.get("customerType")) || "Residential";
   const [customerType, setCustomerType] = useState(initialType);
   const sheetRate = rateFor(customerType);
@@ -69,7 +69,8 @@ export default function Calculator() {
               <input required pattern="[0-9]{6}" inputMode="numeric" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="e.g. 411046" />
             </label>
             <label>City
-              <input required value={city} onChange={(e) => onCityChange(e.target.value)} placeholder="Pune" maxLength={100} />
+              <input required value={city} onChange={(e) => onCityChange(e.target.value)} placeholder="Auto-fills from PIN" maxLength={100} />
+              {suggestion && <small className="field-hint">Filled from PIN {pin} — edit if it's different.</small>}
             </label>
             {pinInfo?.valid && <p className={`pin-note span2 ${pinInfo.serviceable ? "ok" : "check"}`}>{pinInfo.message}</p>}
             <label>Connection type

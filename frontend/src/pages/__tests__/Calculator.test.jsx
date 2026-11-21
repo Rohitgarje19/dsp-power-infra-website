@@ -66,12 +66,14 @@ describe("Calculator city autofill", () => {
   it("resolves any Indian PIN through the backend lookup", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ city: "Mumbai", state: "Maharashtra" }),
+      json: async () => ({ city: "Latur", state: "Maharashtra" }),
     }));
     const user = userEvent.setup();
     renderAt();
-    await user.type(screen.getByLabelText(/pin code/i), "400001");
-    await waitFor(() => expect(screen.getByLabelText(/^city/i)).toHaveValue("Mumbai"), { timeout: 2000 });
+    expect(screen.getByLabelText(/^city/i)).toHaveAttribute("placeholder", "Auto-fills from PIN");
+    await user.type(screen.getByLabelText(/pin code/i), "413517");
+    await waitFor(() => expect(screen.getByLabelText(/^city/i)).toHaveValue("Latur"), { timeout: 2000 });
+    expect(screen.getByText(/Filled from PIN 413517/i)).toBeInTheDocument();
   });
 
   it("does not overwrite a city the visitor typed", async () => {

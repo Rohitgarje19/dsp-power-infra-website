@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
@@ -28,6 +28,10 @@ async function fillValid(user, { name = "Asha Kulkarni", phone = "9876543210", c
 
 beforeEach(() => {
   postLead.mockReset();
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
 });
 
 // TC-FORM-* from docs/TEST_CASES.md
@@ -78,6 +82,29 @@ describe("LeadForm", () => {
     // No backend in this test, so the lookup is unavailable and the field stays empty.
     await new Promise((resolve) => setTimeout(resolve, 400));
     expect(screen.getByLabelText(/^city/i)).toHaveValue("");
+  });
+
+  it("TC-FORM-14: any Indian PIN resolves through the lookup and the city says where it came from", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ city: "Latur", state: "Maharashtra" }),
+    }));
+    const user = userEvent.setup();
+    setup();
+    expect(screen.getByLabelText(/^city/i)).toHaveAttribute("placeholder", "Auto-fills from PIN");
+    await user.type(screen.getByLabelText(/pin code/i), "413517");
+    await waitFor(() => expect(screen.getByLabelText(/^city/i)).toHaveValue("Latur"), { timeout: 2000 });
+    expect(screen.getByText(/Filled from PIN 413517/i)).toBeInTheDocument();
+  });
+
+  it("TC-FORM-15: editing the auto-filled city drops the PIN hint", async () => {
+    const user = userEvent.setup();
+    setup();
+    await user.type(screen.getByLabelText(/pin code/i), "411046");
+    await waitFor(() => expect(screen.getByLabelText(/^city/i)).toHaveValue("Pune"));
+    await user.type(screen.getByLabelText(/^city/i), " Camp");
+    expect(screen.getByLabelText(/^city/i)).toHaveValue("Pune Camp");
+    expect(screen.queryByText(/Filled from PIN/i)).not.toBeInTheDocument();
   });
 
   it("TC-FORM-13: a manually typed city is never overwritten by the PIN hint", async () => {

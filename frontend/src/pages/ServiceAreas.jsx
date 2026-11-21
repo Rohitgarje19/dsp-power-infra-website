@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, MapPin, Search } from "lucide-react";
 import PageHero from "../components/PageHero";
-import { checkPincode } from "../lib/serviceability";
+import { checkPincode, resolveCity } from "../lib/serviceability";
 import { usePageMeta } from "../lib/seo";
 import { CITIES } from "../data/cities";
 
@@ -10,10 +10,20 @@ export default function ServiceAreas() {
   usePageMeta("Service areas", "DSP Power Infra covers Maharashtra. Check your PIN code against our service region — other states confirmed case by case.");
   const [pin, setPin] = useState("");
   const [result, setResult] = useState(null);
-  function check(e) {
+  const [city, setCity] = useState("");
+  const request = useRef(0);
+  async function check(e) {
     e.preventDefault();
-    setResult(checkPincode(pin));
+    const value = pin;
+    const id = ++request.current;
+    const next = checkPincode(value);
+    setResult(next);
+    setCity("");
+    if (!next.valid) return;
+    const resolved = await resolveCity(value);
+    if (id === request.current) setCity(resolved || "");
   }
+  const contactHref = `/contact?pincode=${pin}${city ? `&city=${encodeURIComponent(city)}` : ""}`;
   return (
     <>
       <PageHero
@@ -29,7 +39,7 @@ export default function ServiceAreas() {
             <span className="eyebrow">PIN code check</span>
             <h3>Is your roof in our region?</h3>
             <label className="svc-input">PIN code
-              <input required pattern="[0-9]{6}" inputMode="numeric" placeholder="e.g. 411046" value={pin} onChange={(e) => { setPin(e.target.value.replace(/\D/g, "").slice(0, 6)); setResult(null); }} />
+              <input required pattern="[0-9]{6}" inputMode="numeric" placeholder="e.g. 411046" value={pin} onChange={(e) => { request.current += 1; setPin(e.target.value.replace(/\D/g, "").slice(0, 6)); setResult(null); setCity(""); }} />
             </label>
             <button className="button primary submit"><Search size={16} /> Check availability</button>
             {result && !result.valid && <p className="error" role="alert">{result.message}</p>}
@@ -38,8 +48,9 @@ export default function ServiceAreas() {
                 <MapPin size={20} />
                 <div>
                   <b>{result.serviceable ? "Yes — in our service region." : "Not confirmed yet."}</b>
+                  {city && <p className="svc-city">PIN {pin} · {city}</p>}
                   <p>{result.message}</p>
-                  <Link to={`/contact?pincode=${pin}`}>{result.serviceable ? "Book a survey" : "Ask the team to confirm"} <ArrowRight size={14} /></Link>
+                  <Link to={contactHref}>{result.serviceable ? "Book a survey" : "Ask the team to confirm"} <ArrowRight size={14} /></Link>
                 </div>
               </div>
             )}
